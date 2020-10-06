@@ -1,7 +1,10 @@
 server:
   port: 8000
+  shutdown: graceful
 
 spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 5s
   freemarker:
     check-template-location: false
   profiles:
