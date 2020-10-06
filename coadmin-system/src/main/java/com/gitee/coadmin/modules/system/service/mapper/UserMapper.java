@@ -23,7 +23,7 @@ public interface UserMapper extends CommonMapper<User> {
     @Results({
             @Result(column = "dept_id", property = "dept", one = @One(select = "DeptMapper.selectLink")),
             @Result(column = "job_id", property = "job", one = @One(select = "JobMapper.selectLink")), })
-    @Select("select u.user_id as id, u.* from sys_user u ${ew.customSqlSegment}")
+    @Select("select u.* from sys_user u ${ew.customSqlSegment}")
     User selectLink(@Param(Constants.WRAPPER) Wrapper<User> query);
 
     /**
@@ -32,7 +32,7 @@ public interface UserMapper extends CommonMapper<User> {
      * @param roleId /
      * @return /
      */
-    @Select("SELECT u.user_id as id, u.* FROM sys_user u, sys_users_roles r WHERE" + " u.user_id = r.user_id AND r.role_id = #{roleId}")
+    @Select("SELECT u.* FROM sys_user u, sys_users_roles r WHERE" + " u.id = r.user_id AND r.role_id = #{roleId}")
     List<User> findByRoleId(@Param("roleId") Long roleId);
 
     /**
@@ -41,8 +41,8 @@ public interface UserMapper extends CommonMapper<User> {
      * @param roleId /
      * @return /
      */
-    @Select("SELECT u.user_id as id, u.* FROM sys_user u, sys_users_roles r, sys_roles_depts d WHERE "
-            + "u.user_id = r.user_id AND r.role_id = d.role_id AND r.role_id = #{roleId} group by u.user_id")
+    @Select("SELECT u.* FROM sys_user u, sys_users_roles r, sys_roles_depts d WHERE "
+            + "u.id = r.user_id AND r.role_id = d.role_id AND r.role_id = #{roleId} group by u.id")
     List<User> findByDeptRoleId(@Param("roleId") Long roleId);
 
     /**
@@ -51,8 +51,8 @@ public interface UserMapper extends CommonMapper<User> {
      * @param menuId 菜单ID
      * @return /
      */
-    @Select("SELECT u.user_id as id, u.* FROM sys_user u, sys_users_roles ur, sys_roles_menus rm WHERE "
-            + "u.user_id = ur.user_id AND ur.role_id = rm.role_id AND rm.menu_id = #{menuId} group by u.user_id")
+    @Select("SELECT u.* FROM sys_user u, sys_users_roles ur, sys_roles_menus rm WHERE "
+            + "u.id = ur.user_id AND ur.role_id = rm.role_id AND rm.menu_id = #{menuId} group by u.id")
     List<User> findByMenuId(@Param("menuId") Long menuId);
 
     /**
@@ -61,7 +61,7 @@ public interface UserMapper extends CommonMapper<User> {
      * @param ids /
      * @return /
      */
-    @Select("<script>SELECT count(1) FROM sys_user u, sys_users_jobs j WHERE u.user_id = j.user_id AND j.job_id IN "
+    @Select("<script>SELECT count(1) FROM sys_user u, sys_users_jobs j WHERE u.id = j.user_id AND j.job_id IN "
             + "<foreach item='item' index='index' collection='ids' open='(' separator=',' close=')'> #{item} </foreach>"
             + "</script>")
     int countByJobs(@Param("ids") Set<Long> ids);
@@ -83,7 +83,7 @@ public interface UserMapper extends CommonMapper<User> {
      * @return /
      */
     @Select("<script>SELECT count(1) FROM sys_user u, sys_users_roles r WHERE "
-            + "u.user_id = r.user_id AND r.role_id in "
+            + "u.id = r.user_id AND r.role_id in "
             + "<foreach item='item' index='index' collection='ids' open='(' separator=',' close=')'> #{item} </foreach>"
             + "</script>")
     int countByRoles(@Param("ids") Set<Long> ids);

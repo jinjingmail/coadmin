@@ -23,7 +23,7 @@ import java.io.Serializable;
 public class Dict extends DataEntity implements Serializable {
 
     @ApiModelProperty(value = "ID")
-    @TableId(value = "dict_id", type= IdType.AUTO)
+    @TableId(value = "id", type= IdType.AUTO)
     private Long id;
 
     @ApiModelProperty(value = "字典名称")

@@ -27,7 +27,7 @@ public class QiniuConfig implements Serializable {
 
 
     @ApiModelProperty(value = "ID")
-    @TableId(value = "config_id", type= IdType.ASSIGN_ID)
+    @TableId(value = "id", type= IdType.ASSIGN_ID)
     private Long id;
 
     @NotBlank

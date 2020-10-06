@@ -22,7 +22,7 @@ public class Job extends DataEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "ID")
-    @TableId(value="job_id", type= IdType.AUTO)
+    @TableId(value="id", type= IdType.AUTO)
     private Long id;
 
     @ApiModelProperty(value = "岗位名称")

@@ -28,7 +28,7 @@ public class LocalStorage extends DataEntity implements Serializable {
 
 
     @ApiModelProperty(value = "ID")
-    @TableId(value = "storage_id", type= IdType.AUTO)
+    @TableId(value = "id", type= IdType.ASSIGN_ID)
     private Long id;
 
     @ApiModelProperty(value = "文件真实的名称")

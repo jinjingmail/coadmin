@@ -15,6 +15,8 @@
  */
 package com.gitee.coadmin.modules.logging.service.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -27,6 +29,7 @@ import java.util.Date;
 @Data
 public class LogErrorDTO implements Serializable {
 
+    @JsonSerialize(using= ToStringSerializer.class) // 防止精度丢失
     private Long id;
 
     private String username;

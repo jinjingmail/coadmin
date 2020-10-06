@@ -29,7 +29,7 @@ public class Log implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "ID")
-    @TableId(value = "log_id", type= IdType.AUTO)
+    @TableId(value = "id", type= IdType.ASSIGN_ID)
     private Long id;
 
     private String description;

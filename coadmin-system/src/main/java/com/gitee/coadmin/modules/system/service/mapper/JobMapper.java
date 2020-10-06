@@ -11,6 +11,6 @@ import org.springframework.stereotype.Repository;
 */
 @Repository
 public interface JobMapper extends CommonMapper<Job> {
-    @Select("select j.job_id as id, j.* from sys_job where job_id = #{id}")
+    @Select("select j.* from sys_job where id = #{id}")
     Job selectLink(Long id);
 }

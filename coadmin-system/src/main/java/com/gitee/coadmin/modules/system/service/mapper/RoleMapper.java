@@ -15,7 +15,7 @@ import java.util.Set;
 */
 @Repository
 public interface RoleMapper extends CommonMapper<Role> {
-    @Select("SELECT r.role_id as id, r.* FROM sys_role r LEFT OUTER JOIN sys_users_roles ur ON r.role_id=ur.role_id LEFT OUTER JOIN sys_user u ON ur.user_id=u.user_id WHERE u.user_id=#{userId}")
+    @Select("SELECT r.* FROM sys_role r LEFT OUTER JOIN sys_users_roles ur ON r.id=ur.role_id LEFT OUTER JOIN sys_user u ON ur.user_id=u.id WHERE u.id=#{userId}")
     Set<Role> selectLink(Long userId);
 
     /**
@@ -24,7 +24,7 @@ public interface RoleMapper extends CommonMapper<Role> {
      * @param id 用户ID
      * @return /
      */
-    @Select("SELECT r.* FROM sys_role r, sys_users_roles u WHERE " + "r.role_id = u.role_id AND u.user_id = #{id}")
+    @Select("SELECT r.* FROM sys_role r, sys_users_roles u WHERE " + "r.id = u.role_id AND u.user_id = #{id}")
     Set<Role> findByUserId(@Param("id") Long id);
 
     /**
@@ -33,10 +33,6 @@ public interface RoleMapper extends CommonMapper<Role> {
      * @param deptIds /
      * @return /
      */
-    /*@Select("<script>select count(1) from sys_role r, sys_roles_depts d where "
-            + "r.role_id = d.role_id and d.dept_id in "
-            + "<foreach item='item' index='index' collection='deptIds' open='(' separator=',' close=')'> #{item} </foreach>"
-            + "</script>")*/
     int countByDepts(@Param("deptIds") Set<Long> deptIds);
 
     /**
@@ -44,8 +40,6 @@ public interface RoleMapper extends CommonMapper<Role> {
      * @param menuIds /
      * @return /
      */
-    /*@Select("SELECT r.* FROM sys_role r, sys_roles_menus m WHERE " +
-            "r.role_id = m.role_id AND m.menu_id in #{menuIds}")*/
     List<Role> findInMenuId(@Param("menuIds") List<Long> menuIds);
 
 }

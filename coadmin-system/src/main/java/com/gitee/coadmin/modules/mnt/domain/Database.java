@@ -29,7 +29,7 @@ public class Database implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "ID")
-    @TableId(value = "db_id", type= IdType.ASSIGN_ID)
+    @TableId(value = "id", type= IdType.ASSIGN_ID)
     private String id;
 
     @ApiModelProperty(value = "名称")

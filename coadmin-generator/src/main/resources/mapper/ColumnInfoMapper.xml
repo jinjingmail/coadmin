@@ -5,7 +5,7 @@
   <!-- 通用查询结果列 -->
   <!--
   <sql id="Base_Column_List">
-      a.app_id, a.name, a.upload_path, a.deploy_path, a.backup_path, a.port, a.start_script, a.deploy_script, a.create_by, a.update_by, a.create_time, a.update_time
+      a.id, a.name, a.upload_path, a.deploy_path, a.backup_path, a.port, a.start_script, a.deploy_script, a.create_by, a.update_by, a.create_time, a.update_time
   </sql>
   -->
     <select id="getTables" resultType="com.gitee.coadmin.modules.generator.domain.vo.TableInfo">

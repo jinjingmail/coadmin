@@ -5,7 +5,7 @@
   <!-- 通用查询结果列 -->
 
   <sql id="Base_Column_List">
-      a.content_id as id, a.bucket, a.name, a.size, a.type, a.url, a.suffix, a.update_time
+      a.id, a.bucket, a.name, a.size, a.type, a.url, a.suffix, a.update_time
   </sql>
 
     <select id="findByKey" resultType="com.gitee.coadmin.modules.tools.domain.QiniuContent">

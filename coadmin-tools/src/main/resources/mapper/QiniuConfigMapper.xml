@@ -5,7 +5,7 @@
   <!-- 通用查询结果列 -->
   <!--
   <sql id="Base_Column_List">
-      a.config_id, a.access_key, a.bucket, a.host, a.secret_key, a.type, a.zone
+      a.id, a.access_key, a.bucket, a.host, a.secret_key, a.type, a.zone
   </sql>
   -->
     <update id="updateType">

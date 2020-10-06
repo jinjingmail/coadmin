@@ -5,7 +5,7 @@
   <!-- 通用查询结果列 -->
   <!--
   <sql id="Base_Column_List">
-      a.log_id, a.bean_name, a.create_time, a.cron_expression, a.exception_detail, a.is_success, a.job_name, a.method_name, a.params, a.time
+      a.id, a.bean_name, a.create_time, a.cron_expression, a.exception_detail, a.is_success, a.job_name, a.method_name, a.params, a.time
   </sql>
   -->
 </mapper>

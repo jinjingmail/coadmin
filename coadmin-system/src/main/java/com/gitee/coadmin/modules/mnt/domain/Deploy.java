@@ -28,7 +28,7 @@ public class Deploy extends DataEntity implements Serializable {
 
 
     @ApiModelProperty(value = "ID")
-    @TableId(value="deploy_id", type= IdType.AUTO)
+    @TableId(value="id", type= IdType.ASSIGN_ID)
     private Long id;
 
     @ApiModelProperty(value = "应用编号")

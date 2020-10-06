@@ -5,7 +5,7 @@
   <!-- 通用查询结果列 -->
   <!--
   <sql id="Base_Column_List">
-      a.log_id, a.description, a.log_type, a.method, a.params, a.request_ip, a.time, a.username, a.address, a.browser, a.exception_detail, a.create_time
+      a.id, a.description, a.log_type, a.method, a.params, a.request_ip, a.time, a.username, a.address, a.browser, a.exception_detail, a.create_time
   </sql>
   -->
 </mapper>

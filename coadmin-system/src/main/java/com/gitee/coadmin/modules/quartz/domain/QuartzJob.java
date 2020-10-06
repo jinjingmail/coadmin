@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,10 +29,11 @@ import java.io.Serializable;
 public class QuartzJob extends DataEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    public static final String JOB_KEY = "JOB_KEY";
+    public static final String JOB_KEY = "QUARTZ_JOB_KEY";
 
     @ApiModelProperty(value = "ID")
-    @TableId(value = "job_id", type= IdType.AUTO)
+    @TableId(value = "id", type= IdType.AUTO)
+    @JsonSerialize(using= ToStringSerializer.class) // 防止精度丢失
     private Long id;
 
 

@@ -1,6 +1,8 @@
 package com.gitee.coadmin.modules.mnt.service.dto;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,7 +23,7 @@ import java.util.stream.Collectors;
 public class DeployDto extends DataDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
-
+    @JsonSerialize(using= ToStringSerializer.class) // 防止精度丢失
     private Long id;
 
     private Long appId;

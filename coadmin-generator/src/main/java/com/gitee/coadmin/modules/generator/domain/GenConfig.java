@@ -18,6 +18,8 @@ package com.gitee.coadmin.modules.generator.domain;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,7 +43,8 @@ public class GenConfig implements Serializable {
     }
 
     @ApiModelProperty(value = "ID", hidden = true)
-    @TableId(value = "config_id", type= IdType.AUTO)
+    @TableId(value = "id", type= IdType.ASSIGN_ID)
+    @JsonSerialize(using= ToStringSerializer.class) // 防止精度丢失
     private Long id;
 
     @NotBlank

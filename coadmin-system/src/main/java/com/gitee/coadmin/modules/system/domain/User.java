@@ -25,7 +25,7 @@ public class User extends DataEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "ID")
-    @TableId(value = "user_id", type= IdType.AUTO)
+    @TableId(value = "id", type= IdType.ASSIGN_ID)
     @NotNull(groups = Update.class)
     private Long id;
 

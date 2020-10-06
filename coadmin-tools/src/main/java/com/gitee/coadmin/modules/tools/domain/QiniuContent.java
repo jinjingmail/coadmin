@@ -29,7 +29,7 @@ public class QiniuContent implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "ID")
-    @TableId(value = "content_id", type= IdType.AUTO)
+    @TableId(value = "id", type= IdType.ASSIGN_ID)
     private Long id;
 
     @ApiModelProperty(value = "Bucket 识别符")

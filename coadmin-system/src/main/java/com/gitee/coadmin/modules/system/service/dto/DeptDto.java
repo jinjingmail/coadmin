@@ -1,6 +1,8 @@
 package com.gitee.coadmin.modules.system.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.*;
 import com.gitee.coadmin.base.DataDto;
 
@@ -19,6 +21,7 @@ import java.util.Objects;
 public class DeptDto extends DataDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    @JsonSerialize(using= ToStringSerializer.class) // 防止精度丢失
     private Long id;
 
     private Long pid;

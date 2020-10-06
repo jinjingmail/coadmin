@@ -14,10 +14,10 @@ import java.util.Set;
 @Repository
 public interface DeptMapper extends CommonMapper<Dept> {
 
-    @Select("select d.dept_id as id, d.* from sys_dept d where dept_id = #{id}")
+    @Select("select d.* from sys_dept d where id = #{id}")
     Dept selectLink(Long id);
 
-    @Select("SELECT d.dept_id as id, d.* FROM sys_dept d LEFT OUTER JOIN sys_roles_depts rd ON d.dept_id=rd.dept_id WHERE rd.role_id=#{roleId}")
+    @Select("SELECT d.* FROM sys_dept d LEFT OUTER JOIN sys_roles_depts rd ON d.id=rd.dept_id WHERE rd.role_id=#{roleId}")
     Set<Dept> selectByRoleId(Long roleId);
 
 }

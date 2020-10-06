@@ -23,7 +23,7 @@ public class Menu extends DataEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "ID")
-    @TableId(value="menu_id", type= IdType.AUTO)
+    @TableId(value="id", type= IdType.AUTO)
     private Long id;
 
     @ApiModelProperty(value = "上级菜单ID")

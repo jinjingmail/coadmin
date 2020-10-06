@@ -31,11 +31,8 @@ public class ${className}Dto extends BaseDto {
 <#if columns??>
     <#list columns as column>
 
-    <#if column.columnKey = 'PRI'>
-    <#if !auto && pkColumnType = 'Long'>
-    /** 防止精度丢失 */
-    @JsonSerialize(using= ToStringSerializer.class)
-    </#if>
+    <#if column.columnType = 'Long'>
+    @JsonSerialize(using= ToStringSerializer.class) // 防止精度丢失
     </#if>
     <#if column.changeColumnName != 'delFlag'>
     private ${column.columnType} ${column.changeColumnName};

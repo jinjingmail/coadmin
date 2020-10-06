@@ -15,6 +15,8 @@
  */
 package com.gitee.coadmin.modules.system.service.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Getter;
 import lombok.Setter;
 import java.io.Serializable;
@@ -27,5 +29,6 @@ import java.io.Serializable;
 @Setter
 public class DictSmallDto implements Serializable {
 
+    @JsonSerialize(using= ToStringSerializer.class) // 防止精度丢失
     private Long id;
 }

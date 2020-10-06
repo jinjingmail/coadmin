@@ -24,7 +24,7 @@ import java.util.Date;
 public class DictDetail implements Serializable {
 
     @ApiModelProperty(value = "ID")
-    @TableId(value = "detail_id", type= IdType.AUTO)
+    @TableId(value = "id", type= IdType.AUTO)
     private Long id;
 
     @NotNull

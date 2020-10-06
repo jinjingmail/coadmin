@@ -28,7 +28,7 @@ public class Server extends DataEntity implements Serializable {
 
 
     @ApiModelProperty(value = "ID")
-    @TableId(value="server_id", type= IdType.AUTO)
+    @TableId(value="id", type= IdType.ASSIGN_ID)
     private Long id;
 
     @ApiModelProperty(value = "账号")

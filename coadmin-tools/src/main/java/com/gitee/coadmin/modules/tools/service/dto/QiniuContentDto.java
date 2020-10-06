@@ -1,5 +1,7 @@
 package com.gitee.coadmin.modules.tools.service.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,6 +21,7 @@ import java.sql.Timestamp;
 public class QiniuContentDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    @JsonSerialize(using= ToStringSerializer.class) // 防止精度丢失
     private Long id;
 
     private String bucket;
