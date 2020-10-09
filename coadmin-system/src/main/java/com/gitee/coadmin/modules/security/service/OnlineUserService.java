@@ -51,13 +51,13 @@ public class OnlineUserService {
      * @param request /
      */
     public void save(JwtUserDto jwtUserDto, String token, HttpServletRequest request){
-        String dept = jwtUserDto.getUser().getDept().getName();
+        // String dept = jwtUserDto.getUser().getDept().getName();
         String ip = com.gitee.coadmin.utils.StringUtils.getIp(request);
         String browser = com.gitee.coadmin.utils.StringUtils.getBrowser(request);
         String address = com.gitee.coadmin.utils.StringUtils.getCityInfo(ip);
         OnlineUserDto onlineUserDto = null;
         try {
-            onlineUserDto = new OnlineUserDto(jwtUserDto.getUsername(), jwtUserDto.getUser().getNickName(), dept, browser , ip, address, com.gitee.coadmin.utils.EncryptUtils.desEncrypt(token), new Date());
+            onlineUserDto = new OnlineUserDto(jwtUserDto.getUsername(), jwtUserDto.getUser().getNickName(), browser , ip, address, com.gitee.coadmin.utils.EncryptUtils.desEncrypt(token), new Date());
         } catch (Exception e) {
             log.error(e.getMessage(),e);
         }
@@ -130,7 +130,7 @@ public class OnlineUserService {
         for (OnlineUserDto user : all) {
             Map<String,Object> map = new LinkedHashMap<>();
             map.put("用户名", user.getUserName());
-            map.put("部门", user.getDept());
+            // map.put("部门", user.getDept());
             map.put("登录IP", user.getIp());
             map.put("登录地点", user.getAddress());
             map.put("浏览器", user.getBrowser());

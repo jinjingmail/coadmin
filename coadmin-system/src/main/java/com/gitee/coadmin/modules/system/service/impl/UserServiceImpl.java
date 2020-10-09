@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.gitee.coadmin.modules.system.domain.UsersDepts;
+import com.gitee.coadmin.modules.system.service.mapper.UsersDeptsMapper;
 import lombok.AllArgsConstructor;
 import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.base.QueryHelpMybatisPlus;
@@ -44,11 +46,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-// 默认不使用缓存
-//import org.springframework.cache.annotation.CacheConfig;
-//import org.springframework.cache.annotation.CacheEvict;
-//import org.springframework.cache.annotation.Cacheable;
-
 /**
 * @author jinjin
 * @date 2020-09-25
@@ -68,8 +65,11 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
     private final DeptService deptService;
     private final UsersRolesService usersRolesService;
     private final UsersJobsService usersJobsService;
+    private final UsersDeptsService usersDeptsService;
+
     private final UsersRolesMapper usersRolesMapper;
     private final UsersJobsMapper usersJobsMapper;
+    private final UsersDeptsMapper usersDeptsMapper;
 
     @Override
     //@Cacheable
@@ -78,8 +78,10 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
         IPage<User> pageData = userMapper.selectPage(page, QueryHelpMybatisPlus.getPredicate(query));
         List<UserDto> userDtos = com.gitee.coadmin.utils.ConvertUtil.convertList(pageData.getRecords(), UserDto.class);
         if (pageData.getTotal() > 0) {
-            Map<Long, DeptDto> deptMap = deptService.queryAll().parallelStream()
-                    .collect(Collectors.toMap(DeptDto::getId, Function.identity(), (x,y) -> x));
+            QueryWrapper<UsersDepts> userDeptWrapper = new QueryWrapper<>();
+            userDeptWrapper.lambda().in(UsersDepts::getUserId, userDtos.stream().map(UserDto::getId).collect(Collectors.toSet()));
+            Map<Long, Set<UsersDepts>> usersDeptsMap = usersDeptsMapper.selectList(userDeptWrapper).stream()
+                    .collect(Collectors.groupingBy(UsersDepts::getUserId, Collectors.toSet()));
 
             QueryWrapper<UsersRoles> userRoleWrapper = new QueryWrapper<>();
             userRoleWrapper.lambda().in(UsersRoles::getUserId, userDtos.stream().map(UserDto::getId).collect(Collectors.toSet()));
@@ -92,7 +94,14 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
                     .collect(Collectors.groupingBy(UsersJobs::getUserId));
 
             userDtos.forEach(user -> {
-                user.setDept(com.gitee.coadmin.utils.ConvertUtil.convert(deptMap.get(user.getDeptId()), DeptSmallDto.class));
+                if (usersDeptsMap.containsKey(user.getId())) {
+                    user.setDepts(usersDeptsMap.get(user.getId()).stream().map(ud -> {
+                        DeptSmallDto dept = new DeptSmallDto();
+                        dept.setId(ud.getDeptId());
+                        return dept;
+                    }).collect(Collectors.toSet()));
+                }
+
                 if (usersRolesMap.containsKey(user.getId())) {
                     user.setRoles(usersRolesMap.get(user.getId()).stream().map(ur -> {
                         RoleSmallDto role = new RoleSmallDto();
@@ -144,7 +153,7 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
     @Cacheable(key = "'username:' + #p0")
     public UserDto findByName(String userName) {
         UserDto dto = com.gitee.coadmin.utils.ConvertUtil.convert(getByUsername(userName), UserDto.class);
-        dto.setDept(new DeptSmallDto(dto.getDeptId(), ""));
+        //dto.setDepts();
         //dto.setRoles();
         //dto.setJobs();
         return dto;
@@ -176,11 +185,23 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
         }
 
         user = com.gitee.coadmin.utils.ConvertUtil.convert(resources, User.class);
-        if (resources.getDept() != null) {
+
+        /*if (resources.getDept() != null) {
             user.setDeptId(resources.getDept().getId());
-        }
+        }*/
+
         int ret = userMapper.insert(user);
         final Long userId = user.getId();
+
+        if (CollectionUtils.isNotEmpty(resources.getDepts())) {
+            resources.getDepts().forEach(dept -> {
+                UsersDepts ud = new UsersDepts();
+                ud.setUserId(userId);
+                ud.setDeptId(dept.getId());
+                usersDeptsMapper.insert(ud);
+            });
+        }
+
         if (CollectionUtils.isNotEmpty(resources.getRoles())) {
             resources.getRoles().forEach(role -> {
                 UsersRoles ur = new UsersRoles();
@@ -253,14 +274,20 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
             });
         }
 
+        if (CollectionUtils.isNotEmpty(resources.getDepts())) {
+            usersDeptsService.removeByUserId(resources.getId());
+            resources.getDepts().stream().forEach(dept -> {
+                UsersDepts ud = new UsersDepts();
+                ud.setUserId(resources.getId());
+                ud.setDeptId(dept.getId());
+                usersDeptsMapper.insert(ud);
+            });
+        }
+
         user.setUsername(resources.getUsername());
         user.setEmail(resources.getEmail());
         user.setEnabled(resources.getEnabled());
-        if (resources.getDept() != null) {
-            user.setDeptId(resources.getDept().getId());
-        } else {
-            user.setDeptId(null);
-        }
+
         user.setPhone(resources.getPhone());
         user.setNickName(resources.getNickName());
         user.setGender(resources.getGender());
@@ -293,7 +320,7 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
         if (StrUtil.isNotBlank(oldPath)) {
             com.gitee.coadmin.utils.FileUtil.del(oldPath);
         }
-        redisUtils.del("user::username:" + user.getUsername());
+        delCaches(user.getId(), user.getUsername());
         return new HashMap<String, String>() {
             {
                 put("avatar", file.getName());
@@ -313,7 +340,7 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
         User userUpdate = new User();
         userUpdate.setEmail(email);
         userMapper.update(userUpdate, updater);
-        redisUtils.del("user::username:" + username);
+        delCaches(user.getId(), user.getUsername());
     }
 
     @Override
@@ -330,6 +357,7 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
         userUpdate.setNickName(resources.getNickName());
         userMapper.update(userUpdate, updater);
         redisUtils.del("user::username:" + resources.getUsername());
+        delCaches(user2.getId(), user2.getUsername());
     }
 
     @Override
@@ -340,6 +368,7 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
             delCaches(user.getId(), user.getUsername());
             usersRolesService.removeByUserId(id);
             usersJobsService.removeByUserId(id);
+            usersDeptsService.removeByUserId(id);
         }
         return userMapper.deleteBatchIds(ids) > 0;
     }
@@ -357,7 +386,6 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
       List<Map<String, Object>> list = new ArrayList<>();
       for (UserDto user : all) {
         Map<String,Object> map = new LinkedHashMap<>();
-              map.put("部门名称", user.getDeptId());
               map.put("用户名", user.getUsername());
               map.put("昵称", user.getNickName());
               map.put("性别", user.getGender());

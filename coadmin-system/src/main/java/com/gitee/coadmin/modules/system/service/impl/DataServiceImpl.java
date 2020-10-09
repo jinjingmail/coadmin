@@ -60,7 +60,7 @@ public class DataServiceImpl implements DataService {
             DataScopeEnum dataScopeEnum = DataScopeEnum.find(role.getDataScope());
             switch (Objects.requireNonNull(dataScopeEnum)) {
                 case THIS_LEVEL:
-                    deptIds.add(user.getDept().getId());
+                    // deptIds.add(user.getDept().getId());
                     break;
                 case CUSTOMIZE:
                     deptIds.addAll(getCustomize(deptIds, role));
@@ -79,14 +79,14 @@ public class DataServiceImpl implements DataService {
      * @return 数据权限ID
      */
     public Set<Long> getCustomize(Set<Long> deptIds, RoleSmallDto role){
-        Set<DeptDto> depts = deptService.findByRoleId(role.getId());
+        /*Set<DeptDto> depts = deptService.findByRoleId(role.getId());
         for (DeptDto dept : depts) {
             deptIds.add(dept.getId());
             List<Dept> deptChildren = deptService.findByPid(dept.getId());
             if (deptChildren != null && deptChildren.size() != 0) {
                 deptIds.addAll(deptService.getDeptChildren(dept.getId(), deptChildren));
             }
-        }
+        }*/
         return deptIds;
     }
 }

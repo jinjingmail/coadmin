@@ -1,54 +1,39 @@
 package com.gitee.coadmin.modules.system.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import lombok.*;
-import com.gitee.coadmin.base.DataDto;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
 /**
 * @author jinjin
-* @date 2020-09-25
+* @date 20201007
 */
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
-public class DeptDto extends DataDto {
-    private static final long serialVersionUID = 1L;
+public class DeptCompactDto implements Serializable {
 
     private Long id;
-    private String deptCode;
-
+    private Long pid;
     private String name;
     private Integer sort;
-
-    private Long pid;
-    private String treePids;
-    private String treeNames;
-    private String treeSorts;
-    private Integer treeLevel;
-    private Boolean treeLeaf;
-
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private List<DeptDto> children;
-
     private Boolean enabled;
+    private Boolean treeLeaf;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private List<DeptCompactDto> children;
+    private Date createTime;
+
+    public String getLabel() {
+        return name;
+    }
 
     public Boolean getHasChildren() {
         return !treeLeaf;
-    }
-
-    /*
-    public Boolean getLeaf() {
-        return treeLeaf;
-    }
-    */
-    public String getLabel() {
-        return name;
     }
 
     @Override
@@ -59,7 +44,7 @@ public class DeptDto extends DataDto {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        DeptDto deptDto = (DeptDto) o;
+        DeptCompactDto deptDto = (DeptCompactDto) o;
         return Objects.equals(id, deptDto.id) &&
                 Objects.equals(name, deptDto.name);
     }

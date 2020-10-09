@@ -18,26 +18,41 @@ import java.io.Serializable;
 */
 @Data
 @TableName("sys_dept")
-public class Dept extends DataEntity implements Serializable {
+public class Dept extends DataEntity {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "ID")
     @TableId(value="id", type= IdType.AUTO)
     private Long id;
 
-    @ApiModelProperty(value = "上级部门")
-    @NotNull
-    private Long pid;
-
-    @ApiModelProperty(value = "子部门数目")
-    private Integer subCount;
+    @ApiModelProperty(value = "机构编码")
+    private String deptCode;
 
     @ApiModelProperty(value = "名称")
     @NotBlank
     private String name;
 
     @ApiModelProperty(value = "排序")
-    private Integer deptSort;
+    @NotNull
+    private Integer sort;
+
+    @ApiModelProperty(value = "上级ID")
+    private Long pid;
+
+    @ApiModelProperty(value = "所有上级ID,'/'分隔")
+    private String treePids;
+
+    @ApiModelProperty(value = "是否叶子节点1=是0=否")
+    private Boolean treeLeaf;
+
+    @ApiModelProperty(value = "含所有父节点的名称,'/'分隔")
+    private String treeNames;
+
+    @ApiModelProperty(value = "含所有父节点的排序,'/'分隔")
+    private String treeSorts;
+
+    @ApiModelProperty(value = "层级，从0开始")
+    private Integer treeLevel;
 
     @ApiModelProperty(value = "状态")
     @NotNull

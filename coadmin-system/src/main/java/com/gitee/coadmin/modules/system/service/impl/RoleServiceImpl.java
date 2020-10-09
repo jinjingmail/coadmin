@@ -50,7 +50,6 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
 
     private final RoleMapper roleMapper;
     private final MenuMapper menuMapper;
-    private final DeptService deptService;
     private final UserMapper userMapper;
     private final RolesMenusService rolesMenusService;
     private final RolesDeptsService rolesDeptsService;
@@ -64,10 +63,11 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
         IPage<Role> page = com.gitee.coadmin.utils.PageUtil.toMybatisPage(pageable);
         IPage<Role> pageList = roleMapper.selectPage(page, QueryHelpMybatisPlus.getPredicate(query));
         List<RoleDto> roleDtos = com.gitee.coadmin.utils.ConvertUtil.convertList(pageList.getRecords(), RoleDto.class);
+        /* 20201009 暂时取消角色跟部门的关联
         roleDtos.forEach(role -> {
             role.setMenus(com.gitee.coadmin.utils.ConvertUtil.convertSet(menuMapper.selectLink(role.getId()), MenuDto.class));
             role.setDepts(deptService.findByRoleId(role.getId()));
-        });
+        });*/
         return new PageInfo<>(pageList.getTotal(), roleDtos);
     }
 
@@ -81,10 +81,11 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
         QueryWrapper<Role> query = new QueryWrapper<Role>();
         query.lambda().orderByAsc(Role::getLevel);
         List<RoleDto> list = com.gitee.coadmin.utils.ConvertUtil.convertList(roleMapper.selectList(query), RoleDto.class);
+        /* 20201009 暂时取消角色跟部门的关联
         list.forEach(role -> {
             role.setMenus(com.gitee.coadmin.utils.ConvertUtil.convertSet(menuMapper.selectLink(role.getId()), MenuDto.class));
             role.setDepts(deptService.findByRoleId(role.getId()));
-        });
+        });*/
         return com.gitee.coadmin.utils.ConvertUtil.convertList(list, RoleDto.class);
     }
 
@@ -98,7 +99,7 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
     public RoleDto findById(Long id) {
         RoleDto role = com.gitee.coadmin.utils.ConvertUtil.convert(getById(id), RoleDto.class);
         role.setMenus(com.gitee.coadmin.utils.ConvertUtil.convertSet(menuMapper.selectLink(role.getId()), MenuDto.class));
-        role.setDepts(deptService.findByRoleId(role.getId()));
+        //role.setDepts(deptService.findByRoleId(role.getId()));
         return role;
     }
 

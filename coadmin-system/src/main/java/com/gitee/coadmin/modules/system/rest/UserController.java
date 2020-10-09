@@ -80,8 +80,8 @@ public class UserController {
     public ResponseEntity<Object> query(UserQueryParam criteria, Pageable pageable){
         if (!ObjectUtils.isEmpty(criteria.getDeptId())) {
             criteria.getDeptIds().add(criteria.getDeptId());
-            criteria.getDeptIds().addAll(deptService.getDeptChildren(criteria.getDeptId(),
-                    deptService.findByPid(criteria.getDeptId())));
+            // TODO criteria.getDeptIds().addAll(deptService.getDeptChildren(criteria.getDeptId(),
+            //        deptService.findByPid(criteria.getDeptId())));
         }
         // 数据权限
         List<Long> dataScopes = dataService.getDeptIds(userService.findByName(com.gitee.coadmin.utils.SecurityUtils.getCurrentUsername()));

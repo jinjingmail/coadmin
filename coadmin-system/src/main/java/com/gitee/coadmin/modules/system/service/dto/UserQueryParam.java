@@ -24,7 +24,7 @@ public class UserQueryParam{
 
     private Long deptId;
 
-    @Query(propName = "dept_id", type = Query.Type.IN)
+    //@Query(propName = "dept_id", type = Query.Type.IN)
     private Set<Long> deptIds = new HashSet<>();
 
     @Query(blurry = "email,username,nickName")

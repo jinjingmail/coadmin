@@ -29,8 +29,8 @@ public class User extends DataEntity implements Serializable {
     @NotNull(groups = Update.class)
     private Long id;
 
-    @ApiModelProperty(value = "部门名称")
-    private Long deptId;
+    //@ApiModelProperty(value = "部门名称")
+    //private Long deptId;
 
     @ApiModelProperty(value = "用户名")
     @NotBlank

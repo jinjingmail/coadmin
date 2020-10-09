@@ -28,10 +28,12 @@ public class UserDto extends DataDto implements Serializable {
 
     private Set<JobSmallDto> jobs;
 
-    private DeptSmallDto dept;
+    private Set<DeptSmallDto> depts;
 
-    @JsonSerialize(using= ToStringSerializer.class) // 防止精度丢失
-    private Long deptId;
+    //private DeptSmallDto dept;
+
+    //@JsonSerialize(using= ToStringSerializer.class) // 防止精度丢失
+    //private Long deptId;
 
     private String username;
 

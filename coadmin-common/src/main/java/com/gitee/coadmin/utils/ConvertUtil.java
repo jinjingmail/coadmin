@@ -1,6 +1,7 @@
 package com.gitee.coadmin.utils;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.gitee.coadmin.base.PageInfo;
 
@@ -35,4 +36,7 @@ public class ConvertUtil {
         return pageInfo;
     }
 
+    public static void copyIgnoreNull(Object source, Object target) {
+        BeanUtil.copyProperties(source, target, CopyOptions.create().setIgnoreNullValue(true));
+    }
 }

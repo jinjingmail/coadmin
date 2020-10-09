@@ -1,13 +1,9 @@
 package com.gitee.coadmin.modules.system.service.impl;
 
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import lombok.AllArgsConstructor;
 import com.gitee.coadmin.base.QueryHelpMybatisPlus;
 import com.gitee.coadmin.base.impl.BaseServiceImpl;
 import com.gitee.coadmin.exception.BadRequestException;
@@ -15,16 +11,17 @@ import com.gitee.coadmin.modules.system.domain.Dept;
 import com.gitee.coadmin.modules.system.domain.User;
 import com.gitee.coadmin.modules.system.service.DeptService;
 import com.gitee.coadmin.modules.system.service.RolesDeptsService;
+import com.gitee.coadmin.modules.system.service.UsersDeptsService;
+import com.gitee.coadmin.modules.system.service.dto.DeptCompactDto;
 import com.gitee.coadmin.modules.system.service.dto.DeptDto;
 import com.gitee.coadmin.modules.system.service.dto.DeptQueryParam;
 import com.gitee.coadmin.modules.system.service.mapper.DeptMapper;
-import com.gitee.coadmin.modules.system.service.mapper.RoleMapper;
 import com.gitee.coadmin.modules.system.service.mapper.UserMapper;
 import com.gitee.coadmin.utils.ConvertUtil;
 import com.gitee.coadmin.utils.FileUtil;
 import com.gitee.coadmin.utils.RedisUtils;
-import com.gitee.coadmin.utils.SecurityUtils;
-import com.gitee.coadmin.utils.enums.DataScopeEnum;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -32,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -45,6 +41,7 @@ import java.util.stream.Collectors;
 * @author jinjin
 * @date 2020-09-25
 */
+@Slf4j
 @Service
 @AllArgsConstructor
 @CacheConfig(cacheNames = "dept")
@@ -52,81 +49,16 @@ import java.util.stream.Collectors;
 public class DeptServiceImpl extends BaseServiceImpl<Dept> implements DeptService {
 
     private final UserMapper userMapper;
-    private final RoleMapper roleMapper;
     private final DeptMapper deptMapper;
     private final RedisUtils redisUtils;
     private final RolesDeptsService rolesDeptsService;
+    private final UsersDeptsService usersDeptsService;
 
     @Override
-    //@Cacheable
-    public List<DeptDto> queryAll(DeptQueryParam query, Boolean isQuery){
-        if (isQuery) {
-            query.setPidIsNull(true);
-        }
-        boolean notEmpty = StrUtil.isNotEmpty(query.getName()) || null != query.getPid()
-                || CollectionUtils.isNotEmpty(query.getCreateTime());
-        if (isQuery && notEmpty) {
-            query.setPidIsNull(null);
-        }
-        return ConvertUtil.convertList(deptMapper.selectList(QueryHelpMybatisPlus.getPredicate(query)), DeptDto.class);
-    }
-
-    public List<DeptDto> queryAll2(DeptQueryParam query, Boolean isQuery) throws Exception {
-        //Sort sort = new Sort(Sort.Direction.ASC, "deptSort");
-        String dataScopeType = SecurityUtils.getDataScopeType();
-        if (isQuery) {
-            if (dataScopeType.equals(DataScopeEnum.ALL.getValue())) {
-                query.setPidIsNull(true);
-            }
-            List<Field> fields = QueryHelpMybatisPlus.getAllFields(query.getClass(), new ArrayList<>());
-            List<String> fieldNames = new ArrayList<String>() {{
-                add("pidIsNull");
-                add("enabled");
-            }};
-            for (Field field : fields) {
-                //设置对象的访问权限，保证对private的属性的访问
-                field.setAccessible(true);
-                Object val = field.get(query);
-                if (fieldNames.contains(field.getName())) {
-                    continue;
-                }
-                if (ObjectUtil.isNotNull(val)) {
-                    query.setPidIsNull(null);
-                    break;
-                }
-            }
-        }
-        QueryWrapper<Dept> wrapper = QueryHelpMybatisPlus.getPredicate(query);
-        wrapper.lambda().orderByAsc(Dept::getDeptSort);
-        List<DeptDto> list = ConvertUtil.convertList(deptMapper.selectList(wrapper), DeptDto.class);//deptMapper.toDto(deptRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), sort));
-
-        // 如果为空，就代表为自定义权限或者本级权限，就需要去重，不理解可以注释掉，看查询结果
-        if (StringUtils.isBlank(dataScopeType)) {
-            return deduplication(list);
-        }
-        return list;
-    }
-    private List<DeptDto> deduplication(List<DeptDto> list) {
-        List<DeptDto> deptDtos = new ArrayList<>();
-        for (DeptDto deptDto : list) {
-            boolean flag = true;
-            for (DeptDto dto : list) {
-                if (deptDto.getPid().equals(dto.getId())) {
-                    flag = false;
-                    break;
-                }
-            }
-            if (flag){
-                deptDtos.add(deptDto);
-            }
-        }
-        return deptDtos;
-    }
-
-    @Override
-    // @Cacheable
-    public List<DeptDto> queryAll() {
-        return ConvertUtil.convertList(deptMapper.selectList(Wrappers.emptyWrapper()), DeptDto.class);
+    public List<DeptDto> queryAll(DeptQueryParam criteria, Boolean query) {
+        QueryWrapper<Dept> w = QueryHelpMybatisPlus.getPredicate(criteria);
+        w.lambda().orderByAsc(Dept::getTreeSorts);
+        return ConvertUtil.convertList(deptMapper.selectList(w), DeptDto.class);
     }
 
     @Override
@@ -141,45 +73,110 @@ public class DeptServiceImpl extends BaseServiceImpl<Dept> implements DeptServic
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean save(Dept resources) {
-        int ret = deptMapper.insert(resources);
-        resources.setSubCount(0);
-        if (resources.getPid() != null) {
-            redisUtils.del("dept::pid:" + resources.getPid());
-            updateSubCnt(resources.getPid());
+        if (resources.getSort() > 999) {
+            throw new BadRequestException("sort large than 999");
         }
-        return ret > 0;
+        if (resources.getPid() == null){
+            resources.setPid(0L);
+        }
+        Dept parent = getById(resources.getPid());
+        resources.setTreeLeaf(true);
+        updateSelfAndChildren(parent, resources);
+        //int ret = deptMapper.insert(resources);
+        updateLeaf(parent, false);
+
+        redisUtils.del("dept::pid:" + resources.getPid());
+        //updateSubCnt(resources.getPid());
+        return true;
+    }
+
+    private void updateLeaf(Dept tree, boolean isLeaf) {
+        if (tree == null) {
+            return;
+        }
+        if (tree.getTreeLeaf() != isLeaf) {
+            tree.setTreeLeaf(isLeaf);
+            deptMapper.updateById(tree);
+        }
+    }
+
+    private static final String FORMAT = "00000";
+    private void updateSelfAndChildren(Dept parent, Dept self) {
+        if (parent == null) {
+            self.setTreePids("/" + self.getPid());
+            self.setTreeNames("/" + self.getName());
+            self.setTreeSorts("/" + NumberUtil.decimalFormat(FORMAT, self.getSort()));
+        } else {
+            self.setTreePids(parent.getTreePids() + "/" + self.getPid());
+            self.setTreeNames(parent.getTreeNames() + "/" + self.getName());
+            self.setTreeSorts(parent.getTreeSorts() + "/" + NumberUtil.decimalFormat(FORMAT, self.getSort()));
+        }
+        self.setTreeLevel(calcTreeLevel(self));
+        if (self.getId() == null) {
+            deptMapper.insert(self);
+        } else {
+            deptMapper.updateById(self);
+            if ( ! self.getTreeLeaf()) {
+                QueryWrapper<Dept> query = new QueryWrapper<>();
+                query.lambda().eq(Dept::getPid, self.getId());
+                List<Dept> children = deptMapper.selectList(query);
+                for (Dept child: children) {
+                    updateSelfAndChildren(self, child);
+                }
+            }
+        }
+    }
+    private int calcTreeLevel(Dept tree) {
+        int size = StrUtil.splitTrim(tree.getTreePids(), '/').size();
+        if (size <= 1) {
+            return 0;
+        } else {
+            return size-1;
+        }
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean updateById(Dept resources){
-        // 旧的部门
-        Long pidOld = getById(resources.getId()).getPid();
-        if (resources.getPid() != null && resources.getId().equals(resources.getPid())) {
+    public boolean updateById(DeptCompactDto resources){
+        if (resources.getPid() == null) {
+            resources.setPid(0L);
+        }
+        Dept newTree = getById(resources.getId());
+        Long oldPid = newTree.getPid();
+        ConvertUtil.copyIgnoreNull(resources, newTree);
+
+        if (newTree.getSort() > 999) {
+            throw new BadRequestException("sort large than 999");
+        }
+        if (newTree.getId().equals(newTree.getPid())) {
             throw new BadRequestException("上级不能为自己");
         }
-        int ret = deptMapper.updateById(resources);
-        updateSubCnt(pidOld);
-        updateSubCnt(resources.getPid());
-        // 清理缓存
-        delCaches(resources.getId(), pidOld, resources.getPid());
+        Dept oldParent = getById(oldPid);
+        Dept newParent = oldParent;
+        log.info("oldPid={} newPid={}", oldPid, newTree.getPid());
+        if ( ! oldPid.equals(newTree.getPid())) {
+            newParent = getById(newTree.getPid());
+            updateSelfAndChildren(newParent, newTree);
 
-        return ret > 0;
+            updateLeaf(newParent, false);
+            updateLeaf(oldParent, countOfChildren(oldParent==null? 0 : oldParent.getId()) == 0);
+        } else {
+            updateSelfAndChildren(newParent, newTree);
+        }
+        //int ret = deptMapper.updateById(newTree);
+
+        //updateSubCnt(pidOld);
+        //updateSubCnt(newTree.getPid());
+        // 清理缓存
+        delCaches(newTree.getId(), oldPid, newTree.getPid());
+
+        return true;
     }
 
-    private void updateSubCnt(Long deptId) {
-        if (deptId == null) {
-            return;
-        }
-        QueryWrapper<Dept> query = new QueryWrapper<Dept>();
-        query.lambda().eq(Dept::getPid, deptId);
-        int count = deptMapper.selectCount(query);
-
-        UpdateWrapper<Dept> update = new UpdateWrapper<Dept>();
-        update.lambda().eq(Dept::getId, deptId);
-        Dept dept = new Dept();
-        dept.setSubCount(count);
-        deptMapper.update(dept, update);
+    private int countOfChildren(Long pid) {
+        QueryWrapper<Dept> wrapper = new QueryWrapper<>();
+        wrapper.lambda().eq(Dept::getPid, pid);
+        return deptMapper.selectCount(wrapper);
     }
 
     @Override
@@ -189,12 +186,36 @@ public class DeptServiceImpl extends BaseServiceImpl<Dept> implements DeptServic
             Dept dept = getById(id);
             // 清理缓存
             delCaches(id, dept.getPid(), null);
-            updateSubCnt(dept.getPid());
             rolesDeptsService.removeByDeptId(id);
+            usersDeptsService.removeByDeptId(id);
+            if (!dept.getTreeLeaf()) {
+                removeChildren(dept.getId());
+            }
+            deptMapper.deleteById(dept.getId());
+
+            Dept parent = getById(dept.getPid());
+            if (parent != null) {
+                updateLeaf(parent, countOfChildren(parent.getId()) == 0);
+            }
         }
-        return deptMapper.deleteBatchIds(ids) > 0;
+        return true;
     }
-    
+
+    private void removeChildren(Long pid) {
+        QueryWrapper<Dept> query = new QueryWrapper<Dept>();
+        query.lambda().eq(Dept::getPid, pid);
+        List<Dept> children = deptMapper.selectList(query);
+        for (Dept dept: children) {
+            delCaches(dept.getId(), dept.getPid(), null);
+            rolesDeptsService.removeByDeptId(dept.getId());
+            usersDeptsService.removeByDeptId(dept.getId());
+            if (!dept.getTreeLeaf()) {
+                removeChildren(dept.getId());
+            }
+            deptMapper.deleteById(dept.getId());
+        }
+    }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean removeById(Long id){
@@ -211,104 +232,50 @@ public class DeptServiceImpl extends BaseServiceImpl<Dept> implements DeptServic
     }
 
     @Override
-    public Set<DeptDto> findByRoleId(Long roleId) {
-        return ConvertUtil.convertSet(deptMapper.selectByRoleId(roleId), DeptDto.class);
-    }
-
-    @Override
-    public List<DeptDto> getSuperior(DeptDto deptDto, List<Dept> depts) {
-        if (deptDto.getPid() == null) {
-            QueryWrapper<Dept> query = new QueryWrapper<Dept>();
-            query.lambda().isNull(Dept::getPid);
-            depts.addAll(deptMapper.selectList(query));
-            return ConvertUtil.convertList(depts, DeptDto.class);
-        }
-        QueryWrapper<Dept> query = new QueryWrapper<Dept>();
-        query.lambda().eq(Dept::getPid, deptDto.getPid());
-        depts.addAll(deptMapper.selectList(query));
-        return getSuperior(ConvertUtil.convert(getById(deptDto.getPid()), DeptDto.class), depts);
-    }
-
-    @Override
-    public Map<String, Object> buildTree(List<DeptDto> deptDtos) {
+    public Map<String, Object> buildTree(LinkedHashSet<Long> deptIds) {
+        log.info("buildTree:{}", JSONUtil.toJsonPrettyStr(deptIds));
         Set<DeptDto> trees = new LinkedHashSet<>();
-        Set<DeptDto> depts = new LinkedHashSet<>();
-        List<String> deptNames = deptDtos.stream().map(DeptDto::getName).collect(Collectors.toList());
-        boolean isChild;
-        for (DeptDto deptDTO : deptDtos) {
-            isChild = false;
-            if (deptDTO.getPid() == null) {
-                trees.add(deptDTO);
+        for (Long deptId : deptIds) {
+            DeptDto dto = findById(deptId);
+            if (dto==null) {
+                continue;
             }
-            for (DeptDto it : deptDtos) {
-                if (it.getPid() != null && it.getPid().equals(deptDTO.getId())) {
-                    isChild = true;
-                    if (deptDTO.getChildren() == null) {
-                        deptDTO.setChildren(new ArrayList<>());
-                    }
-                    deptDTO.getChildren().add(it);
-                }
+            /*if (!dto.getEnabled()) {
+                continue;
+            }*/
+            if (!dto.getTreeLeaf()) {
+                dto.setChildren(getChildren(dto.getId()));
             }
-            if (isChild) {
-                depts.add(deptDTO);
-            } else {
-                Dept dept = null;
-                if (null != deptDTO.getPid()) {
-                    dept = this.getById(deptDTO.getPid());
-                }
-                if (null != dept && !deptNames.contains(dept.getName())) {
-                    depts.add(deptDTO);
-                }
-            }
+            trees.add(dto);
         }
+        if (deptIds.isEmpty()) {
+            List<DeptDto> children = getChildren(0L);
+            Map<String, Object> map = new HashMap<>(2);
+            map.put("totalElements", trees.size());
+            map.put("content", ConvertUtil.convertList(children, DeptCompactDto.class));
+            return map;
 
-        if (CollectionUtils.isEmpty(trees)) {
-            trees = depts;
+        } else {
+            Map<String, Object> map = new HashMap<>(2);
+            map.put("totalElements", trees.size());
+            map.put("content", ConvertUtil.convertSet(trees, DeptCompactDto.class));
+            return map;
         }
-
-        Map<String, Object> map = new HashMap<>(2);
-        map.put("totalElements", deptDtos.size());
-        map.put("content", CollectionUtils.isEmpty(trees) ? deptDtos : trees);
-        return map;
     }
 
-    @Override
-    public Set<Long> getDeleteDepts(List<Dept> deptList, Set<Long> deptIds) {
-        for (Dept dept : deptList) {
-            deptIds.add(dept.getId());
-            List<Dept> depts = findByPid(dept.getId());
-            if (depts != null && depts.size() != 0) {
-                getDeleteDepts(depts, deptIds);
+    private List<DeptDto> getChildren(Long pid) {
+        QueryWrapper<Dept> query = new QueryWrapper<Dept>();
+        query.lambda().eq(Dept::getPid, pid).orderByAsc(Dept::getTreeSorts);
+        List<DeptDto> depts = ConvertUtil.convertList(deptMapper.selectList(query), DeptDto.class);
+        if (depts.isEmpty()) {
+            return null;
+        }
+        for (DeptDto dept: depts) {
+            if (!dept.getTreeLeaf()) {
+                dept.setChildren(getChildren(dept.getId()));
             }
         }
-        return deptIds;
-    }
-
-    @Override
-    public List<Long> getDeptChildren(Long deptId, List<Dept> deptList) {
-        List<Long> list = new ArrayList<>();
-        deptList.forEach(dept -> {
-            if (dept != null && dept.getEnabled()) {
-                QueryWrapper<Dept> query = new QueryWrapper<Dept>();
-                query.lambda().eq(Dept::getPid, dept.getId());
-                List<Dept> depts = deptMapper.selectList(query);
-                if (deptList.size() != 0) {
-                    list.addAll(getDeptChildren(dept.getId(), depts));
-                }
-                list.add(dept.getId());
-            }
-        });
-        return list;
-    }
-
-    @Override
-    public void verification(Set<Long> deptIds) {
-        if (userMapper.countByDepts(deptIds) > 0) {
-            throw new BadRequestException("所选部门存在用户关联，请解除后再试！");
-        }
-        if (roleMapper.countByDepts(deptIds) > 0) {
-            throw new BadRequestException("所选部门存在角色关联，请解除后再试！");
-        }
+        return depts;
     }
 
     @Override
@@ -317,9 +284,9 @@ public class DeptServiceImpl extends BaseServiceImpl<Dept> implements DeptServic
       for (DeptDto dept : all) {
         Map<String,Object> map = new LinkedHashMap<>();
               map.put("上级部门", dept.getPid());
-              map.put("子部门数目", dept.getSubCount());
+              map.put("子部门数目", dept.getTreeLeaf()?0:1);
               map.put("名称", dept.getName());
-              map.put("排序", dept.getDeptSort());
+              map.put("排序", dept.getSort());
               map.put("状态", dept.getEnabled());
               map.put("创建者", dept.getCreateBy());
               map.put("更新者", dept.getUpdateBy());

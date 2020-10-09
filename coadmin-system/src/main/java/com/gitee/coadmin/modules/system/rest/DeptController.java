@@ -15,17 +15,17 @@
  */
 package com.gitee.coadmin.modules.system.rest;
 
-import cn.hutool.core.collection.CollectionUtil;
+import com.gitee.coadmin.annotation.AnonymousAccess;
+import com.gitee.coadmin.modules.system.service.DeptService;
+import com.gitee.coadmin.modules.system.service.dto.DeptCompactDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import com.gitee.coadmin.modules.logging.annotation.Log;
 import com.gitee.coadmin.exception.BadRequestException;
 import com.gitee.coadmin.modules.system.domain.Dept;
-import com.gitee.coadmin.modules.system.service.DeptService;
-import com.gitee.coadmin.modules.system.service.dto.DeptDto;
 import com.gitee.coadmin.modules.system.service.dto.DeptQueryParam;
-import com.gitee.coadmin.utils.PageUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -38,6 +38,7 @@ import java.util.*;
 * @author Zheng Jie
 * @date 2019-03-25
 */
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @Api(tags = "系统：部门管理")
@@ -60,22 +61,37 @@ public class DeptController {
     @GetMapping
     @PreAuthorize("@el.check('user:list','dept:list')")
     public ResponseEntity<Object> query(DeptQueryParam criteria) throws Exception {
-        List<DeptDto> deptDtos = deptService.queryAll(criteria, true);
-        return new ResponseEntity<>(PageUtil.toPage(deptDtos, deptDtos.size()),HttpStatus.OK);
+        //List<DeptDto> deptDtos = deptService.queryAll(criteria, true);
+        //return new ResponseEntity<>(PageUtil.toPage(deptDtos, deptDtos.size()),HttpStatus.OK);
+        LinkedHashSet<Long> idset = new LinkedHashSet<>();
+        //idset.add(7L);
+        //idset.add(8L);
+        return new ResponseEntity<>(deptService.buildTree(idset),HttpStatus.OK);
     }
 
     @Log("查询部门")
     @ApiOperation("查询部门:根据ID获取同级与上级数据")
     @PostMapping("/superior")
     @PreAuthorize("@el.check('user:list','dept:list')")
-    public ResponseEntity<Object> getSuperior(@RequestBody List<Long> ids) {
-        Set<DeptDto> deptDtos  = new LinkedHashSet<>();
-        for (Long id : ids) {
-            DeptDto deptDto = deptService.findById(id);
-            List<DeptDto> depts = deptService.getSuperior(deptDto, new ArrayList<>());
-            deptDtos.addAll(depts);
-        }
-        return new ResponseEntity<>(deptService.buildTree(new ArrayList<>(deptDtos)),HttpStatus.OK);
+    public ResponseEntity<Object> getSuperior(@RequestBody LinkedHashSet<Long> ids) {
+        // TODO 使用当前登录用户的depts
+        LinkedHashSet<Long> idset = new LinkedHashSet<>();
+        //idset.add(7L);
+        //idset.add(8L);
+        return new ResponseEntity<>(deptService.buildTree(idset),HttpStatus.OK);
+    }
+
+    /**
+     * 根据部门id列表，构建树
+     * @param ids
+     * @return
+     */
+    @GetMapping("/tree")
+    //@PreAuthorize("@el.check('user:list','dept:list')")
+    @AnonymousAccess
+    public ResponseEntity<Object> tree(@RequestParam LinkedHashSet<Long> ids) {
+        log.info("tree:{}", ids);
+        return new ResponseEntity<>(deptService.buildTree(ids),HttpStatus.OK);
     }
 
     @Log("新增部门")
@@ -94,7 +110,7 @@ public class DeptController {
     @ApiOperation("修改部门")
     @PutMapping
     @PreAuthorize("@el.check('dept:edit')")
-    public ResponseEntity<Object> update(@Validated(Dept.Update.class) @RequestBody Dept resources){
+    public ResponseEntity<Object> update(@Validated(Dept.Update.class) @RequestBody DeptCompactDto resources){
         deptService.updateById(resources);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -104,17 +120,7 @@ public class DeptController {
     @DeleteMapping
     @PreAuthorize("@el.check('dept:del')")
     public ResponseEntity<Object> delete(@RequestBody Set<Long> ids){
-        Set<Long> deptIds = new HashSet<>();
-        for (Long id : ids) {
-            List<Dept> deptList = deptService.findByPid(id);
-            deptIds.add(deptService.findById(id).getId());
-            if(CollectionUtil.isNotEmpty(deptList)){
-                deptIds = deptService.getDeleteDepts(deptList, deptIds);
-            }
-        }
-        // 验证是否被角色或用户关联
-        deptService.verification(deptIds);
-        deptService.removeByIds(deptIds);
+        deptService.removeByIds(ids);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

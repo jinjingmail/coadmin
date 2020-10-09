@@ -42,7 +42,7 @@ public class OnlineUserDto {
     /**
      * 岗位
      */
-    private String dept;
+    // private String dept;
 
     /**
      * 浏览器
