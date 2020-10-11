@@ -18,6 +18,7 @@ package com.gitee.coadmin.modules.system.rest;
 import com.gitee.coadmin.annotation.AnonymousAccess;
 import com.gitee.coadmin.modules.system.service.DeptService;
 import com.gitee.coadmin.modules.system.service.dto.DeptCompactDto;
+import com.gitee.coadmin.utils.SecurityUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -61,12 +62,7 @@ public class DeptController {
     @GetMapping
     @PreAuthorize("@el.check('user:list','dept:list')")
     public ResponseEntity<Object> query(DeptQueryParam query) throws Exception {
-        //List<DeptDto> deptDtos = deptService.queryAll(criteria, true);
-        //return new ResponseEntity<>(PageUtil.toPage(deptDtos, deptDtos.size()),HttpStatus.OK);
-        LinkedHashSet<Long> idset = new LinkedHashSet<>();
-        //idset.add(7L);
-        //idset.add(8L);
-        return new ResponseEntity<>(deptService.buildTree(query, idset),HttpStatus.OK);
+        return new ResponseEntity<>(deptService.buildTree(query, SecurityUtils.getCurrentUserId()),HttpStatus.OK);
     }
 
     @Log("查询部门")
@@ -74,11 +70,7 @@ public class DeptController {
     @PostMapping("/superior")
     @PreAuthorize("@el.check('user:list','dept:list')")
     public ResponseEntity<Object> getSuperior(@RequestBody LinkedHashSet<Long> ids) {
-        // TODO 使用当前登录用户的depts
-        LinkedHashSet<Long> idset = new LinkedHashSet<>();
-        //idset.add(7L);
-        //idset.add(8L);
-        return new ResponseEntity<>(deptService.buildTree(new DeptQueryParam(), idset),HttpStatus.OK);
+        return new ResponseEntity<>(deptService.buildTree(new DeptQueryParam(), SecurityUtils.getCurrentUserId()),HttpStatus.OK);
     }
 
     /**
@@ -91,7 +83,7 @@ public class DeptController {
     @AnonymousAccess
     public ResponseEntity<Object> tree(@RequestParam LinkedHashSet<Long> ids) {
         log.info("tree:{}", ids);
-        return new ResponseEntity<>(deptService.buildTree(new DeptQueryParam(), ids),HttpStatus.OK);
+        return new ResponseEntity<>(deptService.buildTree(new DeptQueryParam(), SecurityUtils.getCurrentUserId()),HttpStatus.OK);
     }
 
     @Log("新增部门")

@@ -63,11 +63,11 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
         IPage<Role> page = com.gitee.coadmin.utils.PageUtil.toMybatisPage(pageable);
         IPage<Role> pageList = roleMapper.selectPage(page, QueryHelpMybatisPlus.getPredicate(query));
         List<RoleDto> roleDtos = com.gitee.coadmin.utils.ConvertUtil.convertList(pageList.getRecords(), RoleDto.class);
-        /* 20201009 暂时取消角色跟部门的关联
         roleDtos.forEach(role -> {
             role.setMenus(com.gitee.coadmin.utils.ConvertUtil.convertSet(menuMapper.selectLink(role.getId()), MenuDto.class));
-            role.setDepts(deptService.findByRoleId(role.getId()));
-        });*/
+            // role.setDepts(deptService.findByRoleId(role.getId())); // 20201009 暂时取消角色跟部门的关联
+            role.setDepts(new HashSet<>(0));
+        });
         return new PageInfo<>(pageList.getTotal(), roleDtos);
     }
 

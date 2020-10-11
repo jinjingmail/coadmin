@@ -23,6 +23,8 @@ public class UserQueryParam{
     @Query
     private Long id;
 
+    @Query(propName = "id", type = Query.Type.IN_SQL,
+            sql="SELECT DISTINCT user_id FROM sys_users_depts WHERE dept_id=? OR dept_id IN(SELECT id FROM sys_dept WHERE tree_pids LIKE '%/?/%')")
     private Long deptId;
 
     @Query(blurry = "email,username,nickName")
@@ -30,7 +32,7 @@ public class UserQueryParam{
 
     /** 精确 */
     @Query
-    private Long enabled;
+    private Boolean enabled;
 
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Query(type = Query.Type.BETWEEN)

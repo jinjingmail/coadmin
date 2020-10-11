@@ -64,13 +64,10 @@ public class QueryHelpMybatisPlus {
                     // 模糊多字段
                     if (ObjectUtil.isNotEmpty(blurry)) {
                         String[] blurrys = blurry.split(",");
-                        //queryWrapper.or();
                         queryWrapper.and(wrapper -> {
                             for (String blurry1 : blurrys) {
                                 String column = humpToUnderline(blurry1);
-                                //if(i!=0){
                                 wrapper.or();
-                                //}
                                 wrapper.like(column, val.toString());
                             }
                         });
@@ -79,7 +76,6 @@ public class QueryHelpMybatisPlus {
                     String finalAttributeName = attributeName;
                     switch (q.type()) {
                         case EQUAL:
-                            //queryWrapper.and(wrapper -> wrapper.eq(finalAttributeName, val));
                             queryWrapper.eq(attributeName, val);
                             break;
                         case GREATER_THAN:
@@ -103,6 +99,12 @@ public class QueryHelpMybatisPlus {
                         case IN:
                             if (CollUtil.isNotEmpty((Collection<Long>) val)) {
                                queryWrapper.in(finalAttributeName, (Collection<Long>) val);
+                            }
+                            break;
+                        case IN_SQL: {
+                                String sql = q.sql();
+                                sql = StrUtil.replace(sql, "?", val.toString());
+                               queryWrapper.inSql(finalAttributeName, sql);
                             }
                             break;
                         case NOT_EQUAL:

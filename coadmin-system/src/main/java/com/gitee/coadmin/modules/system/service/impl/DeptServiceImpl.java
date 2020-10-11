@@ -1,5 +1,6 @@
 package com.gitee.coadmin.modules.system.service.impl;
 
+import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
@@ -12,6 +13,7 @@ import com.gitee.coadmin.modules.system.domain.Dept;
 import com.gitee.coadmin.modules.system.domain.User;
 import com.gitee.coadmin.modules.system.service.DeptService;
 import com.gitee.coadmin.modules.system.service.RolesDeptsService;
+import com.gitee.coadmin.modules.system.service.UserService;
 import com.gitee.coadmin.modules.system.service.UsersDeptsService;
 import com.gitee.coadmin.modules.system.service.dto.DeptCompactDto;
 import com.gitee.coadmin.modules.system.service.dto.DeptDto;
@@ -272,47 +274,45 @@ public class DeptServiceImpl extends BaseServiceImpl<Dept> implements DeptServic
     }
 
     @Override
-    public Map<String, Object> buildTree(DeptQueryParam query, LinkedHashSet<Long> deptIds) {
+    public Map<String, Object> buildTree(DeptQueryParam query, Long userId) {
         QueryWrapper<Dept> wrapper1 = QueryHelpMybatisPlus.getPredicate(query);
-        LambdaQueryWrapper<Dept> wrapper = wrapper1.lambda();
+        final LambdaQueryWrapper<Dept> wrapper = wrapper1.lambda();
+        wrapper.orderByAsc(Dept::getTreeSorts);
 
-        log.info("buildTree:{}", JSONUtil.toJsonPrettyStr(deptIds));
-        Set<DeptDto> trees = new LinkedHashSet<>();
-        for (Long deptId : deptIds) {
-            DeptDto dto = findById(deptId);
-            if (dto==null) {
-                continue;
+        List<DeptDto> tree = new ArrayList<>();
+        if (query.getTreeId() == null) {
+            List<Long> userTopLevelDeptIds = usersDeptsService.queryDeptIdByUserId(userId);
+            for (Long id: userTopLevelDeptIds) {
+                LambdaQueryWrapper<Dept> wr = wrapper.clone();
+                wr.eq(Dept::getId, id);
+                DeptDto dto = ConvertUtil.convert(deptMapper.selectOne(wr), DeptDto.class);
+                if (dto!=null) {
+                    if (!dto.getTreeLeaf()) {
+                        dto.setChildren(getChildren(wrapper, dto.getId()));
+                    }
+                    tree.add(dto);
+                }
             }
-            if (!dto.getTreeLeaf()) {
-                dto.setChildren(getChildren(wrapper, dto.getId()));
-            }
-            trees.add(dto);
-        }
-        if (deptIds.isEmpty()) {
-            List<DeptDto> children = getChildren(wrapper, 0L);
-            Map<String, Object> map = new HashMap<>(2);
-            map.put("totalElements", trees.size());
-            map.put("content", ConvertUtil.convertList(children, DeptCompactDto.class));
-            return map;
-
         } else {
-            Map<String, Object> map = new HashMap<>(2);
-            map.put("totalElements", trees.size());
-            map.put("content", ConvertUtil.convertSet(trees, DeptCompactDto.class));
-            return map;
+            tree = getChildren(wrapper, query.getTreeId());
         }
+        Map<String, Object> map = new HashMap<>(2);
+        map.put("totalElements", tree.size());
+        map.put("content", ConvertUtil.convertList(tree, DeptCompactDto.class));
+        return map;
     }
 
     private List<DeptDto> getChildren(final LambdaQueryWrapper<Dept> wrapperOrigin, Long pid) {
         LambdaQueryWrapper<Dept> wrapper = wrapperOrigin.clone();
-        wrapper.eq(Dept::getPid, pid).orderByAsc(Dept::getTreeSorts);
-        List<DeptDto> depts = ConvertUtil.convertList(deptMapper.selectList(wrapper), DeptDto.class);
-        if (depts.isEmpty()) {
-            return null;
+        if (pid != null) {
+            wrapper.eq(Dept::getPid, pid);
         }
-        for (DeptDto dept: depts) {
-            if (!dept.getTreeLeaf()) {
-                dept.setChildren(getChildren(wrapperOrigin, dept.getId()));
+        List<DeptDto> depts = ConvertUtil.convertList(deptMapper.selectList(wrapper), DeptDto.class);
+        if (!depts.isEmpty()) {
+            for (DeptDto dept: depts) {
+                if (!dept.getTreeLeaf()) {
+                    dept.setChildren(getChildren(wrapperOrigin, dept.getId()));
+                }
             }
         }
         return depts;

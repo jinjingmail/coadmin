@@ -22,10 +22,9 @@ public interface DeptService extends BaseService<Dept> {
 
     /**
      * 构建树形数据
-     * @param deptIds /
      * @return /
      */
-    Object buildTree(DeptQueryParam query, LinkedHashSet<Long> deptIds);
+    Object buildTree(DeptQueryParam query, Long userId);
 
     Dept getById(Long id);
     DeptDto findById(Long id);

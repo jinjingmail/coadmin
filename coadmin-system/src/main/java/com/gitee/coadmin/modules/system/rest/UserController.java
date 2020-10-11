@@ -82,7 +82,7 @@ public class UserController {
     @PreAuthorize("@el.check('user:list')")
     public ResponseEntity<Object> query(UserQueryParam query, Pageable pageable){
         return new ResponseEntity<>(userService.queryAll(query, pageable), HttpStatus.OK);
-/*if (!ObjectUtils.isEmpty(criteria.getDeptId())) {
+        /*if (!ObjectUtils.isEmpty(criteria.getDeptId())) {
             criteria.getDeptIds().add(criteria.getDeptId());
             // TODO criteria.getDeptIds().addAll(deptService.getDeptChildren(criteria.getDeptId(),
             //        deptService.findByPid(criteria.getDeptId())));

@@ -6,19 +6,32 @@ import lombok.Data;
 import java.util.Date;
 import java.util.List;
 import com.gitee.coadmin.annotation.Query;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 /**
 * @author jinjin
 * @date 2020-09-25
 */
-@Data
+@Getter
+@Setter
 @DataPermission(fieldName = "id")
 public class DeptQueryParam{
 
-    /** 精确 */
+    private Long treeId;
+
+    @Query
+    private Long id;
+
     @Query
     private Long pid;
+
+    @Query(propName = "tree_pids", type = Query.Type.INNER_LIKE)
+    private String pids;
+    public String getPids() {
+        return "/"+pids+"/";
+    }
 
     @Query(blurry = "treeNames")
     private String blurry;

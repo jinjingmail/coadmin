@@ -1,5 +1,7 @@
 package com.gitee.coadmin.base;
 
+import cn.hutool.json.JSONUtil;
+
 import java.io.Serializable;
 
 /**
@@ -14,4 +16,8 @@ public class BaseEntity implements Serializable {
     public @interface Update {
     }
 
+    @Override
+    public String toString() {
+        return JSONUtil.toJsonStr(this);
+    }
 }
