@@ -3,6 +3,7 @@ package com.gitee.coadmin.modules.system.domain;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.gitee.coadmin.utils.PinyinUtil;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import cn.hutool.core.bean.BeanUtil;
@@ -32,6 +33,14 @@ public class Dept extends DataEntity {
     @NotBlank
     private String name;
 
+    public void setName(String name) {
+        this.name = name;
+        this.nameLetter = PinyinUtil.getAllFirstPinyin(this.name);
+    }
+
+    @ApiModelProperty(value = "名称首字母")
+    private String nameLetter;
+
     @ApiModelProperty(value = "排序")
     @NotNull
     private Integer sort;
@@ -47,6 +56,13 @@ public class Dept extends DataEntity {
 
     @ApiModelProperty(value = "含所有父节点的名称,'/'分隔")
     private String treeNames;
+
+    public void setTreeNames(String names) {
+        this.treeNames = names;
+        treeNamesLetter = PinyinUtil.getAllFirstPinyin(this.treeNames);
+    }
+
+    private String treeNamesLetter;
 
     @ApiModelProperty(value = "含所有父节点的排序,'/'分隔")
     private String treeSorts;

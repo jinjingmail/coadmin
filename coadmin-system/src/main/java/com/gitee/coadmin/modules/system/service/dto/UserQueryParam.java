@@ -1,5 +1,6 @@
 package com.gitee.coadmin.modules.system.service.dto;
 
+import com.gitee.coadmin.annotation.DataPermission;
 import lombok.Data;
 
 import java.util.Date;
@@ -15,17 +16,14 @@ import org.springframework.format.annotation.DateTimeFormat;
 * @date 2020-09-25
 */
 @Data
-// @DataPermission(fieldName = "dept_id")
+@DataPermission(fieldName = "id", inSql="SELECT DISTINCT user_id FROM sys_users_depts WHERE dept_id IN(?)")
 public class UserQueryParam{
 
     /** 精确 */
     @Query
-    private Long userId;
+    private Long id;
 
     private Long deptId;
-
-    //@Query(propName = "dept_id", type = Query.Type.IN)
-    private Set<Long> deptIds = new HashSet<>();
 
     @Query(blurry = "email,username,nickName")
     private String blurry;

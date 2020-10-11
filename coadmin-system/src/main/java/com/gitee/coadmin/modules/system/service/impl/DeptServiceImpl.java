@@ -3,6 +3,7 @@ package com.gitee.coadmin.modules.system.service.impl;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gitee.coadmin.base.QueryHelpMybatisPlus;
 import com.gitee.coadmin.base.impl.BaseServiceImpl;
@@ -30,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 // 默认不使用缓存
@@ -61,6 +63,28 @@ public class DeptServiceImpl extends BaseServiceImpl<Dept> implements DeptServic
         return ConvertUtil.convertList(deptMapper.selectList(w), DeptDto.class);
     }
 
+    // SELECT distinct id FROM sys_dept WHERE (tree_pids LIKE '%/8/%' OR tree_pids LIKE '%/35/%') AND enabled=1 ORDER BY tree_sorts asc
+    @Override
+    public List<Long> querySubDeptIdByPids(List<Long> pidList, Boolean enabled) {
+        LambdaQueryWrapper<Dept> query = new LambdaQueryWrapper<>();
+        query.or(q -> pidList.forEach(pid -> q.or().like(Dept::getTreePids, "/" + pid + "/")));
+        if (enabled != null) {
+            query.eq(Dept::getEnabled, enabled);
+        }
+        query.orderByAsc(Dept::getTreeSorts);
+        log.info("querySubDeptIdByPids.query={}", query.getCustomSqlSegment());
+        return deptMapper.querySubDeptIdByPids(query);
+    }
+
+    @Override
+    public List<Long> queryDeptIdAllByUserId(Long userId, Boolean enabled) {
+        // 用户直接关联的部门
+        List<Long> deptIdList = usersDeptsService.queryDeptIdByUserId(userId);
+        // 所有子部门
+        deptIdList.addAll(this.querySubDeptIdByPids(deptIdList, enabled));
+        return deptIdList;
+    }
+
     @Override
     public Dept getById(Long id) {
         return deptMapper.selectById(id);
@@ -79,14 +103,17 @@ public class DeptServiceImpl extends BaseServiceImpl<Dept> implements DeptServic
         if (resources.getPid() == null){
             resources.setPid(0L);
         }
+        Dept exist = getByName(resources.getName());
+        if (exist != null) {
+            throw new BadRequestException("已经存在：" + resources.getName());
+        }
+
         Dept parent = getById(resources.getPid());
         resources.setTreeLeaf(true);
         updateSelfAndChildren(parent, resources);
-        //int ret = deptMapper.insert(resources);
         updateLeaf(parent, false);
 
         redisUtils.del("dept::pid:" + resources.getPid());
-        //updateSubCnt(resources.getPid());
         return true;
     }
 
@@ -103,11 +130,15 @@ public class DeptServiceImpl extends BaseServiceImpl<Dept> implements DeptServic
     private static final String FORMAT = "00000";
     private void updateSelfAndChildren(Dept parent, Dept self) {
         if (parent == null) {
-            self.setTreePids("/" + self.getPid());
+            if (self.getPid() == 0) {
+                self.setTreePids("/");
+            } else {
+                self.setTreePids("/" + self.getPid() + "/");
+            }
             self.setTreeNames("/" + self.getName());
             self.setTreeSorts("/" + NumberUtil.decimalFormat(FORMAT, self.getSort()));
         } else {
-            self.setTreePids(parent.getTreePids() + "/" + self.getPid());
+            self.setTreePids(parent.getTreePids() + self.getPid() + "/");
             self.setTreeNames(parent.getTreeNames() + "/" + self.getName());
             self.setTreeSorts(parent.getTreeSorts() + "/" + NumberUtil.decimalFormat(FORMAT, self.getSort()));
         }
@@ -128,10 +159,10 @@ public class DeptServiceImpl extends BaseServiceImpl<Dept> implements DeptServic
     }
     private int calcTreeLevel(Dept tree) {
         int size = StrUtil.splitTrim(tree.getTreePids(), '/').size();
-        if (size <= 1) {
+        if (size <= 0) {
             return 0;
         } else {
-            return size-1;
+            return size;
         }
     }
 
@@ -148,6 +179,12 @@ public class DeptServiceImpl extends BaseServiceImpl<Dept> implements DeptServic
         if (newTree.getSort() > 999) {
             throw new BadRequestException("sort large than 999");
         }
+
+        Dept exist = getByName(resources.getName());
+        if (exist != null && !exist.getId().equals(resources.getId())) {
+            throw new BadRequestException("已经存在：" + resources.getName());
+        }
+
         if (newTree.getId().equals(newTree.getPid())) {
             throw new BadRequestException("上级不能为自己");
         }
@@ -163,14 +200,17 @@ public class DeptServiceImpl extends BaseServiceImpl<Dept> implements DeptServic
         } else {
             updateSelfAndChildren(newParent, newTree);
         }
-        //int ret = deptMapper.updateById(newTree);
 
-        //updateSubCnt(pidOld);
-        //updateSubCnt(newTree.getPid());
         // 清理缓存
         delCaches(newTree.getId(), oldPid, newTree.getPid());
 
         return true;
+    }
+
+    private Dept getByName(String name) {
+        LambdaQueryWrapper<Dept> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Dept::getName, name);
+        return deptMapper.selectOne(wrapper);
     }
 
     private int countOfChildren(Long pid) {
@@ -232,7 +272,10 @@ public class DeptServiceImpl extends BaseServiceImpl<Dept> implements DeptServic
     }
 
     @Override
-    public Map<String, Object> buildTree(LinkedHashSet<Long> deptIds) {
+    public Map<String, Object> buildTree(DeptQueryParam query, LinkedHashSet<Long> deptIds) {
+        QueryWrapper<Dept> wrapper1 = QueryHelpMybatisPlus.getPredicate(query);
+        LambdaQueryWrapper<Dept> wrapper = wrapper1.lambda();
+
         log.info("buildTree:{}", JSONUtil.toJsonPrettyStr(deptIds));
         Set<DeptDto> trees = new LinkedHashSet<>();
         for (Long deptId : deptIds) {
@@ -240,16 +283,13 @@ public class DeptServiceImpl extends BaseServiceImpl<Dept> implements DeptServic
             if (dto==null) {
                 continue;
             }
-            /*if (!dto.getEnabled()) {
-                continue;
-            }*/
             if (!dto.getTreeLeaf()) {
-                dto.setChildren(getChildren(dto.getId()));
+                dto.setChildren(getChildren(wrapper, dto.getId()));
             }
             trees.add(dto);
         }
         if (deptIds.isEmpty()) {
-            List<DeptDto> children = getChildren(0L);
+            List<DeptDto> children = getChildren(wrapper, 0L);
             Map<String, Object> map = new HashMap<>(2);
             map.put("totalElements", trees.size());
             map.put("content", ConvertUtil.convertList(children, DeptCompactDto.class));
@@ -263,16 +303,16 @@ public class DeptServiceImpl extends BaseServiceImpl<Dept> implements DeptServic
         }
     }
 
-    private List<DeptDto> getChildren(Long pid) {
-        QueryWrapper<Dept> query = new QueryWrapper<Dept>();
-        query.lambda().eq(Dept::getPid, pid).orderByAsc(Dept::getTreeSorts);
-        List<DeptDto> depts = ConvertUtil.convertList(deptMapper.selectList(query), DeptDto.class);
+    private List<DeptDto> getChildren(final LambdaQueryWrapper<Dept> wrapperOrigin, Long pid) {
+        LambdaQueryWrapper<Dept> wrapper = wrapperOrigin.clone();
+        wrapper.eq(Dept::getPid, pid).orderByAsc(Dept::getTreeSorts);
+        List<DeptDto> depts = ConvertUtil.convertList(deptMapper.selectList(wrapper), DeptDto.class);
         if (depts.isEmpty()) {
             return null;
         }
         for (DeptDto dept: depts) {
             if (!dept.getTreeLeaf()) {
-                dept.setChildren(getChildren(dept.getId()));
+                dept.setChildren(getChildren(wrapperOrigin, dept.getId()));
             }
         }
         return depts;

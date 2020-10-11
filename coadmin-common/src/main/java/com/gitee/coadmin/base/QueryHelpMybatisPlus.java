@@ -5,8 +5,8 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.gitee.coadmin.utils.SecurityUtils;
+import com.gitee.coadmin.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import com.gitee.coadmin.annotation.DataPermission;
 import com.gitee.coadmin.annotation.Query;
@@ -34,13 +34,13 @@ public class QueryHelpMybatisPlus {
             // 获取数据权限
             List<Long> dataScopes = SecurityUtils.getCurrentUserDataScope();
             if(CollectionUtil.isNotEmpty(dataScopes)){
-                if(StringUtils.isNotBlank(permission.joinName()) && StringUtils.isNotBlank(permission.fieldName())) {
-                    //Join join = root.join(permission.joinName(), JoinType.LEFT);
-                    //list.add(getExpression(permission.fieldName(),join, root).in(dataScopes));
-                    throw new RuntimeException("未实现");
-                } else if (StringUtils.isBlank(permission.joinName()) && StringUtils.isNotBlank(permission.fieldName())) {
-                    //list.add(getExpression(permission.fieldName(),null, root).in(dataScopes));
+                if (StringUtils.isNotBlank(permission.fieldName()) && StrUtil.isBlank(permission.inSql())) {
                     queryWrapper.in(permission.fieldName(), dataScopes);
+
+                } else if(StringUtils.isNotBlank(permission.fieldName()) && StrUtil.isNotBlank(permission.inSql())){
+                    String sql = permission.inSql();
+                    sql = StrUtil.replace(sql, "?", StringUtils.join(dataScopes, ","));
+                    queryWrapper.inSql(permission.fieldName(), sql);
                 }
             }
         }

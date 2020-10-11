@@ -3,6 +3,7 @@ package com.gitee.coadmin.modules.system.domain;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.gitee.coadmin.utils.PinyinUtil;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import cn.hutool.core.bean.BeanUtil;
@@ -35,6 +36,13 @@ public class User extends DataEntity implements Serializable {
     @ApiModelProperty(value = "用户名")
     @NotBlank
     private String username;
+
+    public void setUsername(String username) {
+        this.username = username;
+        this.usernameLetter = PinyinUtil.getAllFirstPinyin(this.username);
+    }
+
+    private String usernameLetter;
 
     @ApiModelProperty(value = "昵称")
     private String nickName;

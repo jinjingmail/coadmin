@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.gitee.coadmin.modules.system.domain.UsersDepts;
 import com.gitee.coadmin.modules.system.service.mapper.UsersDeptsMapper;
+import com.gitee.coadmin.utils.FileUtil;
 import lombok.AllArgsConstructor;
 import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.base.QueryHelpMybatisPlus;
@@ -140,30 +141,39 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
 
     @Override
     public User getByUsername(String userName) {
+        if (StrUtil.isBlank(userName)) {
+            return null;
+        }
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.lambda().eq(User::getUsername, userName);
         User user = userMapper.selectOne(wrapper);
-        /*if (user == null) {
-            throw new EntityNotFoundException(User.class, "username", userName);
-        }*/
         return user;
     }
 
     @Override
     @Cacheable(key = "'username:' + #p0")
     public UserDto findByName(String userName) {
+        if (StrUtil.isBlank(userName)) {
+            return null;
+        }
         UserDto dto = com.gitee.coadmin.utils.ConvertUtil.convert(getByUsername(userName), UserDto.class);
-        //dto.setDepts();
+        //TODO dto.setDepts();
         //dto.setRoles();
         //dto.setJobs();
         return dto;
     }
 
     private User getByEmail(String email) {
+        if (StrUtil.isBlank(email)) {
+            return null;
+        }
         Wrapper<User> wrapper = new QueryWrapper<User>().eq("email", email);
         return userMapper.selectOne(wrapper);
     }
     private User getByPhone(String phone) {
+        if (StrUtil.isBlank(phone)) {
+            return null;
+        }
         Wrapper<User> wrapper = new QueryWrapper<User>().eq("phone", phone);
         return userMapper.selectOne(wrapper);
     }
@@ -175,9 +185,11 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
         if (user != null) {
             throw new EntityExistException(User.class, "username", user.getUsername());
         }
-        user = getByEmail(resources.getEmail());
-        if (user != null) {
-            throw new EntityExistException(User.class, "email", resources.getEmail());
+        if (StrUtil.isNotBlank(resources.getEmail())) {
+            user = getByEmail(resources.getEmail());
+            if (user != null) {
+                throw new EntityExistException(User.class, "email", resources.getEmail());
+            }
         }
         user = getByPhone(resources.getPhone());
         if (user != null) {
@@ -332,7 +344,7 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
     public void updateEmail(String username, String email) {
         User user = getByUsername(username);
         User user2 = getByEmail(email);
-        if (ObjectUtil.notEqual(user.getId(), user2.getId())) {
+        if (user2 != null && ObjectUtil.notEqual(user.getId(), user2.getId())) {
             throw new EntityExistException(User.class, "email", email);
         }
         UpdateWrapper<User> updater = new UpdateWrapper<>();
@@ -346,7 +358,7 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
     @Override
     public void updateCenter(User resources) {
         User user2 = getByPhone(resources.getPhone());
-        if (ObjectUtil.notEqual(resources.getId(), user2.getId())) {
+        if (user2 != null && ObjectUtil.notEqual(resources.getId(), user2.getId())) {
             throw new EntityExistException(User.class, "phone", resources.getPhone());
         }
         UpdateWrapper<User> updater = new UpdateWrapper<>();
@@ -357,7 +369,7 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
         userUpdate.setNickName(resources.getNickName());
         userMapper.update(userUpdate, updater);
         redisUtils.del("user::username:" + resources.getUsername());
-        delCaches(user2.getId(), user2.getUsername());
+        delCaches(resources.getId(), resources.getUsername());
     }
 
     @Override
@@ -403,7 +415,7 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
               map.put("更新时间", user.getUpdateTime());
         list.add(map);
       }
-      com.gitee.coadmin.utils.FileUtil.downloadExcel(list, response);
+      FileUtil.downloadExcel(list, response);
     }
 
     /**

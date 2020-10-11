@@ -35,6 +35,7 @@ public class JwtUserDto implements UserDetails {
 
     private final UserDto user;
 
+    // 用户关联的部门及其所有子部门（enabled=true）
     private final List<Long> dataScopes;
 
     @JsonIgnore

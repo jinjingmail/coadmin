@@ -1,5 +1,6 @@
 package com.gitee.coadmin.modules.system.service.dto;
 
+import com.gitee.coadmin.annotation.DataPermission;
 import lombok.Data;
 
 import java.util.Date;
@@ -12,6 +13,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 * @date 2020-09-25
 */
 @Data
+@DataPermission(fieldName = "id")
 public class DeptQueryParam{
 
     /** 精确 */

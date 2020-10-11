@@ -15,6 +15,7 @@
  */
 package com.gitee.coadmin.modules.system.service.impl;
 
+import com.gitee.coadmin.modules.system.service.UsersDeptsService;
 import lombok.RequiredArgsConstructor;
 import com.gitee.coadmin.modules.system.domain.Dept;
 import com.gitee.coadmin.modules.system.service.DeptService;
@@ -42,15 +43,19 @@ public class DataServiceImpl implements DataService {
 
     private final RoleService roleService;
     private final DeptService deptService;
+    private final UsersDeptsService usersDeptsService;
 
     /**
      * 用户角色改变时需清理缓存
+     * 用户所在部门，及其所有子部门的id列表
      * @param user /
      * @return /
      */
     @Override
     @Cacheable(key = "'user:' + #p0.id")
     public List<Long> getDeptIds(UserDto user) {
+        return deptService.queryDeptIdAllByUserId(user.getId(), true);
+        /*
         // 用于存储部门id
         Set<Long> deptIds = new HashSet<>();
         // 查询用户角色
@@ -69,7 +74,7 @@ public class DataServiceImpl implements DataService {
                     return new ArrayList<>(deptIds);
             }
         }
-        return new ArrayList<>(deptIds);
+        return new ArrayList<>(deptIds);*/
     }
 
     /**

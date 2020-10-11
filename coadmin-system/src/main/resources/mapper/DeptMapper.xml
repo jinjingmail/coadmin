@@ -5,7 +5,10 @@
   <!-- 通用查询结果列 -->
   <!--
   <sql id="Base_Column_List">
-      dept_id, pid, sub_count, name, dept_sort, enabled, create_by, update_by, create_time, update_time
+      id, pid, sub_count, name, dept_sort, enabled, create_by, update_by, create_time, update_time
   </sql>
   -->
+    <select id="querySubDeptIdByPids" resultType="java.lang.Long">
+        SELECT distinct id FROM sys_dept ${ew.customSqlSegment}
+    </select>
 </mapper>

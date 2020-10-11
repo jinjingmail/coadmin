@@ -8,6 +8,7 @@ import com.gitee.coadmin.modules.system.service.dto.DeptQueryParam;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,7 +25,7 @@ public interface DeptService extends BaseService<Dept> {
      * @param deptIds /
      * @return /
      */
-    Object buildTree(LinkedHashSet<Long> deptIds);
+    Object buildTree(DeptQueryParam query, LinkedHashSet<Long> deptIds);
 
     Dept getById(Long id);
     DeptDto findById(Long id);
@@ -46,4 +47,19 @@ public interface DeptService extends BaseService<Dept> {
     void download(List<DeptDto> all, HttpServletResponse response) throws IOException;
 
     List<DeptDto> queryAll(DeptQueryParam criteria, Boolean query);
+
+    /**
+     * 父部门的所有递归子部门id
+     * @param pidList
+     * @return
+     */
+    List<Long> querySubDeptIdByPids(List<Long> pidList, Boolean enabled);
+
+    /**
+     * 查询用户对应的部门id（如果有权限的话，也包含所有递归子部门id）
+     * TODO 用户的每个部门，可以设置只看本部门，还是包含子部门
+     * @param userId
+     * @return
+     */
+    List<Long> queryDeptIdAllByUserId(Long userId, Boolean enabled);
 }

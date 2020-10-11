@@ -16,6 +16,7 @@
 package com.gitee.coadmin.modules.system.rest;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ import com.gitee.coadmin.modules.system.service.VerifyService;
 import com.gitee.coadmin.modules.system.service.dto.UserQueryParam;
 import com.gitee.coadmin.modules.system.service.UserService;
 import com.gitee.coadmin.utils.enums.CodeEnum;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,6 +54,7 @@ import java.util.stream.Collectors;
  * @author Zheng Jie
  * @date 2018-11-23
  */
+@Slf4j
 @Api(tags = "系统：用户管理")
 @RestController
 @RequestMapping("/api/users")
@@ -77,12 +80,14 @@ public class UserController {
     @ApiOperation("查询用户")
     @GetMapping
     @PreAuthorize("@el.check('user:list')")
-    public ResponseEntity<Object> query(UserQueryParam criteria, Pageable pageable){
-        if (!ObjectUtils.isEmpty(criteria.getDeptId())) {
+    public ResponseEntity<Object> query(UserQueryParam query, Pageable pageable){
+        return new ResponseEntity<>(userService.queryAll(query, pageable), HttpStatus.OK);
+/*if (!ObjectUtils.isEmpty(criteria.getDeptId())) {
             criteria.getDeptIds().add(criteria.getDeptId());
             // TODO criteria.getDeptIds().addAll(deptService.getDeptChildren(criteria.getDeptId(),
             //        deptService.findByPid(criteria.getDeptId())));
         }
+
         // 数据权限
         List<Long> dataScopes = dataService.getDeptIds(userService.findByName(com.gitee.coadmin.utils.SecurityUtils.getCurrentUsername()));
         // criteria.getDeptIds() 不为空并且数据权限不为空则取交集
@@ -96,8 +101,7 @@ public class UserController {
             // 否则取并集
             criteria.getDeptIds().addAll(dataScopes);
             return new ResponseEntity<>(userService.queryAll(criteria,pageable),HttpStatus.OK);
-        }
-        return new ResponseEntity<>(com.gitee.coadmin.utils.PageUtil.toPage(null,0),HttpStatus.OK);
+        }*/
     }
 
     @Log("新增用户")

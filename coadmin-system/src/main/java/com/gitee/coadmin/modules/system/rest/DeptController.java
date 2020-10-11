@@ -60,13 +60,13 @@ public class DeptController {
     @ApiOperation("查询部门")
     @GetMapping
     @PreAuthorize("@el.check('user:list','dept:list')")
-    public ResponseEntity<Object> query(DeptQueryParam criteria) throws Exception {
+    public ResponseEntity<Object> query(DeptQueryParam query) throws Exception {
         //List<DeptDto> deptDtos = deptService.queryAll(criteria, true);
         //return new ResponseEntity<>(PageUtil.toPage(deptDtos, deptDtos.size()),HttpStatus.OK);
         LinkedHashSet<Long> idset = new LinkedHashSet<>();
         //idset.add(7L);
         //idset.add(8L);
-        return new ResponseEntity<>(deptService.buildTree(idset),HttpStatus.OK);
+        return new ResponseEntity<>(deptService.buildTree(query, idset),HttpStatus.OK);
     }
 
     @Log("查询部门")
@@ -78,7 +78,7 @@ public class DeptController {
         LinkedHashSet<Long> idset = new LinkedHashSet<>();
         //idset.add(7L);
         //idset.add(8L);
-        return new ResponseEntity<>(deptService.buildTree(idset),HttpStatus.OK);
+        return new ResponseEntity<>(deptService.buildTree(new DeptQueryParam(), idset),HttpStatus.OK);
     }
 
     /**
@@ -91,7 +91,7 @@ public class DeptController {
     @AnonymousAccess
     public ResponseEntity<Object> tree(@RequestParam LinkedHashSet<Long> ids) {
         log.info("tree:{}", ids);
-        return new ResponseEntity<>(deptService.buildTree(ids),HttpStatus.OK);
+        return new ResponseEntity<>(deptService.buildTree(new DeptQueryParam(), ids),HttpStatus.OK);
     }
 
     @Log("新增部门")
