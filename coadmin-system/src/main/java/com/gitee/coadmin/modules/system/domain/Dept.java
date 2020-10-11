@@ -14,6 +14,7 @@ import javax.validation.constraints.*;
 import java.io.Serializable;
 
 /**
+ * 机构
 * @author jinjin
 * @date 2020-09-25
 */

@@ -18,7 +18,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 @JsonIgnoreProperties(value = { "handler" })
 @TableName("sys_roles_depts")
-@ApiModel(value="RolesDepts对象", description="角色部门关联")
+@ApiModel(value="RolesDepts对象", description="角色-机构关联")
 public class RolesDepts implements Serializable{
     private static final long serialVersionUID = 1L;
 
@@ -26,7 +26,7 @@ public class RolesDepts implements Serializable{
     @TableField(value = "role_id")
     private Long roleId;
 
-    @ApiModelProperty(value = "部门ID")
+    @ApiModelProperty(value = "机构ID")
     @TableField(value = "dept_id")
     private Long deptId;
 }

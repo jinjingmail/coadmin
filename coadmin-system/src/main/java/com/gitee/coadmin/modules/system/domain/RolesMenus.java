@@ -26,7 +26,7 @@ public class RolesMenus implements Serializable{
     @TableField(value = "role_id")
     private Long roleId;
 
-    @ApiModelProperty(value = "部门ID")
+    @ApiModelProperty(value = "菜单ID")
     @TableField(value = "menu_id")
     private Long menuId;
 }

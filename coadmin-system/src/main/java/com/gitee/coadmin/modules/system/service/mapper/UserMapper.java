@@ -36,7 +36,7 @@ public interface UserMapper extends CommonMapper<User> {
     List<User> findByRoleId(@Param("roleId") Long roleId);
 
     /**
-     * 根据角色中的部门查询
+     * 根据角色中的机构查询
      *
      * @param roleId /
      * @return /
@@ -67,7 +67,7 @@ public interface UserMapper extends CommonMapper<User> {
     int countByJobs(@Param("ids") Set<Long> ids);
 
     /**
-     * 根据部门查询
+     * 根据机构查询
      *
      * @param deptIds /
      * @return /

@@ -48,15 +48,15 @@ public interface DeptService extends BaseService<Dept> {
     List<DeptDto> queryAll(DeptQueryParam criteria, Boolean query);
 
     /**
-     * 父部门的所有递归子部门id
+     * 父机构的所有递归子机构id
      * @param pidList
      * @return
      */
     List<Long> querySubDeptIdByPids(List<Long> pidList, Boolean enabled);
 
     /**
-     * 查询用户对应的部门id（如果有权限的话，也包含所有递归子部门id）
-     * TODO 用户的每个部门，可以设置只看本部门，还是包含子部门
+     * 查询用户对应的机构id（如果有权限的话，也包含所有递归子机构id）
+     * TODO 用户的每个机构，可以设置只看本机构，还是包含子机构
      * @param userId
      * @return
      */

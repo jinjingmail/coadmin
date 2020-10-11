@@ -65,7 +65,7 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
         List<RoleDto> roleDtos = com.gitee.coadmin.utils.ConvertUtil.convertList(pageList.getRecords(), RoleDto.class);
         roleDtos.forEach(role -> {
             role.setMenus(com.gitee.coadmin.utils.ConvertUtil.convertSet(menuMapper.selectLink(role.getId()), MenuDto.class));
-            // role.setDepts(deptService.findByRoleId(role.getId())); // 20201009 暂时取消角色跟部门的关联
+            // role.setDepts(deptService.findByRoleId(role.getId())); // 20201009 暂时取消角色跟机构的关联
             role.setDepts(new HashSet<>(0));
         });
         return new PageInfo<>(pageList.getTotal(), roleDtos);
@@ -81,7 +81,7 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
         QueryWrapper<Role> query = new QueryWrapper<Role>();
         query.lambda().orderByAsc(Role::getLevel);
         List<RoleDto> list = com.gitee.coadmin.utils.ConvertUtil.convertList(roleMapper.selectList(query), RoleDto.class);
-        /* 20201009 暂时取消角色跟部门的关联
+        /* 20201009 暂时取消角色跟机构的关联
         list.forEach(role -> {
             role.setMenus(com.gitee.coadmin.utils.ConvertUtil.convertSet(menuMapper.selectLink(role.getId()), MenuDto.class));
             role.setDepts(deptService.findByRoleId(role.getId()));

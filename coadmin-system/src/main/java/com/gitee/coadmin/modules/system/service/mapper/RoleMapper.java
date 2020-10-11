@@ -28,7 +28,7 @@ public interface RoleMapper extends CommonMapper<Role> {
     Set<Role> findByUserId(@Param("id") Long id);
 
     /**
-     * 根据部门查询
+     * 根据机构查询
      *
      * @param deptIds /
      * @return /

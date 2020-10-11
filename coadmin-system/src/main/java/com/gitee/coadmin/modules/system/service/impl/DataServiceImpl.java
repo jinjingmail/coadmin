@@ -47,7 +47,7 @@ public class DataServiceImpl implements DataService {
 
     /**
      * 用户角色改变时需清理缓存
-     * 用户所在部门，及其所有子部门的id列表
+     * 用户所在机构，及其所有子机构的id列表
      * @param user /
      * @return /
      */
@@ -56,11 +56,11 @@ public class DataServiceImpl implements DataService {
     public List<Long> getDeptIds(UserDto user) {
         return deptService.queryDeptIdAllByUserId(user.getId(), true);
         /*
-        // 用于存储部门id
+        // 用于存储机构id
         Set<Long> deptIds = new HashSet<>();
         // 查询用户角色
         List<RoleSmallDto> roleSet = roleService.findByUsersId(user.getId());
-        // 获取对应的部门ID
+        // 获取对应的机构ID
         for (RoleSmallDto role : roleSet) {
             DataScopeEnum dataScopeEnum = DataScopeEnum.find(role.getDataScope());
             switch (Objects.requireNonNull(dataScopeEnum)) {
@@ -79,7 +79,7 @@ public class DataServiceImpl implements DataService {
 
     /**
      * 获取自定义的数据权限
-     * @param deptIds 部门ID
+     * @param deptIds 机构ID
      * @param role 角色
      * @return 数据权限ID
      */

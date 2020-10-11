@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
 //import org.springframework.cache.annotation.Cacheable;
 
 /**
+ * 机构管理
 * @author jinjin
 * @date 2020-09-25
 */
@@ -80,9 +81,9 @@ public class DeptServiceImpl extends BaseServiceImpl<Dept> implements DeptServic
 
     @Override
     public List<Long> queryDeptIdAllByUserId(Long userId, Boolean enabled) {
-        // 用户直接关联的部门
+        // 用户直接关联的机构
         List<Long> deptIdList = usersDeptsService.queryDeptIdByUserId(userId);
-        // 所有子部门
+        // 所有子机构
         deptIdList.addAll(this.querySubDeptIdByPids(deptIdList, enabled));
         return deptIdList;
     }
@@ -323,8 +324,8 @@ public class DeptServiceImpl extends BaseServiceImpl<Dept> implements DeptServic
       List<Map<String, Object>> list = new ArrayList<>();
       for (DeptDto dept : all) {
         Map<String,Object> map = new LinkedHashMap<>();
-              map.put("上级部门", dept.getPid());
-              map.put("子部门数目", dept.getTreeLeaf()?0:1);
+              map.put("上级机构", dept.getPid());
+              map.put("子机构数目", dept.getTreeLeaf()?0:1);
               map.put("名称", dept.getName());
               map.put("排序", dept.getSort());
               map.put("状态", dept.getEnabled());

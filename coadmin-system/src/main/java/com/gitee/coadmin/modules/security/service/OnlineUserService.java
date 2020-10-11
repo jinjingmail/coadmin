@@ -130,7 +130,6 @@ public class OnlineUserService {
         for (OnlineUserDto user : all) {
             Map<String,Object> map = new LinkedHashMap<>();
             map.put("用户名", user.getUserName());
-            // map.put("部门", user.getDept());
             map.put("登录IP", user.getIp());
             map.put("登录地点", user.getAddress());
             map.put("浏览器", user.getBrowser());
