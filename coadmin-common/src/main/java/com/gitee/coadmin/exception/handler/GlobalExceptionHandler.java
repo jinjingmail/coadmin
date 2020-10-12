@@ -29,6 +29,11 @@ import java.util.Objects;
 import static org.springframework.http.HttpStatus.*;
 
 /**
+ * GlobalExceptionHandler 未捕获的异常，返回如下的样式：
+ * {"timestamp":1602485174975,"status":500,"error":"Internal Server Error","message":"","path":"/api/users"}
+ *
+ * GlobalExceptionHandler 捕获的异常，返回如下的样式：
+ * {"status":400,"timestamp":"2020-10-12 14:45:06","message":"/ by zero"}
  * @author Zheng Jie
  * @date 2018-11-23
  */

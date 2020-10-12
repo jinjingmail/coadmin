@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>coadmin-system</artifactId>
+    <artifactId>coadmin-core</artifactId>
     <name>核心模块</name>
 
     <properties>

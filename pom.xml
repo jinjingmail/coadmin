@@ -12,7 +12,7 @@
     <modules>
         <module>coadmin-common</module>
         <module>coadmin-logging</module>
-        <module>coadmin-system</module>
+        <module>coadmin-core</module>
         <module>coadmin-tools</module>
         <module>coadmin-generator</module>
     </modules>

@@ -67,7 +67,7 @@ public class DeptServiceImpl extends BaseServiceImpl<Dept> implements DeptServic
     }
 
     // SELECT distinct id FROM sys_dept WHERE (tree_pids LIKE '%/8/%' OR tree_pids LIKE '%/35/%') AND enabled=1 ORDER BY tree_sorts asc
-    @Override
+    @Override // TODO querySubDeptIdByPids.query=WHERE ( AND enabled = #{ew.paramNameValuePairs.MPGENVAL1}) ORDER BY tree_sorts ASC
     public List<Long> querySubDeptIdByPids(List<Long> pidList, Boolean enabled) {
         LambdaQueryWrapper<Dept> query = new LambdaQueryWrapper<>();
         query.or(q -> pidList.forEach(pid -> q.or().like(Dept::getTreePids, "/" + pid + "/")));
