@@ -33,7 +33,7 @@ public class DeptCompactDto implements Serializable {
     }
 
     public Boolean getHasChildren() {
-        return !treeLeaf;
+        return children != null && !children.isEmpty();
     }
 
     @Override

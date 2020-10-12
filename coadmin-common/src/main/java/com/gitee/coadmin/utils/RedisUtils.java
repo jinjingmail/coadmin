@@ -192,6 +192,14 @@ public class RedisUtils {
         }
     }
 
+    public long del(Collection<Object> set) {
+        if (set != null) {
+            return redisTemplate.delete(set);
+        } else {
+            return 0;
+        }
+    }
+
     // ============================String=============================
 
     /**

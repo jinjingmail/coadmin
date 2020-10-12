@@ -39,14 +39,9 @@ public class DeptDto extends DataDto {
     private Boolean enabled;
 
     public Boolean getHasChildren() {
-        return !treeLeaf;
+        return children != null && !children.isEmpty();
     }
 
-    /*
-    public Boolean getLeaf() {
-        return treeLeaf;
-    }
-    */
     public String getLabel() {
         return name;
     }

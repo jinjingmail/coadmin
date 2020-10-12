@@ -16,6 +16,7 @@
 package com.gitee.coadmin.modules.security.rest;
 
 import cn.hutool.core.util.IdUtil;
+import com.gitee.coadmin.modules.security.service.UserCacheClean;
 import com.wf.captcha.base.Captcha;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -68,6 +69,7 @@ public class AuthorizationController {
     private final OnlineUserService onlineUserService;
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final UserCacheClean userCacheClean;
     @Resource
     private LoginProperties loginProperties;
 
@@ -87,15 +89,19 @@ public class AuthorizationController {
         if (StringUtils.isBlank(authUser.getCode()) || !authUser.getCode().equalsIgnoreCase(code)) {
             throw new BadRequestException("验证码错误");
         }
+        userCacheClean.cleanUserCache(authUser.getUsername());
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(authUser.getUsername(), password);
+        // 验证密码和用户
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        // 密码验证成功
         SecurityContextHolder.getContext().setAuthentication(authentication);
         // 生成令牌
         String token = tokenProvider.createToken(authentication);
         final JwtUserDto jwtUserDto = (JwtUserDto) authentication.getPrincipal();
         // 保存在线信息
         onlineUserService.save(jwtUserDto, token, request);
+        log.info("login.auth.onlineSave:{}", authUser.getUsername());
         // 返回 token 与 用户信息
         Map<String, Object> authInfo = new HashMap<String, Object>(2) {{
             put("token", properties.getTokenStartWith() + token);
@@ -138,6 +144,7 @@ public class AuthorizationController {
     @ApiOperation("退出登录")
     @AnonymousDeleteMapping(value = "/logout")
     public ResponseEntity<Object> logout(HttpServletRequest request) {
+        // userCacheClean.cleanUserCache(SecurityUtils.getCurrentUsername());
         onlineUserService.logout(tokenProvider.getToken(request));
         return new ResponseEntity<>(HttpStatus.OK);
     }

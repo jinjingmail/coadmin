@@ -340,16 +340,17 @@ public class DeptServiceImpl extends BaseServiceImpl<Dept> implements DeptServic
 
     /**
      * 清理缓存
-     *
-     * @param id /
      */
-    public void delCaches(Long id, Long pidOld, Long pidNew) {
-        List<User> users = userMapper.findByDeptRoleId(id);
+    public void delCaches(Long deptId, Long pidOld, Long pidNew) {
+        //List<User> users = userMapper.findByDeptRoleId(id);
         // 删除数据权限
-        redisUtils.delByKeys("data::user:", users.stream().map(User::getId).collect(Collectors.toSet()));
-        redisUtils.del("dept::id:" + id);
+        //redisUtils.delByKeys("data::user:", users.stream().map(User::getId).collect(Collectors.toSet()));
+        List dataUserKeys = redisUtils.scan("data::user:*");
+        log.info("delCaches.dataUserKeys.size={}", dataUserKeys.size());
+        long count = redisUtils.del(dataUserKeys);
+        log.info("delCaches.dataUserKeys delete count:{}", count);
+        redisUtils.del("dept::id:" + deptId);
         redisUtils.del("dept::pid:" + (pidOld == null ? 0 : pidOld));
         redisUtils.del("dept::pid:" + (pidNew == null ? 0 : pidNew));
     }
-
 }

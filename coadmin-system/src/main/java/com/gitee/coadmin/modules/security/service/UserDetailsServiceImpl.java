@@ -24,6 +24,7 @@ import com.gitee.coadmin.modules.system.service.DataService;
 import com.gitee.coadmin.modules.system.service.RoleService;
 import com.gitee.coadmin.modules.system.service.UserService;
 import com.gitee.coadmin.modules.system.service.dto.UserDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Zheng Jie
  * @date 2018-11-22
  */
+@Slf4j
 @RequiredArgsConstructor
 @Service("userDetailsService")
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -54,6 +56,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public JwtUserDto loadUserByUsername(String username) {
+        log.info("loadUserByUsername:{}", username);
         boolean searchDb = true;
         JwtUserDto jwtUserDto = null;
         if (loginProperties.isCacheEnable() && userDtoCache.containsKey(username)) {

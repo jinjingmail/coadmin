@@ -54,7 +54,11 @@ public class DataServiceImpl implements DataService {
     @Override
     @Cacheable(key = "'user:' + #p0.id")
     public List<Long> getDeptIds(UserDto user) {
-        return deptService.queryDeptIdAllByUserId(user.getId(), true);
+        Boolean enabled = true;
+        if (user.getIsAdmin()) {
+            enabled = null;
+        }
+        return deptService.queryDeptIdAllByUserId(user.getId(), enabled);
         /*
         // 用于存储机构id
         Set<Long> deptIds = new HashSet<>();
