@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.AllArgsConstructor;
 import com.gitee.coadmin.base.PageInfo;
-import com.gitee.coadmin.base.QueryHelpMybatisPlus;
+import com.gitee.coadmin.modules.tools.utils.QueryHelpMybatisPlus;
 import com.gitee.coadmin.base.impl.BaseServiceImpl;
 import com.gitee.coadmin.modules.system.domain.Dict;
 import com.gitee.coadmin.modules.system.service.mapper.DictMapper;

@@ -4,7 +4,7 @@ import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.AllArgsConstructor;
 import com.gitee.coadmin.base.PageInfo;
-import com.gitee.coadmin.base.QueryHelpMybatisPlus;
+import com.gitee.coadmin.modules.tools.utils.QueryHelpMybatisPlus;
 import com.gitee.coadmin.base.impl.BaseServiceImpl;
 import com.gitee.coadmin.modules.quartz.domain.QuartzLog;
 import com.gitee.coadmin.modules.quartz.service.mapper.QuartzLogMapper;

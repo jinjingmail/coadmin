@@ -5,12 +5,12 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.json.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.gitee.coadmin.modules.logging.domain.Log;
-import com.gitee.coadmin.modules.logging.service.LogService;
 import com.gitee.coadmin.modules.logging.service.dto.LogErrorDTO;
 import com.gitee.coadmin.modules.logging.service.dto.LogQueryParam;
 import com.gitee.coadmin.modules.logging.service.dto.LogSmallDTO;
 import com.gitee.coadmin.modules.logging.service.mapper.LogMapper;
+import com.gitee.coadmin.modules.logging.domain.Log;
+import com.gitee.coadmin.modules.logging.service.LogService;
 import com.gitee.coadmin.utils.ConvertUtil;
 import com.gitee.coadmin.utils.FileUtil;
 import com.gitee.coadmin.utils.PageUtil;
@@ -18,7 +18,6 @@ import com.gitee.coadmin.utils.ValidationUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.gitee.coadmin.base.PageInfo;
-import com.gitee.coadmin.base.QueryHelpMybatisPlus;
 import com.gitee.coadmin.base.impl.BaseServiceImpl;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -53,7 +52,7 @@ public class LogServiceImpl extends BaseServiceImpl<Log> implements LogService {
     @Override
     public Object queryAll(LogQueryParam query, Pageable pageable) {
         IPage<Log> page = PageUtil.toMybatisPage(pageable);
-        IPage<Log> pageList = logMapper.selectPage(page, QueryHelpMybatisPlus.getPredicate(query));
+        IPage<Log> pageList = logMapper.selectPage(page, QHMP.getPredicate(query));
         String status = "ERROR";
         if (status.equals(query.getLogType())) {
             return ConvertUtil.convertPage(pageList, LogErrorDTO.class);
@@ -63,13 +62,13 @@ public class LogServiceImpl extends BaseServiceImpl<Log> implements LogService {
 
     @Override
     public List<Log> queryAll(LogQueryParam query){
-        return logMapper.selectList(QueryHelpMybatisPlus.getPredicate(query));
+        return logMapper.selectList(QHMP.getPredicate(query));
     }
 
     @Override
     public PageInfo<LogSmallDTO> queryAllByUser(LogQueryParam query, Pageable pageable) {
         IPage<Log> page = PageUtil.toMybatisPage(pageable);
-        IPage<Log> pageList = logMapper.selectPage(page, QueryHelpMybatisPlus.getPredicate(query));
+        IPage<Log> pageList = logMapper.selectPage(page, QHMP.getPredicate(query));
         return ConvertUtil.convertPage(pageList, LogSmallDTO.class);
     }
 

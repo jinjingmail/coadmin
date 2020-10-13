@@ -26,7 +26,7 @@ import com.gitee.coadmin.modules.system.service.RoleService;
 import com.gitee.coadmin.modules.system.service.dto.RoleDto;
 import com.gitee.coadmin.modules.system.service.dto.RoleQueryParam;
 import com.gitee.coadmin.modules.system.service.dto.RoleSmallDto;
-import com.gitee.coadmin.utils.SecurityUtils;
+import com.gitee.coadmin.modules.tools.utils.SecurityUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

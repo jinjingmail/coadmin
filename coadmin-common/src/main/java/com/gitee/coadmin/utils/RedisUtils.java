@@ -35,7 +35,9 @@ import java.util.concurrent.TimeUnit;
 @SuppressWarnings({"unchecked", "all"})
 public class RedisUtils {
     private static final Logger log = LoggerFactory.getLogger(RedisUtils.class);
+
     private RedisTemplate<Object, Object> redisTemplate;
+
     @Value("${jwt.online-key}")
     private String onlineKey;
 

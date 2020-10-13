@@ -9,10 +9,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.gitee.coadmin.modules.system.domain.UsersDepts;
 import com.gitee.coadmin.modules.system.service.mapper.UsersDeptsMapper;
+import com.gitee.coadmin.modules.tools.utils.SecurityUtils;
 import com.gitee.coadmin.utils.FileUtil;
 import lombok.AllArgsConstructor;
 import com.gitee.coadmin.base.PageInfo;
-import com.gitee.coadmin.base.QueryHelpMybatisPlus;
+import com.gitee.coadmin.modules.tools.utils.QueryHelpMybatisPlus;
 import com.gitee.coadmin.base.impl.BaseServiceImpl;
 import com.gitee.coadmin.config.FileProperties;
 import com.gitee.coadmin.exception.BadRequestException;
@@ -23,7 +24,6 @@ import com.gitee.coadmin.modules.system.domain.UsersRoles;
 import com.gitee.coadmin.modules.system.service.mapper.UsersJobsMapper;
 import com.gitee.coadmin.modules.system.service.mapper.UsersRolesMapper;
 import com.gitee.coadmin.modules.system.service.*;
-import com.gitee.coadmin.modules.system.service.dto.DeptDto;
 import com.gitee.coadmin.modules.system.service.dto.UserDto;
 import com.gitee.coadmin.modules.system.service.dto.UserQueryParam;
 import com.gitee.coadmin.modules.security.service.OnlineUserService;
@@ -44,7 +44,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -323,7 +322,7 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
 
     @Override
     public Map<String, String> updateAvatar(MultipartFile multipartFile) {
-        User user = getByUsername(com.gitee.coadmin.utils.SecurityUtils.getCurrentUsername());
+        User user = getByUsername(SecurityUtils.getCurrentUsername());
         String oldPath = user.getAvatarPath();
         File file = com.gitee.coadmin.utils.FileUtil.upload(multipartFile, properties.getPath().getAvatar());
         user.setAvatarName(file.getName());

@@ -17,7 +17,6 @@ package com.gitee.coadmin.modules.logging.service.dto;
 
 import lombok.Data;
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.util.Date;
 
 /**

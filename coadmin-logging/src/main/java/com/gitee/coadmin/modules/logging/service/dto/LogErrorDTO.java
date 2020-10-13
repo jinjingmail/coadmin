@@ -19,7 +19,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.util.Date;
 
 /**

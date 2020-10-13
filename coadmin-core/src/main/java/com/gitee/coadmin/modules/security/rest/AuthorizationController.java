@@ -37,7 +37,7 @@ import com.gitee.coadmin.modules.security.service.dto.JwtUserDto;
 import com.gitee.coadmin.modules.security.service.OnlineUserService;
 import com.gitee.coadmin.utils.RsaUtils;
 import com.gitee.coadmin.utils.RedisUtils;
-import com.gitee.coadmin.utils.SecurityUtils;
+import com.gitee.coadmin.modules.tools.utils.SecurityUtils;
 import com.gitee.coadmin.utils.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

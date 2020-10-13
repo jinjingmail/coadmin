@@ -1,19 +1,15 @@
 package com.gitee.coadmin.modules.system.service.impl;
 
-import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.gitee.coadmin.base.QueryHelpMybatisPlus;
+import com.gitee.coadmin.modules.tools.utils.QueryHelpMybatisPlus;
 import com.gitee.coadmin.base.impl.BaseServiceImpl;
 import com.gitee.coadmin.exception.BadRequestException;
 import com.gitee.coadmin.modules.system.domain.Dept;
-import com.gitee.coadmin.modules.system.domain.User;
 import com.gitee.coadmin.modules.system.service.DeptService;
 import com.gitee.coadmin.modules.system.service.RolesDeptsService;
-import com.gitee.coadmin.modules.system.service.UserService;
 import com.gitee.coadmin.modules.system.service.UsersDeptsService;
 import com.gitee.coadmin.modules.system.service.dto.DeptCompactDto;
 import com.gitee.coadmin.modules.system.service.dto.DeptDto;
@@ -33,8 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 // 默认不使用缓存
 //import org.springframework.cache.annotation.CacheConfig;

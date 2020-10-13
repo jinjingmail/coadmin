@@ -28,7 +28,7 @@ import com.gitee.coadmin.modules.system.service.dto.MenuQueryParam;
 import com.gitee.coadmin.modules.system.service.mapper.MenuMapper;
 import com.gitee.coadmin.utils.ConvertUtil;
 import com.gitee.coadmin.utils.PageUtil;
-import com.gitee.coadmin.utils.SecurityUtils;
+import com.gitee.coadmin.modules.tools.utils.SecurityUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

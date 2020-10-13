@@ -15,6 +15,10 @@
         <module>coadmin-core</module>
         <module>coadmin-tools</module>
         <module>coadmin-generator</module>
+        <module>weixin-common</module>
+        <module>app-demo</module>
+        <module>app-demo-dao-share</module>
+        <module>app-dao-share</module>
     </modules>
 
     <name>CoAdmin 后台管理</name>
@@ -35,6 +39,7 @@
         <fastjson.version>1.2.70</fastjson.version>
         <druid.version>1.1.22</druid.version>
         <commons-pool2.version>2.5.0</commons-pool2.version>
+        <hutool.version>5.3.4</hutool.version>
     </properties>
 
     <dependencies>
@@ -59,12 +64,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-        </dependency>
-
-        <!--Spring boot 安全框架-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
         <!-- spring boot 缓存 -->

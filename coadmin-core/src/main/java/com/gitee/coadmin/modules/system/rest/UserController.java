@@ -15,8 +15,7 @@
  */
 package com.gitee.coadmin.modules.system.rest;
 
-import cn.hutool.core.collection.CollectionUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.gitee.coadmin.modules.tools.utils.SecurityUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -40,8 +39,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -130,7 +127,7 @@ public class UserController {
     @ApiOperation("修改用户：个人中心")
     @PutMapping(value = "center")
     public ResponseEntity<Object> center(@Validated(User.Update.class) @RequestBody User resources){
-        if(!resources.getId().equals(com.gitee.coadmin.utils.SecurityUtils.getCurrentUserId())){
+        if(!resources.getId().equals(SecurityUtils.getCurrentUserId())){
             throw new BadRequestException("不能修改他人资料");
         }
         userService.updateCenter(resources);
@@ -143,7 +140,7 @@ public class UserController {
     @PreAuthorize("@el.check('user:del')")
     public ResponseEntity<Object> delete(@RequestBody Set<Long> ids){
         for (Long id : ids) {
-            Integer currentLevel =  Collections.min(roleService.findByUsersId(com.gitee.coadmin.utils.SecurityUtils.getCurrentUserId()).stream().map(RoleSmallDto::getLevel).collect(Collectors.toList()));
+            Integer currentLevel =  Collections.min(roleService.findByUsersId(SecurityUtils.getCurrentUserId()).stream().map(RoleSmallDto::getLevel).collect(Collectors.toList()));
             Integer optLevel =  Collections.min(roleService.findByUsersId(id).stream().map(RoleSmallDto::getLevel).collect(Collectors.toList()));
             if (currentLevel > optLevel) {
                 throw new BadRequestException("角色权限不足，不能删除：" + userService.findById(id).getUsername());
@@ -158,7 +155,7 @@ public class UserController {
     public ResponseEntity<Object> updatePass(@RequestBody UserPassVo passVo) throws Exception {
         String oldPass = com.gitee.coadmin.utils.RsaUtils.decryptByPrivateKey(RsaProperties.privateKey,passVo.getOldPass());
         String newPass = com.gitee.coadmin.utils.RsaUtils.decryptByPrivateKey(RsaProperties.privateKey,passVo.getNewPass());
-        UserDto user = userService.findByName(com.gitee.coadmin.utils.SecurityUtils.getCurrentUsername());
+        UserDto user = userService.findByName(SecurityUtils.getCurrentUsername());
         if(!passwordEncoder.matches(oldPass, user.getPassword())){
             throw new BadRequestException("修改失败，旧密码错误");
         }
@@ -180,7 +177,7 @@ public class UserController {
     @PostMapping(value = "/updateEmail/{code}")
     public ResponseEntity<Object> updateEmail(@PathVariable String code,@RequestBody User user) throws Exception {
         String password = com.gitee.coadmin.utils.RsaUtils.decryptByPrivateKey(RsaProperties.privateKey,user.getPassword());
-        UserDto userDto = userService.findByName(com.gitee.coadmin.utils.SecurityUtils.getCurrentUsername());
+        UserDto userDto = userService.findByName(SecurityUtils.getCurrentUsername());
         if(!passwordEncoder.matches(password, userDto.getPassword())){
             throw new BadRequestException("密码错误");
         }
@@ -194,7 +191,7 @@ public class UserController {
      * @param resources /
      */
     private void checkLevel(UserDto resources) {
-        Integer currentLevel =  Collections.min(roleService.findByUsersId(com.gitee.coadmin.utils.SecurityUtils.getCurrentUserId()).stream().map(RoleSmallDto::getLevel).collect(Collectors.toList()));
+        Integer currentLevel =  Collections.min(roleService.findByUsersId(SecurityUtils.getCurrentUserId()).stream().map(RoleSmallDto::getLevel).collect(Collectors.toList()));
         Integer optLevel = roleService.findByRoles(resources.getRoles().stream().map(RoleSmallDto::getId).collect(Collectors.toSet()));
         if (currentLevel > optLevel) {
             throw new BadRequestException("角色权限不足");
