@@ -20,7 +20,6 @@ import java.util.*;
 @Slf4j
 public class QueryHelpMybatisPlus {
 
-    // TODO DataPermission
     public static <R, Q> QueryWrapper<R> getPredicate(Q query) {
         QueryWrapper<R> queryWrapper = new QueryWrapper<>();
         if (query == null) {
@@ -41,6 +40,9 @@ public class QueryHelpMybatisPlus {
                     sql = StrUtil.replace(sql, "?", StringUtils.join(dataScopes, ","));
                     queryWrapper.inSql(permission.fieldName(), sql);
                 }
+            } else {
+                // 声明了需要数据权限，但是dataScopes为空，所以使用一个不存在的数模拟为空的情况
+                queryWrapper.in(permission.fieldName(), 999999L);
             }
         }
 
@@ -98,12 +100,15 @@ public class QueryHelpMybatisPlus {
                         case IN:
                             if (CollUtil.isNotEmpty((Collection<Long>) val)) {
                                queryWrapper.in(finalAttributeName, (Collection<Long>) val);
+                            } else {
+                                queryWrapper.in(finalAttributeName, 999999L);
                             }
                             break;
-                        case IN_SQL: {
+                        case IN_SQL:
+                            {
                                 String sql = q.sql();
                                 sql = StrUtil.replace(sql, "?", val.toString());
-                               queryWrapper.inSql(finalAttributeName, sql);
+                                queryWrapper.inSql(finalAttributeName, sql);
                             }
                             break;
                         case NOT_EQUAL:
