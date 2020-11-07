@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.gitee.coadmin.base.impl.BaseServiceImpl;
 import com.gitee.coadmin.modules.system.domain.UsersDepts;
 import com.gitee.coadmin.modules.system.service.UsersDeptsService;
+import com.gitee.coadmin.modules.system.service.mapper.DeptMapper;
 import com.gitee.coadmin.modules.system.service.mapper.UsersDeptsMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 public class UsersDeptsServiceImpl extends BaseServiceImpl<UsersDepts> implements UsersDeptsService {
 
     private final UsersDeptsMapper usersDeptsMapper;
+    private final DeptMapper deptMapper;
 
     @Override
     public List<Long> queryUserIdByDeptId(Long id) {
@@ -34,6 +36,10 @@ public class UsersDeptsServiceImpl extends BaseServiceImpl<UsersDepts> implement
 
     @Override
     public List<Long> queryDeptIdByUserId(Long id) {
+        if (id == 1) {
+            // Admin 用户，可以查看所有机构
+            return deptMapper.selectIdsByPid(0L);
+        }
         LambdaQueryWrapper<UsersDepts> query = new LambdaQueryWrapper<>();
         query.eq(UsersDepts::getUserId, id);
         return usersDeptsMapper.selectList(query).stream().map(UsersDepts::getDeptId)

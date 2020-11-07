@@ -26,4 +26,6 @@ public interface DeptMapper extends CommonMapper<Dept> {
     Set<Dept> selectByRoleId(Long roleId);
 
     List<Long> querySubDeptIdByPids(@Param(Constants.WRAPPER) AbstractWrapper query);
+
+    List<Long> selectIdsByPid(Long pid);
 }

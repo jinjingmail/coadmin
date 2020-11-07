@@ -78,7 +78,7 @@ public class SecurityUtils {
     }
 
     /**
-     * 获取当前用户的数据权限
+     * 获取当前用户的数据权限（关联的部门id）
      * @return /
      */
     public static List<Long> getCurrentUserDataScope(){

@@ -4,6 +4,7 @@ import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.gitee.coadmin.modules.security.service.UserCacheClean;
 import com.gitee.coadmin.modules.tools.utils.QueryHelpMybatisPlus;
 import com.gitee.coadmin.base.impl.BaseServiceImpl;
 import com.gitee.coadmin.exception.BadRequestException;
@@ -16,12 +17,12 @@ import com.gitee.coadmin.modules.system.service.dto.DeptDto;
 import com.gitee.coadmin.modules.system.service.dto.DeptQueryParam;
 import com.gitee.coadmin.modules.system.service.mapper.DeptMapper;
 import com.gitee.coadmin.modules.system.service.mapper.UserMapper;
+import com.gitee.coadmin.modules.tools.utils.SecurityUtils;
 import com.gitee.coadmin.utils.ConvertUtil;
 import com.gitee.coadmin.utils.FileUtil;
 import com.gitee.coadmin.utils.RedisUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,15 +44,17 @@ import java.util.*;
 @Slf4j
 @Service
 @AllArgsConstructor
-@CacheConfig(cacheNames = "dept")
+// @CacheConfig(cacheNames = "dept")
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class DeptServiceImpl extends BaseServiceImpl<Dept> implements DeptService {
 
     private final UserMapper userMapper;
     private final DeptMapper deptMapper;
-    private final RedisUtils redisUtils;
+    // private final RedisUtils redisUtils;
     private final RolesDeptsService rolesDeptsService;
     private final UsersDeptsService usersDeptsService;
+
+    private final UserCacheClean userCacheClean;
 
     @Override
     public List<DeptDto> queryAll(DeptQueryParam criteria, Boolean query) {
@@ -112,7 +115,8 @@ public class DeptServiceImpl extends BaseServiceImpl<Dept> implements DeptServic
         updateSelfAndChildren(parent, resources);
         updateLeaf(parent, false);
 
-        redisUtils.del("dept::pid:" + resources.getPid());
+        // redisUtils.del("dept::pid:" + resources.getPid());
+        userCacheClean.cleanAll();
         return true;
     }
 
@@ -202,7 +206,6 @@ public class DeptServiceImpl extends BaseServiceImpl<Dept> implements DeptServic
 
         // 清理缓存
         delCaches(newTree.getId(), oldPid, newTree.getPid());
-
         return true;
     }
 
@@ -338,6 +341,7 @@ public class DeptServiceImpl extends BaseServiceImpl<Dept> implements DeptServic
      * 清理缓存
      */
     public void delCaches(Long deptId, Long pidOld, Long pidNew) {
+        /*
         //List<User> users = userMapper.findByDeptRoleId(id);
         // 删除数据权限
         //redisUtils.delByKeys("data::user:", users.stream().map(User::getId).collect(Collectors.toSet()));
@@ -348,5 +352,7 @@ public class DeptServiceImpl extends BaseServiceImpl<Dept> implements DeptServic
         redisUtils.del("dept::id:" + deptId);
         redisUtils.del("dept::pid:" + (pidOld == null ? 0 : pidOld));
         redisUtils.del("dept::pid:" + (pidNew == null ? 0 : pidNew));
+        userCacheClean.cleanAll();
+        */
     }
 }

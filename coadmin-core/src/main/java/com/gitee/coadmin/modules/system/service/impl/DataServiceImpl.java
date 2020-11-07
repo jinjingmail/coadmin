@@ -38,7 +38,7 @@ import java.util.*;
  **/
 @Service
 @RequiredArgsConstructor
-@CacheConfig(cacheNames = "data")
+// @CacheConfig(cacheNames = "data")
 public class DataServiceImpl implements DataService {
 
     private final RoleService roleService;
@@ -52,7 +52,7 @@ public class DataServiceImpl implements DataService {
      * @return /
      */
     @Override
-    @Cacheable(key = "'user:' + #p0.id")
+    // @Cacheable(key = "'user:' + #p0.id")
     public List<Long> getDeptIds(UserDto user) {
         Boolean enabled = true;
         if (user.getIsAdmin()) {

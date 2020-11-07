@@ -4,11 +4,13 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gitee.coadmin.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import com.gitee.coadmin.annotation.DataPermission;
 import com.gitee.coadmin.annotation.Query;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -28,14 +30,14 @@ public class QueryHelpMybatisPlus {
 
         // 数据权限验证
         DataPermission permission = query.getClass().getAnnotation(DataPermission.class);
-        if(permission != null){
+        if (permission != null) {
             // 获取数据权限
             List<Long> dataScopes = SecurityUtils.getCurrentUserDataScope();
-            if(CollectionUtil.isNotEmpty(dataScopes)){
+            if (CollectionUtil.isNotEmpty(dataScopes)) {
                 if (StringUtils.isNotBlank(permission.fieldName()) && StrUtil.isBlank(permission.inSql())) {
                     queryWrapper.in(permission.fieldName(), dataScopes);
 
-                } else if(StringUtils.isNotBlank(permission.fieldName()) && StrUtil.isNotBlank(permission.inSql())){
+                } else if (StringUtils.isNotBlank(permission.fieldName()) && StrUtil.isNotBlank(permission.inSql())) {
                     String sql = permission.inSql();
                     sql = StrUtil.replace(sql, "?", StringUtils.join(dataScopes, ","));
                     queryWrapper.inSql(permission.fieldName(), sql);
