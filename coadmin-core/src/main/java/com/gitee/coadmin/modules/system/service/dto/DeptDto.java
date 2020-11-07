@@ -24,11 +24,13 @@ public class DeptDto extends DataDto {
     private String deptCode;
 
     private String name;
+    private String nameLetter;
     private Integer sort;
 
     private Long pid;
     private String treePids;
     private String treeNames;
+    private String treeNamesLetter;
     private String treeSorts;
     private Integer treeLevel;
     private Boolean treeLeaf;

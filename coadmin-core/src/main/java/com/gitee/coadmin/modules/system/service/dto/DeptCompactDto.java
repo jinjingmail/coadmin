@@ -21,9 +21,13 @@ public class DeptCompactDto implements Serializable {
     private Long id;
     private Long pid;
     private String name;
+    private String nameLetter;
+    private String deptCode;
     private Integer sort;
     private Boolean enabled;
     private Boolean treeLeaf;
+    private String treeNames;
+    private String treeNamesLetter;
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<DeptCompactDto> children;
     private Date createTime;
