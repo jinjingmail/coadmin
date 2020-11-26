@@ -20,7 +20,10 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.poi.excel.BigExcelWriter;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.gitee.coadmin.exception.BadRequestException;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.xssf.streaming.SXSSFCell;
+import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -212,14 +215,8 @@ public class FileUtil extends cn.hutool.core.io.FileUtil {
         SXSSFSheet sheet = (SXSSFSheet)writer.getSheet();
         //上面需要强转SXSSFSheet  不然没有trackAllColumnsForAutoSizing方法
         sheet.trackAllColumnsForAutoSizing();
-        //列宽自适应
-        for (int i=0; i<writer.getColumnCount(); ++i) {
-            //writer.autoSizeColumnAll();
-            // 调整每一列宽度
-            sheet.autoSizeColumn((short) i);
-            // 解决自动设置列宽中文失效的问题
-            sheet.setColumnWidth(i, sheet.getColumnWidth(i) * 17 / 10);
-        }
+        writer.autoSizeColumnAll();
+        sizeChineseColumn(sheet, writer);
         //response为HttpServletResponse对象
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8");
         //test.xls是弹出下载对话框的文件名，不能为中文，中文请自行编码
@@ -230,6 +227,33 @@ public class FileUtil extends cn.hutool.core.io.FileUtil {
         writer.flush(out, true);
         //此处记得关闭输出Servlet流
         IoUtil.close(out);
+    }
+
+    /**
+     * 自适应宽度(中文支持)
+     */
+    private static void sizeChineseColumn(SXSSFSheet sheet, BigExcelWriter writer) {
+        for (int columnNum = 0; columnNum < writer.getColumnCount(); columnNum++) {
+            int columnWidth = sheet.getColumnWidth(columnNum) / 256;
+            for (int rowNum = 0; rowNum < sheet.getLastRowNum(); rowNum++) {
+                SXSSFRow currentRow;
+                if (sheet.getRow(rowNum) == null) {
+                    currentRow = sheet.createRow(rowNum);
+                } else {
+                    currentRow = sheet.getRow(rowNum);
+                }
+                if (currentRow.getCell(columnNum) != null) {
+                    SXSSFCell currentCell = currentRow.getCell(columnNum);
+                    if (currentCell.getCellTypeEnum() == CellType.STRING) {
+                        int length = currentCell.getStringCellValue().getBytes().length;
+                        if (columnWidth < length) {
+                            columnWidth = length;
+                        }
+                    }
+                }
+            }
+            sheet.setColumnWidth(columnNum, columnWidth * 256);
+        }
     }
 
     public static String getFileType(String type) {

@@ -19,6 +19,7 @@ import cn.hutool.core.date.BetweenFormater;
 import cn.hutool.core.date.DateUtil;
 import com.gitee.coadmin.modules.system.service.MonitorService;
 import com.gitee.coadmin.utils.FileUtil;
+import com.gitee.coadmin.utils.GlobalConstant;
 import com.gitee.coadmin.utils.StringUtils;
 import org.springframework.stereotype.Service;
 import oshi.SystemInfo;
@@ -73,13 +74,24 @@ public class MonitorServiceImpl implements MonitorService {
         Map<String,Object> diskInfo = new LinkedHashMap<>();
         FileSystem fileSystem = os.getFileSystem();
         List<OSFileStore> fsArray = fileSystem.getFileStores();
+        String osName = System.getProperty("os.name");
+        long available = 0, total = 0;
         for (OSFileStore fs : fsArray){
-            diskInfo.put("total", fs.getTotalSpace() > 0 ? FileUtil.getSize(fs.getTotalSpace()) : "?");
-            long used = fs.getTotalSpace() - fs.getUsableSpace();
-            diskInfo.put("available", FileUtil.getSize(fs.getUsableSpace()));
-            diskInfo.put("used", FileUtil.getSize(used));
-            diskInfo.put("usageRate", df.format(used/(double)fs.getTotalSpace() * 100));
+            // windows 需要将所有磁盘分区累加，TODO linux 和 mac 直接累加会出现磁盘重复的问题，待修复
+            if(osName.toLowerCase().startsWith(GlobalConstant.WIN)) {
+                available += fs.getUsableSpace();
+                total += fs.getTotalSpace();
+            } else {
+                available = fs.getUsableSpace();
+                total = fs.getTotalSpace();
+                break;
+            }
         }
+        long used = total - available;
+        diskInfo.put("total", total > 0 ? FileUtil.getSize(total) : "?");
+        diskInfo.put("available", FileUtil.getSize(available));
+        diskInfo.put("used", FileUtil.getSize(used));
+        diskInfo.put("usageRate", df.format(used/(double)total * 100));
         return diskInfo;
     }
 
@@ -90,10 +102,17 @@ public class MonitorServiceImpl implements MonitorService {
      */
     private Map<String,Object> getSwapInfo(GlobalMemory memory) {
         Map<String,Object> swapInfo = new LinkedHashMap<>();
-        swapInfo.put("total", FormatUtil.formatBytes(memory.getVirtualMemory().getSwapTotal()));
-        swapInfo.put("used", FormatUtil.formatBytes(memory.getVirtualMemory().getSwapUsed()));
-        swapInfo.put("available", FormatUtil.formatBytes(memory.getVirtualMemory().getSwapTotal() - memory.getVirtualMemory().getSwapUsed()));
-        swapInfo.put("usageRate", df.format(memory.getVirtualMemory().getSwapUsed()/(double)memory.getVirtualMemory().getSwapTotal() * 100));
+        VirtualMemory virtualMemory = memory.getVirtualMemory();
+        long total = virtualMemory.getSwapTotal();
+        long used = virtualMemory.getSwapUsed();
+        swapInfo.put("total", FormatUtil.formatBytes(total));
+        swapInfo.put("used", FormatUtil.formatBytes(used));
+        swapInfo.put("available", FormatUtil.formatBytes(total - used));
+        if(used == 0){
+            swapInfo.put("usageRate", 0);
+        } else {
+            swapInfo.put("usageRate", df.format(used/(double)total * 100));
+        }
         return swapInfo;
     }
 
