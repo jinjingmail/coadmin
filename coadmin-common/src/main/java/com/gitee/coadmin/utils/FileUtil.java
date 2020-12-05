@@ -216,7 +216,9 @@ public class FileUtil extends cn.hutool.core.io.FileUtil {
         //上面需要强转SXSSFSheet  不然没有trackAllColumnsForAutoSizing方法
         sheet.trackAllColumnsForAutoSizing();
         writer.autoSizeColumnAll();
+        /* 20201127 还是有问题，不能自动扩展。最简单的办法，生成excel后用MsExcel打开，然后全选，然后双击A列和B列直接的竖线，就能自适应列宽了。
         sizeChineseColumn(sheet, writer);
+        */
         //response为HttpServletResponse对象
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8");
         //test.xls是弹出下载对话框的文件名，不能为中文，中文请自行编码
