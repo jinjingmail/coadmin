@@ -22,7 +22,7 @@ public class DictDetailDto implements Serializable {
 
     private String value;
 
-    private Integer dictSort;
+    private Integer sort;
 
     private String createBy;
 

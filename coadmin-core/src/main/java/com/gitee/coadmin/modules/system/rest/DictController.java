@@ -56,7 +56,7 @@ public class DictController {
 
     @Log("查询字典")
     @ApiOperation("查询字典")
-    @GetMapping(value = "/all")
+    @GetMapping(value = "all")
     @PreAuthorize("@el.check('dict:list')")
     public ResponseEntity<Object> queryAll(){
         return new ResponseEntity<>(dictService.queryAll(new DictQueryParam()),HttpStatus.OK);

@@ -10,7 +10,7 @@ import com.gitee.coadmin.annotation.Query;
 @Data
 public class DictQueryParam{
 
-    @Query(blurry = "name,description")
+    @Query(blurry = "id,name,description")
     private String blurry;
 
     /** 精确 */

@@ -9,11 +9,11 @@
   </sql>
   -->
     <select id="querySubDeptIdByPids" resultType="java.lang.Long">
-        SELECT distinct id FROM sys_dept ${ew.customSqlSegment}
+        SELECT id FROM sys_dept ${ew.customSqlSegment}
     </select>
 
     <select id="selectIdsByPid" resultType="java.lang.Long">
-        SELECT DISTINCT id FROM sys_dept a WHERE pid=#{pid}
+        SELECT id FROM sys_dept a WHERE pid=#{pid}
         ORDER BY tree_sorts
     </select>
 </mapper>

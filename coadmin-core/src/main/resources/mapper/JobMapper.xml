@@ -5,7 +5,7 @@
   <!-- 通用查询结果列 -->
   <!--
   <sql id="Base_Column_List">
-      job_id, name, enabled, job_sort, create_by, update_by, create_time, update_time
+      job_id, name, enabled, sort, create_by, update_by, create_time, update_time
   </sql>
   -->
 </mapper>

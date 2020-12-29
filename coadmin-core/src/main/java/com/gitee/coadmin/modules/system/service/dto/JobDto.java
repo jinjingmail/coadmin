@@ -25,7 +25,7 @@ public class JobDto extends DataDto implements Serializable {
 
     private Boolean enabled;
 
-    private Integer jobSort;
+    private Integer sort;
 
     public JobDto(String name, Boolean enabled) {
         this.name = name;

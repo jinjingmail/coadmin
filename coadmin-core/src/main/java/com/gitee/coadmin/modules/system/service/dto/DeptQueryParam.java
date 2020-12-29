@@ -33,7 +33,7 @@ public class DeptQueryParam{
         return "/"+pids+"/";
     }
 
-    @Query(blurry = "treeNames")
+    @Query(blurry = "id,treeNames,treeNamesLetter")
     private String blurry;
 
     /** 精确 */

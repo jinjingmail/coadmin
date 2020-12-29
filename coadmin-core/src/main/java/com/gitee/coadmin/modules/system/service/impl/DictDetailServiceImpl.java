@@ -18,6 +18,7 @@ import com.gitee.coadmin.modules.system.service.mapper.DictDetailMapper;
 import com.gitee.coadmin.utils.PageUtil;
 import com.gitee.coadmin.utils.RedisUtils;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 //import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import java.util.List;
+import java.util.Set;
 
 /**
 * @author jinjin
@@ -91,6 +93,17 @@ public class DictDetailServiceImpl extends BaseServiceImpl<DictDetail> implement
         // 清理缓存
         delCaches(detail.getDictId());
         return ret;
+    }
+
+    @Override
+    @CacheEvict(allEntries = true)
+    @Transactional(rollbackFor = Exception.class)
+    public boolean removeByIds(Set<Long> ids){
+        boolean b = false;
+        for (Long id : ids) {
+            b = removeById(id);
+        }
+        return b;
     }
 
     @Override

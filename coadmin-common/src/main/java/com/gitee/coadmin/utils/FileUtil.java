@@ -216,7 +216,7 @@ public class FileUtil extends cn.hutool.core.io.FileUtil {
         //上面需要强转SXSSFSheet  不然没有trackAllColumnsForAutoSizing方法
         sheet.trackAllColumnsForAutoSizing();
         writer.autoSizeColumnAll();
-        /* 20201127 还是有问题，不能自动扩展。最简单的办法，生成excel后用MsExcel打开，然后全选，然后双击A列和B列直接的竖线，就能自适应列宽了。
+        /* 20201127 还是有问题，不能自动扩展。最简单的办法，生成excel后用MsExcel打开，然后全选，然后双击A列和B列之间的竖线，就能自适应列宽了。
         sizeChineseColumn(sheet, writer);
         */
         //response为HttpServletResponse对象

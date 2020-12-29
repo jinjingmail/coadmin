@@ -34,7 +34,7 @@ public class Job extends DataEntity implements Serializable {
     private Boolean enabled;
 
     @ApiModelProperty(value = "排序")
-    private Integer jobSort;
+    private Integer sort;
 
     public void copyFrom(Job source){
         BeanUtil.copyProperties(source,this, CopyOptions.create().setIgnoreNullValue(true));

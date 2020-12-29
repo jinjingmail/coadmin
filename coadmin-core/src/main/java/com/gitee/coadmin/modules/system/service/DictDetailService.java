@@ -7,6 +7,7 @@ import com.gitee.coadmin.modules.system.service.dto.DictDetailDto;
 import com.gitee.coadmin.modules.system.service.dto.DictDetailQueryParam;
 import org.springframework.data.domain.Pageable;
 import java.util.List;
+import java.util.Set;
 
 /**
 * @author jinjin
@@ -38,6 +39,7 @@ public interface DictDetailService  extends BaseService<DictDetail> {
 
     PageInfo<DictDetailDto> getDictByName(String dictName, Pageable pageable);
 
+    boolean removeByIds(Set<Long> ids);
     boolean removeById(Long id);
     boolean removeByDictId(Long id);
 

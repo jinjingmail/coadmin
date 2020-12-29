@@ -10,6 +10,9 @@ import com.gitee.coadmin.annotation.Query;
 @Data
 public class DictDetailQueryParam{
 
+    @Query(blurry = "id,label,value")
+    private String blurry;
+
     private String dictName;
 
     /** 精确 */

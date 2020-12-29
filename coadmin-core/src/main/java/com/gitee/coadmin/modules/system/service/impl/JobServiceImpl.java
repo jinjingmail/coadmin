@@ -139,7 +139,7 @@ public class JobServiceImpl extends BaseServiceImpl<Job> implements JobService {
         Map<String,Object> map = new LinkedHashMap<>();
               map.put("岗位名称", job.getName());
               map.put("岗位状态", job.getEnabled());
-              map.put("排序", job.getJobSort());
+              map.put("排序", job.getSort());
               map.put("创建者", job.getCreateBy());
               map.put("更新者", job.getUpdateBy());
               map.put("创建日期", job.getCreateTime());

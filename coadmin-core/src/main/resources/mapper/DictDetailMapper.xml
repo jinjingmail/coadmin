@@ -5,13 +5,13 @@
   <!-- 通用查询结果列 -->
 
   <sql id="Base_Column_List">
-      id, dict_id, label, value, dict_sort, create_by, update_by, create_time, update_time
+      id, dict_id, label, value, sort, create_by, update_by, create_time, update_time
   </sql>
 
     <select id="getDictDetailsByDictName" resultType="com.gitee.coadmin.modules.system.service.dto.DictDetailDto">
         SELECT dict.id as "dict.id", detail.* FROM sys_dict_detail detail
             LEFT JOIN sys_dict dict ON detail.dict_id = dict.id
         WHERE dict.name = #{dictName}
-        ORDER BY dict_sort ASC
+        ORDER BY sort ASC
     </select>
 </mapper>

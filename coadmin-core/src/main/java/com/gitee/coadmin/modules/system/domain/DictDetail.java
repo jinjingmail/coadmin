@@ -44,7 +44,7 @@ public class DictDetail implements Serializable {
     private String value;
 
     @ApiModelProperty(value = "排序")
-    private Integer dictSort;
+    private Integer sort;
 
     @ApiModelProperty(value = "创建者")
     @TableField(fill= FieldFill.INSERT)

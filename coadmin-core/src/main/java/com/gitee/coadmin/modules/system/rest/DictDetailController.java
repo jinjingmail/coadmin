@@ -16,6 +16,9 @@
 package com.gitee.coadmin.modules.system.rest;
 
 import cn.hutool.core.util.StrUtil;
+import com.gitee.coadmin.modules.system.service.DictService;
+import com.gitee.coadmin.modules.system.service.dto.DictDto;
+import com.gitee.coadmin.modules.system.service.dto.DictQueryParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +38,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
 * @author Zheng Jie
@@ -47,6 +51,7 @@ import java.util.Map;
 public class DictDetailController {
 
     private final DictDetailService dictDetailService;
+    private final DictService dictService;
     private static final String ENTITY_NAME = "dictDetail";
 
     @Log("查询字典详情")
@@ -55,8 +60,14 @@ public class DictDetailController {
     public ResponseEntity<Object> query(DictDetailQueryParam query,
                                          @PageableDefault(sort = {"dictSort"}, direction = Sort.Direction.ASC) Pageable pageable){
         if (StrUtil.isBlank(query.getDictName())) {
+            if (query.getDictId() == null) {
+                throw new BadRequestException("请指定Dict.id");
+            }
             return new ResponseEntity<>(dictDetailService.queryAll(query, pageable), HttpStatus.OK);
         } else {
+            if (query.getDictId() != null) {
+                return new ResponseEntity<>(dictDetailService.queryAll(query, pageable), HttpStatus.OK);
+            }
             return new ResponseEntity<>(dictDetailService.getDictByName(query.getDictName(), pageable), HttpStatus.OK);
         }
     }
@@ -64,11 +75,23 @@ public class DictDetailController {
     @Log("查询多个字典详情")
     @ApiOperation("查询多个字典详情")
     @GetMapping(value = "/map")
-    public ResponseEntity<Object> getDictDetailMaps(@RequestParam String dictName){
-        String[] names = dictName.split("[,，]");
+    public ResponseEntity<Object> getDictDetailMaps(@RequestParam String dictNames){
+        String[] names = dictNames.split("[,，]");
         Map<String, List<DictDetailDto>> dictMap = new HashMap<>(5);
         for (String name : names) {
             dictMap.put(name, dictDetailService.getDictByName(name));
+        }
+        return new ResponseEntity<>(dictMap, HttpStatus.OK);
+    }
+
+    @Log("查询所有字典详情")
+    @ApiOperation("查询所有字典详情")
+    @GetMapping(value = "/map/all")
+    public ResponseEntity<Object> getDictDetailMapsAll(){
+        Map<String, List<DictDetailDto>> dictMap = new HashMap<>(5);
+        List<DictDto> dictAll = dictService.queryAll(new DictQueryParam());
+        for (DictDto dict : dictAll) {
+            dictMap.put(dict.getName(), dictDetailService.getDictByName(dict.getName()));
         }
         return new ResponseEntity<>(dictMap, HttpStatus.OK);
     }
@@ -80,6 +103,9 @@ public class DictDetailController {
     public ResponseEntity<Object> create(@Validated @RequestBody DictDetailDto resources){
         if (resources.getId() != null) {
             throw new BadRequestException("A new "+ ENTITY_NAME +" cannot already have an ID");
+        }
+        if (resources.getDict() == null || resources.getDict().getId() == null) {
+            throw new BadRequestException("请指定Dict.id");
         }
         dictDetailService.save(resources);
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -96,10 +122,10 @@ public class DictDetailController {
 
     @Log("删除字典详情")
     @ApiOperation("删除字典详情")
-    @DeleteMapping(value = "/{id}")
+    @DeleteMapping
     @PreAuthorize("@el.check('dict:del')")
-    public ResponseEntity<Object> delete(@PathVariable Long id){
-        dictDetailService.removeById(id);
+    public ResponseEntity<Object> delete(@RequestBody Set<Long> ids){
+        dictDetailService.removeByIds(ids);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
