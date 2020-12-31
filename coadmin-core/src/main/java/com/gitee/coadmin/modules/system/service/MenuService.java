@@ -8,6 +8,7 @@ import com.gitee.coadmin.modules.system.service.dto.MenuQueryParam;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -29,6 +30,7 @@ public interface MenuService  extends BaseService<Menu> {
     * @return List<MenuDto>
     */
     List<MenuDto> queryAll(MenuQueryParam query);
+    Object getMenuTree(Long pid);
 
     Menu getById(Long id);
     MenuDto findById(Long id);
@@ -48,6 +50,8 @@ public interface MenuService  extends BaseService<Menu> {
      * @return /
      */
     Set<Menu> getDeleteMenus(List<Menu> menuList, Set<Menu> menuSet);
+
+    Map<String, Object> buildTree(MenuQueryParam query);
 
     /**
      * 构建菜单树

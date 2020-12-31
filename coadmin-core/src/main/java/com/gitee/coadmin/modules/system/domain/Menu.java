@@ -54,7 +54,7 @@ public class Menu extends DataEntity implements Serializable {
     private String component;
 
     @ApiModelProperty(value = "排序")
-    private Integer menuSort;
+    private Integer sort;
 
     @ApiModelProperty(value = "图标")
     private String icon;

@@ -32,12 +32,13 @@ public class MenuDto extends DataDto implements Serializable {
     private Integer type;
 
     private String title;
+    private String titleLetter;
 
     private String componentName;
 
     private String component;
 
-    private Integer menuSort;
+    private Integer sort;
 
     private String icon;
 

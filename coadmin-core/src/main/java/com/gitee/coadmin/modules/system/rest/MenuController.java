@@ -45,7 +45,7 @@ import java.util.*;
 @RestController
 @RequiredArgsConstructor
 @Api(tags = "系统：菜单管理")
-@RequestMapping("/api/menus")
+@RequestMapping("/api/menu")
 public class MenuController {
 
     private final MenuService menuService;
@@ -57,8 +57,9 @@ public class MenuController {
     @GetMapping
     @PreAuthorize("@el.check('menu:list')")
     public ResponseEntity<Object> query(MenuQueryParam criteria) throws Exception {
-        List<MenuDto> menuDtoList = menuService.queryAll(criteria, true);
-        return new ResponseEntity<>(PageUtil.toPage(menuDtoList, menuDtoList.size()),HttpStatus.OK);
+        //List<MenuDto> menuDtoList = menuService.queryAll(criteria, true);
+        //return new ResponseEntity<>(PageUtil.toPage(menuDtoList, menuDtoList.size()),HttpStatus.OK);
+        return new ResponseEntity<>(menuService.buildTree(criteria),HttpStatus.OK);
     }
 
     @ApiOperation("返回全部的菜单")

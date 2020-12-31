@@ -36,6 +36,7 @@ public class UserDto extends DataDto implements Serializable {
     //private Long deptId;
 
     private String username;
+    private String usernameLetter;
 
     private String nickName;
 

@@ -26,7 +26,7 @@ public interface MenuMapper extends CommonMapper<Menu> {
 
     @Select({"<script>SELECT m.* FROM sys_menu m LEFT OUTER JOIN sys_roles_menus rm ON m.id=rm.menu_id LEFT OUTER JOIN sys_role r ON rm.role_id=r.id WHERE r.id IN "
             + "<foreach item='item' index='index' collection='roleIds' open='(' separator=',' close=')'> #{item} </foreach>"
-            + " AND m.type &lt;&gt; #{type} ORDER BY m.menu_sort ASC</script>"})
+            + " AND m.type &lt;&gt; #{type} ORDER BY m.sort ASC</script>"})
     LinkedHashSet<Menu> selectLinkRole(@Param("roleIds") Set<Long> roleIds, @Param("type") Long type);
 
 }

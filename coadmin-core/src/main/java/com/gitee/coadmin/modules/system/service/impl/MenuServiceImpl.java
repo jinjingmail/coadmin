@@ -2,11 +2,14 @@ package com.gitee.coadmin.modules.system.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.gitee.coadmin.modules.system.service.dto.*;
 import lombok.AllArgsConstructor;
 import com.gitee.coadmin.modules.tools.utils.QueryHelpMybatisPlus;
 import com.gitee.coadmin.base.impl.BaseServiceImpl;
@@ -17,11 +20,8 @@ import com.gitee.coadmin.modules.system.domain.User;
 import com.gitee.coadmin.modules.system.service.MenuService;
 import com.gitee.coadmin.modules.system.service.RoleService;
 import com.gitee.coadmin.modules.system.service.RolesMenusService;
-import com.gitee.coadmin.modules.system.service.dto.MenuDto;
-import com.gitee.coadmin.modules.system.service.dto.MenuQueryParam;
 import com.gitee.coadmin.modules.system.domain.vo.MenuMetaVo;
 import com.gitee.coadmin.modules.system.domain.vo.MenuVo;
-import com.gitee.coadmin.modules.system.service.dto.RoleSmallDto;
 import com.gitee.coadmin.modules.system.service.mapper.MenuMapper;
 import com.gitee.coadmin.modules.system.service.mapper.UserMapper;
 import com.gitee.coadmin.utils.ConvertUtil;
@@ -29,6 +29,7 @@ import com.gitee.coadmin.utils.FileUtil;
 import com.gitee.coadmin.utils.RedisUtils;
 import com.gitee.coadmin.utils.ValidationUtil;
 import com.gitee.coadmin.utils.enums.MenuType;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -49,6 +50,7 @@ import java.util.stream.Collectors;
 * @author jinjin
 * @date 2020-09-25
 */
+@Slf4j
 @Service
 @AllArgsConstructor
 @CacheConfig(cacheNames = "menu")
@@ -72,9 +74,10 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
         if (isQuery && notEmpty) {
             query.setPidIsNull(null);
         }
-        QueryWrapper wrapper = QueryHelpMybatisPlus.getPredicate(query);
-        wrapper.orderByAsc("menu_sort");
-        return ConvertUtil.convertList(menuMapper.selectList(wrapper), MenuDto.class);
+        QueryWrapper<Menu> wrapper = QueryHelpMybatisPlus.getPredicate(query);
+        LambdaQueryWrapper<Menu> lw = wrapper.lambda();
+        lw.orderByAsc(Menu::getSort);
+        return ConvertUtil.convertList(menuMapper.selectList(lw), MenuDto.class);
     }
 
     @Override
@@ -124,8 +127,11 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
                 throw new BadRequestException("外链必须以http://或者https://开头");
             }
         }
+        /*if (resources.getPid() != null && resources.getPid() == 0) {
+            resources.setPid(null);
+        }*/
         resources.setSubCount(resources.getSubCount() == null ? 0 : resources.getSubCount());
-        resources.setMenuSort(resources.getMenuSort() == null ? 999 : resources.getMenuSort());
+        resources.setSort(resources.getSort() == null ? 999 : resources.getSort());
         int ret = menuMapper.insert(resources);
 
         // 计算子节点数目
@@ -165,7 +171,7 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
             throw new EntityExistException(Menu.class, "name", resources.getTitle());
         }
 
-        if (resources.getPid().equals(0L)) {
+        if (resources.getPid() != null && resources.getPid().equals(0L)) {
             resources.setPid(null);
         }
 
@@ -197,7 +203,7 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
         menu.setIcon(resources.getIcon());
         menu.setIFrame(resources.getIFrame());
         menu.setPid(resources.getPid());
-        menu.setMenuSort(resources.getMenuSort());
+        menu.setSort(resources.getSort());
         menu.setCache(resources.getCache());
         menu.setHidden(resources.getHidden());
         menu.setType(resources.getType());
@@ -278,11 +284,11 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
         List<Menu> menus;
         if (pid != null && !pid.equals(0L)) {
             QueryWrapper<Menu> query = new QueryWrapper<Menu>();
-            query.lambda().eq(Menu::getPid, pid).orderByAsc(Menu::getMenuSort);
+            query.lambda().eq(Menu::getPid, pid).orderByAsc(Menu::getSort);
             menus = menuMapper.selectList(query);
         } else {
             QueryWrapper<Menu> query = new QueryWrapper<Menu>();
-            query.lambda().isNull(Menu::getPid).orderByAsc(Menu::getMenuSort);
+            query.lambda().isNull(Menu::getPid).orderByAsc(Menu::getSort);
             menus = menuMapper.selectList(query);
         }
         return ConvertUtil.convertList(menus, MenuDto.class);
@@ -292,13 +298,60 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
     public List<MenuDto> getSuperior(MenuDto menuDto, List<Menu> menus) {
         QueryWrapper<Menu> query = new QueryWrapper<Menu>();
         if (menuDto.getPid() == null) {
-            query.lambda().isNull(Menu::getPid).orderByAsc(Menu::getMenuSort);
+            query.lambda().isNull(Menu::getPid).orderByAsc(Menu::getSort);
             menus.addAll(menuMapper.selectList(query));
             return ConvertUtil.convertList(menus, MenuDto.class);
         }
-        query.lambda().eq(Menu::getPid, menuDto.getPid()).orderByAsc(Menu::getMenuSort);
+        query.lambda().eq(Menu::getPid, menuDto.getPid()).orderByAsc(Menu::getSort);
         menus.addAll(menuMapper.selectList(query));
         return getSuperior(findById(menuDto.getPid()), menus);
+    }
+
+    @Override
+    public Map<String, Object> buildTree(MenuQueryParam query) {
+
+        List<MenuDto> tree = new ArrayList<>();
+        if (query.getPid() == null) {
+            QueryWrapper<Menu> wrapper1 = QueryHelpMybatisPlus.getPredicate(query);
+            final LambdaQueryWrapper<Menu> wrapper = wrapper1.lambda();
+            wrapper.orderByAsc(Menu::getSort);
+            LambdaQueryWrapper<Menu> wrapper2 = wrapper.clone();
+            wrapper2.isNull(Menu::getPid);
+            List<MenuDto> depts = ConvertUtil.convertList(menuMapper.selectList(wrapper2), MenuDto.class);
+            for (MenuDto dto: depts) {
+                if (dto.getSubCount() > 0) {
+                    dto.setChildren(getChildren(wrapper, dto.getId()));
+                }
+                tree.add(dto);
+            }
+        } else {
+            Long pid = query.getPid();
+            query.setPid(null);
+            QueryWrapper<Menu> w = QueryHelpMybatisPlus.getPredicate(query);
+            final LambdaQueryWrapper<Menu> wrapper = w.lambda();
+            wrapper.orderByAsc(Menu::getSort);
+            tree = getChildren(wrapper, pid);
+        }
+        Map<String, Object> map = new HashMap<>(2);
+        map.put("totalElements", tree.size());
+        map.put("content", tree);
+        return map;
+    }
+    private List<MenuDto> getChildren(final LambdaQueryWrapper<Menu> wrapperOrigin, Long pid) {
+        LambdaQueryWrapper<Menu> wrapper = wrapperOrigin.clone();
+        if (pid != null) {
+            wrapper.eq(Menu::getPid, pid);
+        }
+        List<MenuDto> dtos = ConvertUtil.convertList(menuMapper.selectList(wrapper), MenuDto.class);
+        if (dtos != null) {
+            for (MenuDto dto: dtos) {
+                if (dto.getSubCount() > 0) {
+                    dto.setChildren(getChildren(wrapperOrigin, dto.getId()));
+                }
+            }
+        }
+        log.info("pid:{} getChildren={}", pid, JSONUtil.toJsonStr(dtos));
+        return dtos;
     }
 
     @Override
@@ -377,6 +430,9 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
     }
 
     private void updateSubCnt(Long menuId) {
+        if (menuId == null) {
+            return;
+        }
         QueryWrapper<Menu> query = new QueryWrapper<Menu>();
         query.lambda().eq(Menu::getPid, menuId);
         int count = menuMapper.selectCount(query);
@@ -412,7 +468,7 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
               map.put("菜单标题", menu.getTitle());
               map.put("组件名称", menu.getComponentName());
               map.put("组件", menu.getComponent());
-              map.put("排序", menu.getMenuSort());
+              map.put("排序", menu.getSort());
               map.put("图标", menu.getIcon());
               map.put("链接地址", menu.getPath());
               map.put("是否外链", menu.getIFrame());

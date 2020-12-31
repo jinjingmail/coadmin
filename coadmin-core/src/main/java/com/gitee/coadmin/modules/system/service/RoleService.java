@@ -57,7 +57,7 @@ public interface RoleService  extends BaseService<Role> {
 
     /**
      * 根据角色查询角色级别
-     * @param roles /
+     * @param roleIds /
      * @return /
      */
     Integer findByRoles(Set<Long> roleIds);
