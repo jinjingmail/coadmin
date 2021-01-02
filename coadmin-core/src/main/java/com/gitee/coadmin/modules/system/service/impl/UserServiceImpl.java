@@ -95,26 +95,14 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
 
             userDtos.forEach(user -> {
                 if (usersDeptsMap.containsKey(user.getId())) {
-                    user.setDepts(usersDeptsMap.get(user.getId()).stream().map(ud -> {
-                        DeptSmallDto dept = new DeptSmallDto();
-                        dept.setId(ud.getDeptId());
-                        return dept;
-                    }).collect(Collectors.toSet()));
+                    user.setDepts(usersDeptsMap.get(user.getId()).stream().map(UsersDepts::getDeptId).collect(Collectors.toSet()));
                 }
 
                 if (usersRolesMap.containsKey(user.getId())) {
-                    user.setRoles(usersRolesMap.get(user.getId()).stream().map(ur -> {
-                        RoleSmallDto role = new RoleSmallDto();
-                        role.setId(ur.getRoleId());
-                        return role;
-                    }).collect(Collectors.toSet()));
+                    user.setRoles(usersRolesMap.get(user.getId()).stream().map(UsersRoles::getRoleId).collect(Collectors.toSet()));
                 }
                 if (usersJobsMap.containsKey(user.getId())) {
-                    user.setJobs(usersJobsMap.get(user.getId()).stream().map(uj -> {
-                        JobSmallDto job = new JobSmallDto();
-                        job.setId(uj.getJobId());
-                        return job;
-                    }).collect(Collectors.toSet()));
+                    user.setJobs(usersJobsMap.get(user.getId()).stream().map(UsersJobs::getJobId).collect(Collectors.toSet()));
                 }
             });
         }
@@ -190,9 +178,11 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
                 throw new EntityExistException(User.class, "email", resources.getEmail());
             }
         }
-        user = getByPhone(resources.getPhone());
-        if (user != null) {
-            throw new EntityExistException(User.class, "phone", resources.getPhone());
+        if (StrUtil.isNotBlank(resources.getEmail())) {
+            user = getByPhone(resources.getPhone());
+            if (user != null) {
+                throw new EntityExistException(User.class, "phone", resources.getPhone());
+            }
         }
 
         user = com.gitee.coadmin.utils.ConvertUtil.convert(resources, User.class);
@@ -205,27 +195,27 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
         final Long userId = user.getId();
 
         if (CollectionUtils.isNotEmpty(resources.getDepts())) {
-            resources.getDepts().forEach(dept -> {
+            resources.getDepts().forEach(deptId -> {
                 UsersDepts ud = new UsersDepts();
                 ud.setUserId(userId);
-                ud.setDeptId(dept.getId());
+                ud.setDeptId(deptId);
                 usersDeptsMapper.insert(ud);
             });
         }
 
         if (CollectionUtils.isNotEmpty(resources.getRoles())) {
-            resources.getRoles().forEach(role -> {
+            resources.getRoles().forEach(roleId -> {
                 UsersRoles ur = new UsersRoles();
                 ur.setUserId(userId);
-                ur.setRoleId(role.getId());
+                ur.setRoleId(roleId);
                 usersRolesMapper.insert(ur);
             });
         }
         if (CollectionUtils.isNotEmpty(resources.getJobs())) {
-            resources.getJobs().forEach(job -> {
+            resources.getJobs().forEach(jobId -> {
                 UsersJobs uj = new UsersJobs();
                 uj.setUserId(userId);
-                uj.setJobId(job.getId());
+                uj.setJobId(jobId);
                 usersJobsMapper.insert(uj);
             });
         }
@@ -267,30 +257,30 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
         }
         if (CollectionUtils.isNotEmpty(resources.getRoles())) {
             usersRolesService.removeByUserId(resources.getId());
-            resources.getRoles().stream().forEach(role -> {
+            resources.getRoles().forEach(roleId -> {
                 UsersRoles ur = new UsersRoles();
                 ur.setUserId(resources.getId());
-                ur.setRoleId(role.getId());
+                ur.setRoleId(roleId);
                 usersRolesMapper.insert(ur);
             });
         }
 
         if (CollectionUtils.isNotEmpty(resources.getJobs())) {
             usersJobsService.removeByUserId(resources.getId());
-            resources.getJobs().stream().forEach(job -> {
+            resources.getJobs().forEach(jobId -> {
                 UsersJobs uj = new UsersJobs();
                 uj.setUserId(resources.getId());
-                uj.setJobId(job.getId());
+                uj.setJobId(jobId);
                 usersJobsMapper.insert(uj);
             });
         }
 
         if (CollectionUtils.isNotEmpty(resources.getDepts())) {
             usersDeptsService.removeByUserId(resources.getId());
-            resources.getDepts().stream().forEach(dept -> {
+            resources.getDepts().forEach(deptId -> {
                 UsersDepts ud = new UsersDepts();
                 ud.setUserId(resources.getId());
-                ud.setDeptId(dept.getId());
+                ud.setDeptId(deptId);
                 usersDeptsMapper.insert(ud);
             });
         }

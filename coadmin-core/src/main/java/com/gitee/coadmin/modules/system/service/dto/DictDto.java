@@ -18,7 +18,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class DictDto extends DataDto implements Serializable {
 
-    @JsonSerialize(using= ToStringSerializer.class) // 防止精度丢失
     private Long id;
 
     //     private List<DictDetailDto> dictDetails;

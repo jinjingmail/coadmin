@@ -19,10 +19,8 @@ import java.util.Objects;
 public class MenuDto extends DataDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @JsonSerialize(using= ToStringSerializer.class) // 防止精度丢失
     private Long id;
 
-    @JsonSerialize(using= ToStringSerializer.class) // 防止精度丢失
     private Long pid;
 
     private List<MenuDto> children;

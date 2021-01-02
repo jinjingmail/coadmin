@@ -19,7 +19,6 @@ import java.util.Set;
 public class RoleDto extends DataDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @JsonSerialize(using= ToStringSerializer.class) // 防止精度丢失
     private Long id;
 
     private Set<MenuDto> menus;
