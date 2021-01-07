@@ -19,6 +19,7 @@
         <module>app-demo</module>
         <module>app-demo-dao-share</module>
         <module>app-dao-share</module>
+        <module>coadmin-test</module>
     </modules>
 
     <name>CoAdmin 后台管理</name>

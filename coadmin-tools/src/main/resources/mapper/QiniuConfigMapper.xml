@@ -9,6 +9,6 @@
   </sql>
   -->
     <update id="updateType">
-        UPDATE tool_qiniu_config SET type=#{type} WHERE config_id=1
+        UPDATE tool_qiniu_config SET type=#{type} WHERE id=1
     </update>
 </mapper>

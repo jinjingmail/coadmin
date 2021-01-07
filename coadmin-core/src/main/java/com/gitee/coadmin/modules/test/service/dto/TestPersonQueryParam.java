@@ -1,26 +1,32 @@
-package com.gitee.coadmin.modules.quartz.service.dto;
+package com.gitee.coadmin.modules.test.service.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import java.util.List;
+import java.util.Date;
 import com.gitee.coadmin.annotation.Query;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.Date;
-import java.util.List;
-
 /**
 * @author jinjin
-* @date 2020-09-27
+* @date 2021-01-07
 */
 @Getter
 @Setter
-public class QuartzLogQueryParam {
+public class TestPersonQueryParam{
 
+    /** 精确 */
     @Query
-    private Boolean isSuccess;
+    private Long id;
 
-    @Query(blurry = "id,jobName,beanName,methodName")
-    private String blurry;
+    /** 精确 */
+    @Query
+    private String gender;
+
+    /** 精确 */
+    @Query
+    private Date birthday;
+
 
     /** BETWEEN */
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")

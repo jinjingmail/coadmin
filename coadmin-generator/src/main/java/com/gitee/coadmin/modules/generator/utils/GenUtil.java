@@ -20,6 +20,7 @@ import cn.hutool.extra.template.*;
 import com.gitee.coadmin.modules.generator.domain.ColumnInfo;
 import com.gitee.coadmin.modules.generator.domain.GenConfig;
 import com.gitee.coadmin.utils.FileUtil;
+import com.gitee.coadmin.utils.PinyinUtil;
 import com.gitee.coadmin.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ObjectUtils;
@@ -224,6 +225,7 @@ public class GenUtil {
         Map<String, Object> genMap = new HashMap<>(16);
         // 接口别名
         genMap.put("apiAlias", genConfig.getApiAlias());
+        genMap.put("apiAliasLetter", PinyinUtil.getAllFirstPinyin(genConfig.getApiAlias()));
         // 包名称
         genMap.put("package", genConfig.getPack());
         // 模块名称
@@ -234,6 +236,8 @@ public class GenUtil {
         genMap.put("date", LocalDate.now().toString());
         // 表名
         genMap.put("tableName", genConfig.getTableName());
+        genMap.put("menuPid", genConfig.getMenuPid());
+        genMap.put("hasMenuPid", genConfig.getMenuPid() != null);
         // 大写开头的类名
         String className = StringUtils.toCapitalizeCamelCase(genConfig.getTableName());
         // 小写开头的类名
@@ -319,11 +323,11 @@ public class GenUtil {
             // 不为空
             listMap.put("istNotNull", column.getNotNull());
             // 字段列表显示
-            listMap.put("columnShow", column.getListShow());
+            listMap.put("listShow", column.getListShow());
             // 表单显示
             listMap.put("formShow", column.getFormShow());
             // 表单组件类型
-            listMap.put("formType", StringUtils.isNotBlank(column.getFormType()) ? column.getFormType() : "Input");
+            listMap.put("formType", StringUtils.isNotBlank(column.getFormType()) ? column.getFormType() : "showOnly");
             // 小写开头的字段名称
             listMap.put("changeColumnName", changeColumnName);
             //大写开头的字段名称
@@ -340,7 +344,7 @@ public class GenUtil {
                 isNotNullColumns.add(listMap);
             }
             // 判断是否有查询，如有则把查询的字段set进columnQuery
-            if (!StringUtils.isBlank(column.getQueryType())) {
+            if (StringUtils.isNotBlank(column.getQueryType())) {
                 // 查询类型
                 listMap.put("queryType", column.getQueryType());
                 // 是否存在查询
@@ -355,6 +359,7 @@ public class GenUtil {
                 }
                 if ("between".equalsIgnoreCase(column.getQueryType())) {
                     betweens.add(listMap);
+                    queryColumns.add(listMap);
                 } else {
                     // 添加到查询列表中
                     queryColumns.add(listMap);

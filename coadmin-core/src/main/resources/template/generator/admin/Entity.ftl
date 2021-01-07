@@ -60,20 +60,14 @@ public class ${className} extends BaseEntity {
     </#if>
     <#if column.dateAnnotation??>
     <#if column.dateAnnotation = 'CreationTimestamp'>
-    @CreationTimestamp
+    @TableField(fill= FieldFill.INSERT)
     <#else>
-    @UpdateTimestamp
-    </#if>
-    </#if>
-    <#if column.changeColumnName = 'updateTime'|| column.changeColumnName = 'updateDate' || column.changeColumnName = 'updateBy'>
     @TableField(fill= FieldFill.INSERT_UPDATE)
     </#if>
-    <#if column.changeColumnName = 'createTime' || column.changeColumnName = 'createDate' || column.changeColumnName = 'createBy'>
-    @TableField(fill= FieldFill.INSERT)
     </#if>
     <#if column.changeColumnName = 'delFlag'>
-    @TableLogic
-    @TableField(fill=FieldFill.INSERT_UPDATE)
+    //@TableLogic
+    //@TableField(fill=FieldFill.INSERT_UPDATE)
     private Boolean ${column.changeColumnName};
     <#else>
     private ${column.columnType} ${column.changeColumnName};

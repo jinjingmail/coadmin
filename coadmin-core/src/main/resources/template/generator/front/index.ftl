@@ -1,143 +1,267 @@
-<#--noinspection ALL-->
 <template>
-  <div class="app-container">
-    <!--工具栏-->
-    <div class="head-container">
-    <#if hasQuery>
-      <div v-if="crud.props.searchToggle">
-        <!-- 搜索 -->
-        <#if queryColumns??>
-          <#list queryColumns as column>
-            <#if column.queryType != 'BetWeen'>
-        <label class="el-form-item-label"><#if column.remark != ''>${column.remark}<#else>${column.changeColumnName}</#if></label>
-        <el-input v-model="query.${column.changeColumnName}" clearable placeholder="<#if column.remark != ''>${column.remark}<#else>${column.changeColumnName}</#if>" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
-            </#if>
-          </#list>
-        </#if>
-  <#if betweens??>
-    <#list betweens as column>
-      <#if column.queryType = 'BetWeen'>
-        <date-range-picker
-          v-model="query.${column.changeColumnName}"
-          start-placeholder="${column.changeColumnName}Start"
-          end-placeholder="${column.changeColumnName}Start"
-          class="date-item"
-        />
+  <div>
+    <coadmin-dialog title="查找" no-max seamless ref="search" @before-hide="crud.props.filterTable=''">
+      <q-input style="width:180px" placeholder="在当前页查找" dense outlined v-model="crud.props.filterTable" clearable class="q-mx-sm q-mt-none q-mb-sm"/>
+    </coadmin-dialog>
+
+    <!-- 编辑表单对话框 -->
+    <coadmin-dialog
+      ref="formDialog"
+      :value="crud.status.cu > 0"
+      :title="crud.status.title"
+      no-backdrop-dismiss
+      @before-hide="crud.cancelCU"
+      card-style="width:600px; max-width:95vw;"
+    >
+      <coadmin-form
+        ref="form"
+        label-width="small"
+        label-align="right"
+        class="q-pa-md row q-col-gutter-x-xl q-col-gutter-y-md">
+<#if columns??>
+  <#list columns as column>
+    <#if column.formShow>
+        <#assign formLabel="${column.changeColumnName}"/>
+        <#if column.remark != ''><#assign formLabel="${column.remark}"/></#if>
+      <#if column.formType = 'Input'>
+        <coadmin-input class="col-12" form-label="${formLabel}" v-model="form.${column.changeColumnName}" :disable="!!crud.status.view"
+              <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>/>
+      <#elseif column.formType = 'Textarea'>
+        <coadmin-input class="col-12" form-label="${formLabel}" v-model="form.${column.changeColumnName}" :disable="!!crud.status.view" type="textarea"
+              <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>/>
+      <#elseif column.formType = 'Radio'>
+        <coadmin-option-group
+            class="col-12"
+            form-label="${formLabel}"
+            v-model="form.${column.changeColumnName}"
+            value-to-string
+            :disable="!!crud.status.view"
+            inline
+            :options='dict.<#if (column.dictName)?? && (column.dictName)!="">${column.dictName}<#else>未设置字典，请手动设置 Radio</#if>'
+            type="radio"
+            <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>/>
+      <#elseif column.formType = 'Checkbox'>
+        <coadmin-option-group
+            class="col-12"
+            form-label="${formLabel}"
+            v-model="form.${column.changeColumnName}"
+            value-to-string
+            :disable="!!crud.status.view"
+            inline
+            :options='dict.<#if (column.dictName)?? && (column.dictName)!="">${column.dictName}<#else>未设置字典，请手动设置 Checkbox</#if>'
+            type="checkbox"
+            <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>/>
+      <#elseif column.formType = 'Select'>
+        <coadmin-select
+            v-model="form.${column.changeColumnName}"
+            class="col-12"
+            form-label="${formLabel}"
+            outlined
+            :options='dict.<#if (column.dictName)?? && (column.dictName)!="">${column.dictName}<#else>未设置字典，请手动设置 Select</#if>'
+            :disable="!!crud.status.view"
+            no-filter
+            clearable
+            emit-value
+            map-options
+            <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>/>
+      <#elseif column.formType = 'Date'>
+        <coadmin-date-select
+            class="col-12"
+            form-label="${formLabel}"
+            :value="form.${column.changeColumnName}"
+            @input="val => form.${column.changeColumnName}=val"
+            clearable
+            :disable="!!crud.status.view"
+           <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if> >
+          <template v-slot:append>
+            <q-icon name="event" />
+          </template>
+        </coadmin-date-select>
+      <#elseif column.formType = 'DateRange'>
+        <coadmin-date-select
+            class="col-12"
+            form-label="${formLabel}"
+            v-model="form.${column.changeColumnName}"
+            range
+            :default-time="[' 00:00:00', ' 23:59:59']"
+            clearable
+            :disable="!!crud.status.view"
+           <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if> >
+          <template v-slot:append>
+            <q-icon name="event" />
+          </template>
+        </coadmin-date-select>
+      <#else>
+        <coadmin-form-item class="col-12" form-label="${formLabel}">
+          <div class="q-pt-xs"><#if column.columnType = 'Date'>{{parseTime(form.${column.changeColumnName)}}}<#else>{{form.${column.changeColumnName}}}</#if></div>
+        </coadmin-form-item>
       </#if>
-    </#list>
-  </#if>
-        <rrOperation :crud="crud" />
-      </div>
     </#if>
-      <!--如果想在工具栏加入更多按钮，可以使用插槽方式， slot = 'left' or 'right'-->
-      <crudOperation :permission="permission" />
-      <!--表单组件-->
-      <el-dialog :close-on-click-modal="false" :before-close="crud.cancelCU" :visible.sync="crud.status.cu > 0" :title="crud.status.title" width="500px">
-        <el-form ref="form" :model="form" <#if isNotNullColumns??>:rules="rules"</#if> size="small" label-width="80px">
-    <#if columns??>
-      <#list columns as column>
-        <#if column.formShow>
-          <el-form-item label="<#if column.remark != ''>${column.remark}<#else>${column.changeColumnName}</#if>"<#if column.istNotNull> prop="${column.changeColumnName}"</#if>>
-            <#if column.formType = 'Input'>
-            <el-input v-model="form.${column.changeColumnName}" style="width: 370px;" />
-            <#elseif column.formType = 'Textarea'>
-            <el-input v-model="form.${column.changeColumnName}" :rows="3" type="textarea" style="width: 370px;" />
-            <#elseif column.formType = 'Radio'>
-              <#if (column.dictName)?? && (column.dictName)!="">
-            <el-radio v-model="form.${column.changeColumnName}" v-for="item in dict.${column.dictName}" :key="item.id" :label="item.value">{{ item.label }}</el-radio>
-              <#else>
-                未设置字典，请手动设置 Radio
-              </#if>
-            <#elseif column.formType = 'Select'>
-              <#if (column.dictName)?? && (column.dictName)!="">
-            <el-select v-model="form.${column.changeColumnName}" filterable placeholder="请选择">
-              <el-option
-                v-for="item in dict.${column.dictName}"
-                :key="item.id"
-                :label="item.label"
-                :value="item.value" />
-            </el-select>
-              <#else>
-            未设置字典，请手动设置 Select
-              </#if>
-            <#else>
-            <el-date-picker v-model="form.${column.changeColumnName}" type="datetime" style="width: 370px;" />
-            </#if>
-          </el-form-item>
-        </#if>
-      </#list>
+  </#list>
+</#if>
+      </coadmin-form>
+      <q-card-actions class="q-pa-md" align="right">
+        <q-btn label="取消" flat v-close-popup/>
+        <q-btn label="保存" icon="check" color="primary" v-if="!crud.status.view" @click="crud.submitCU"
+               :loading="crud.status.cu === crud.STATUS_PROCESSING" :disable="crud.status.cu === crud.STATUS_PROCESSING"/>
+      </q-card-actions>
+    </coadmin-dialog>
+
+    <coadmin-table
+        ref="table"
+        row-key="id"
+        dense
+        :data="crud.data"
+        :columns="crud.columns"
+        :visible-columns="crud.visibleColumns"
+        :title="crud.title"
+        :loading="crud.loading"
+        selection="single"
+        :selected.sync="crud.selections"
+        :filter="crud.props.filterTable"
+        @row-click="(evt, row, index) => crud.selections = [row]"
+    >
+      <template v-slot:top-right="props">
+        <div class='row q-col-gutter-x-sm q-col-gutter-y-xs q-pa-xs full-width'>
+<#if hasQuery>
+  <#list queryColumns as column>
+    <#assign formLabel="${column.changeColumnName}"/>
+    <#if column.remark != ''><#assign formLabel="${column.remark}"/></#if>
+
+    <#if column.formType = 'Radio' || column.formType = 'Checkbox' || column.formType = 'Select'>
+          <coadmin-select
+              v-model="query.${column.changeColumnName}"
+              placeholder="${formLabel}"
+              content-style="width:120px"
+              outlined
+              no-filter
+              use-input
+              fill-input
+              hide-selected
+              :options='dict.<#if (column.dictName)?? && (column.dictName)!="">${column.dictName}<#else>未设置字典，请手动设置 Select</#if>'
+              @input="crud.toQuery()"
+              clearable
+              emit-value
+              map-options
+          />
+    <#elseif column.formType ='Date' || column.formType ='DateRange' || column.columnType = 'Date'>
+      <#if column.queryType = 'BetWeen'>
+          <coadmin-date-select
+              v-model="query.${column.changeColumnName}"
+              placeholder="${formLabel}"
+              content-style="width:200px"
+              range
+              :default-time="[' 00:00:00', ' 23:59:59']"
+              @input="crud.toQuery()"
+              clearable
+          />
+      <#else>
+          <coadmin-date-select
+              v-model="query.${column.changeColumnName}"
+              placeholder="${formLabel}"
+              content-style="width:120px"
+              @input="crud.toQuery()"
+              clearable
+          />
+      </#if>
+    <#else>
+          <coadmin-input
+              v-model="query.${column.changeColumnName}"
+              placeholder="${formLabel}"
+              content-style="width:120px"
+          />
     </#if>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button type="text" @click="crud.cancelCU">取消</el-button>
-          <el-button :loading="crud.cu === 2" type="primary" @click="crud.submitCU">确认</el-button>
+  </#list>
+          <div>
+            <q-btn dense padding="xs sm" color="primary" icon="search" @click="crud.toQuery()" />
+          </div>
+          <q-space/>
+</#if>
+          <!--如果想在工具栏加入更多按钮，可以使用插槽方式， 'start' or 'end'-->
+          <crud-operation :permission="permission" />
+          <div>
+            <q-btn-dropdown dense color="primary" class="btn-dropdown-hide-droparrow" icon="apps" auto-close>
+              <crud-more :tableSlotTopProps="props">
+                <template v-slot:start>
+                  <q-btn flat align="left" label="在当前页查找" icon="find_in_page" @click.native="$refs.search.show()" />
+                  <q-separator/>
+                </template>
+              </crud-more>
+            </q-btn-dropdown>
+          </div>
         </div>
-      </el-dialog>
-      <!--表格渲染-->
-      <el-table ref="table" v-loading="crud.loading" :data="crud.data" size="small" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
-        <el-table-column type="selection" width="55" />
-        <#if columns??>
-            <#list columns as column>
-            <#if column.columnShow>
-          <#if (column.dictName)?? && (column.dictName)!="">
-        <el-table-column prop="${column.changeColumnName}" label="<#if column.remark != ''>${column.remark}<#else>${column.changeColumnName}</#if>">
-          <template slot-scope="scope">
-            {{ dict.label.${column.dictName}[scope.row.${column.changeColumnName}] }}
-          </template>
-        </el-table-column>
-          <#elseif column.columnType != 'Timestamp'>
-        <el-table-column prop="${column.changeColumnName}" label="<#if column.remark != ''>${column.remark}<#else>${column.changeColumnName}</#if>" />
-                <#else>
-        <el-table-column prop="${column.changeColumnName}" label="<#if column.remark != ''>${column.remark}<#else>${column.changeColumnName}</#if>">
-          <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.${column.changeColumnName}) }}</span>
-          </template>
-        </el-table-column>
-                </#if>
-            </#if>
-            </#list>
-        </#if>
-        <el-table-column v-permission="['admin','${changeClassName}:edit','${changeClassName}:del']" label="操作" width="150px" align="center">
-          <template slot-scope="scope">
-            <udOperation
-              :data="scope.row"
+      </template>
+
+<#if columns??>
+  <#list columns as column>
+    <#if column.columnType = 'Date'>
+      <template v-slot:body-cell-${column.changeColumnName}="props">
+        <q-td key="${column.changeColumnName}" :props="props">
+          {{formatTime(props.row.${column.changeColumnName})}}
+        </q-td>
+      </template>
+      <#elseif (column.dictName)?? && (column.dictName)!="">
+      <template v-slot:body-cell-${column.changeColumnName}="props">
+        <q-td key="${column.changeColumnName}" :props="props">
+          {{dict.label.${column.dictName}[props.row.${column.changeColumnName}]}}
+        </q-td>
+      </template>
+    </#if>
+  </#list>
+</#if>
+
+      <template v-slot:body-cell-action="props">
+        <q-td key="action" :props="props">
+          <crud-row
+              flat
+              :type="$q.screen.gt.xs?'button':'menu'"
+              :data="props.row"
               :permission="permission"
-            />
-          </template>
-        </el-table-column>
-      </el-table>
-      <!--分页组件-->
-      <pagination />
-    </div>
+              no-add
+          />
+        </q-td>
+      </template>
+
+      <template v-slot:pagination>
+        <crud-pagination />
+      </template>
+
+    </coadmin-table>
   </div>
 </template>
 
 <script>
-import crud${className} from '@/api/${changeClassName}'
+<#if hasDict>import { mapGetters } from 'vuex'</#if>
 import CRUD, { presenter, header, form, crud } from '@crud/crud'
-import rrOperation from '@crud/RR.operation'
 import crudOperation from '@crud/CRUD.operation'
-import udOperation from '@crud/UD.operation'
-import pagination from '@crud/Pagination'
+import crudPagination from '@crud/CRUD.pagination'
+import crudRow from '@crud/CRUD.row'
+import crudMore from '@crud/CRUD.more'
+import crud${className} from '@/api/${changeClassName}'
 
 const defaultForm = { <#if columns??><#list columns as column>${column.changeColumnName}: null<#if column_has_next>, </#if></#list></#if> }
+
+const visibleColumns = [<#if columns??><#list columns as column><#if column.listShow>'${column.changeColumnName}', </#if></#list></#if>'action']
+// 参考：https://quasar.dev/vue-components/table#Defining-the-columns
+const columns = [
+<#if columns??><#list columns as column>
+  <#assign formLabel="${column.changeColumnName}"/>
+  <#if column.remark != ''><#assign formLabel="${column.remark}"/></#if>
+  { name: '${column.changeColumnName}', field: '${column.changeColumnName}', label: '${formLabel}', align: 'left' },
+</#list></#if>
+  { name: 'action', label: '操作', align: 'center', required: false, sortable: false }
+]
+
 export default {
   name: '${className}',
-  components: { pagination, crudOperation, rrOperation, udOperation },
-  mixins: [presenter(), header(), form(defaultForm), crud()],
-  <#if hasDict>
-  dicts: [<#if hasDict??><#list dicts as dict>'${dict}'<#if dict_has_next>, </#if></#list></#if>],
-  </#if>
+  components: { crudOperation, crudMore, crudPagination, crudRow },
   cruds() {
-    return CRUD({ title: '${apiAlias}', url: 'api/${changeClassName}', idField: '${pkChangeColName}', sort: '${pkChangeColName},desc', crudMethod: { ...crud${className} }})
+    return CRUD({ columns, visibleColumns, title: '${apiAlias}', idField: '${pkChangeColName}', sort: ['${pkChangeColName},desc'], url: 'api/${changeClassName}', crudMethod: { ...crud${className} } })
   },
-  data() {
+  mixins: [presenter(), header(), form(defaultForm), crud()],
+  data () {
     return {
-      permission: {
-        add: ['admin', '${changeClassName}:add'],
-        edit: ['admin', '${changeClassName}:edit'],
-        del: ['admin', '${changeClassName}:del']
-      },
+      /*
       rules: {
         <#if isNotNullColumns??>
         <#list isNotNullColumns as column>
@@ -148,24 +272,22 @@ export default {
         </#if>
         </#list>
         </#if>
-      }<#if hasQuery>,
-      queryTypeOptions: [
-        <#if queryColumns??>
-        <#list queryColumns as column>
-        <#if column.queryType != 'BetWeen'>
-        { key: '${column.changeColumnName}', display_name: '<#if column.remark != ''>${column.remark}<#else>${column.changeColumnName}</#if>' }<#if column_has_next>,</#if>
-        </#if>
-        </#list>
-        </#if>
-      ]
-      </#if>
+      },*/
+      permission: {
+        add: ['admin', '${changeClassName}:add'],
+        edit: ['admin', '${changeClassName}:edit'],
+        del: ['admin', '${changeClassName}:del']
+      }
     }
   },
+<#if hasDict>
+  computed: {
+    ...mapGetters('permission', [
+      'dict'
+    ])
+  },
+</#if>
   methods: {
-    // 钩子：在获取表格数据之前执行，false 则代表不获取数据
-    [CRUD.HOOK.beforeRefresh]() {
-      return true
-    }
   }
 }
 </script>

@@ -15,9 +15,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Setter
 public class QuartzJobQueryParam{
 
-    /** 模糊 */
-    @Query(type = Query.Type.INNER_LIKE)
-    private String jobName;
+    @Query(blurry = "id,jobName,beanName,methodName")
+    private String blurry;
 
     /** BETWEEN */
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")

@@ -75,6 +75,9 @@ public class GenConfig implements Serializable {
     @ApiModelProperty(value = "表前缀")
     private String prefix;
 
+    @ApiModelProperty(value = "上级菜单")
+    private Long menuPid;
+
     @ApiModelProperty(value = "是否覆盖")
     private Boolean cover = false;
 }

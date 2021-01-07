@@ -3,6 +3,7 @@
 [https://github.com/jinjingmail/coadmin-web](coadmin-web) 对应前端vue代码。
 
 ** TODO **
+  - TODO BUG 定时任务不能正常暂停
   - TODO RoleDto 的 menus和depts字段，使用简化的类型
   - TODO mybatis plus 不能通过 updateById 将一个值改为null
   - TODO 删除菜单，同步删除子菜单、菜单-角色关联

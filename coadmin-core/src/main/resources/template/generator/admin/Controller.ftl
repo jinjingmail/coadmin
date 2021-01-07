@@ -15,6 +15,24 @@ import org.springframework.web.bind.annotation.*;
 import io.swagger.annotations.*;
 import java.util.Set;
 
+/*  添加菜单的 SQL
+<#if hasMenuPid>
+INSERT INTO sys_menu(pid, sub_count, `type`, title, title_letter, component_name, `component`, sort, `path`, i_frame, `cache`, hidden, permission)
+    VALUES (${menuPid}, 4, 1, '${apiAlias}管理', '${apiAliasLetter}gl', '${className}', '${changeClassName}/index', 10, '${changeClassName}', 0, 1, 0, '${changeClassName}:list');
+SELECT @lastId:=LAST_INSERT_ID();
+INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, permission)
+    VALUES (@lastId, 0, 2, '${apiAlias}查看', 10, '${changeClassName}:view');
+INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, permission)
+    VALUES (@lastId, 0, 2, '${apiAlias}新增', 10, '${changeClassName}:add');
+INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, permission)
+    VALUES (@lastId, 0, 2, '${apiAlias}修改', 10, '${changeClassName}:edit');
+INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, permission)
+    VALUES (@lastId, 0, 2, '${apiAlias}删除', 10, '${changeClassName}:del');
+<#else>
+--- 没有设置上级菜单 ---
+</#if>
+*/
+
 /**
 * @author ${author}
 * @date ${date}
@@ -30,7 +48,7 @@ public class ${className}Controller {
     @GetMapping
     @Log("查询${apiAlias}")
     @ApiOperation("查询${apiAlias}")
-    @PreAuthorize("@el.check('${changeClassName}:list')")
+    @PreAuthorize("@el.check('${changeClassName}:list', '${changeClassName}:view')")
     public ResponseEntity query(${className}QueryParam query, Pageable pageable){
         return new ResponseEntity<>(${changeClassName}Service.queryAll(query,pageable),HttpStatus.OK);
     }

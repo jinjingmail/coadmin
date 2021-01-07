@@ -31,7 +31,7 @@ public class AuthService {
      * @param request /
      */
     public void save(AppUser user, String token, HttpServletRequest request) {
-        String job = "yshop开发工程师";
+        String job = "开发工程师";
         String ip = StringUtils.getIp(request);
         String browser = StringUtils.getBrowser(request);
         String address = StringUtils.getCityInfo(ip);

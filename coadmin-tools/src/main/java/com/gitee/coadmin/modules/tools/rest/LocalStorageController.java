@@ -15,6 +15,7 @@
  */
 package com.gitee.coadmin.modules.tools.rest;
 
+import cn.hutool.core.util.StrUtil;
 import com.gitee.coadmin.modules.tools.service.dto.LocalStorageQueryParam;
 import lombok.RequiredArgsConstructor;
 import com.gitee.coadmin.modules.logging.annotation.Log;
@@ -64,7 +65,10 @@ public class LocalStorageController {
     @ApiOperation("上传文件")
     @PostMapping
     @PreAuthorize("@el.check('storage:add')")
-    public ResponseEntity<Object> create(@RequestParam String name, @RequestParam("file") MultipartFile file){
+    public ResponseEntity<Object> create(@RequestParam(required = false) String name, @RequestParam("file") MultipartFile file){
+        if (StrUtil.isBlank(name)) {
+            name = file.getOriginalFilename();
+        }
         localStorageService.create(name, file);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

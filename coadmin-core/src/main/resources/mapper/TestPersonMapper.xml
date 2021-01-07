@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.gitee.coadmin.modules.tools.service.mapper.EmailConfigMapper">
+<mapper namespace="com.gitee.coadmin.modules.test.service.mapper.TestPersonMapper">
 
   <!-- 通用查询结果列 -->
   <!--
   <sql id="Base_Column_List">
-      a.id, a.from_user, a.host, a.pass, a.port, a.user
+      a.id, a.name, a.gender, a.birthday, a.create_time, a.create_by, a.update_time, a.update_by, a.remarks
   </sql>
   -->
 </mapper>
