@@ -1,6 +1,13 @@
 # coadmin
 在 eladmin-mybatisplus-dao 2.6的基础上，增加和修改一些东西。
-[https://github.com/jinjingmail/coadmin-web-quasar](coadmin-web-quasar) 对应前端vue代码。
+
+## 对应前端vue代码 coadmin-web-quasar
+[Github](https://github.com/jinjingmail/coadmin-web-quasar)
+[Gitee](https://gitee.com/jinjinge/coadmin-web-quasar)
+
+## 代码仓库
+[Github](https://github.com/jinjingmail/coadmin)
+[Gitee](https://gitee.com/jinjinge/coadmin)
 
 # 测试账号
 demo/123456
