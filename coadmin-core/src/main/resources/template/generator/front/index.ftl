@@ -93,7 +93,7 @@
         </coadmin-date-select>
       <#else>
         <coadmin-form-item class="col-12" form-label="${formLabel}">
-          <div class="q-pt-xs"><#if column.columnType = 'Date'>{{parseTime(form.${column.changeColumnName)}}}<#else>{{form.${column.changeColumnName}}}</#if></div>
+          <div class="q-pt-xs"><#if column.columnType = 'Date'>{{parseTime(form.${column.changeColumnName}}}<#else>{{form.${column.changeColumnName}}}</#if></div>
         </coadmin-form-item>
       </#if>
     </#if>

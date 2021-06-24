@@ -156,7 +156,7 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
         Long pid = menu.getPid();
         ValidationUtil.isNull(menu.getId(), "Permission", "id", resources.getId());
 
-        if (resources.getIFrame()) {
+        if (resources.getIFrame() != null && resources.getIFrame()) {
             String http = "http://", https = "https://";
             if (!(resources.getPath().toLowerCase().startsWith(http)
                     || resources.getPath().toLowerCase().startsWith(https))) {

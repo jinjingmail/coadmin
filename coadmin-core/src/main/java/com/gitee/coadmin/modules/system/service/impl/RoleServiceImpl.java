@@ -162,6 +162,7 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
         Set<Long> userIds = users.stream().map(User::getId).collect(Collectors.toSet());
         redisUtils.delByKeys("menu::user:", userIds);
         redisUtils.del("role::id:" + resources.getId());
+        delCaches(resources.getId());
 
         //this.saveOrUpdate(resources);
         QueryWrapper<RolesMenus> query = new QueryWrapper<RolesMenus>();

@@ -1,6 +1,11 @@
 # coadmin
 在 eladmin-mybatisplus-dao 2.6的基础上，增加和修改一些东西。
-[https://github.com/jinjingmail/coadmin-web](coadmin-web) 对应前端vue代码。
+[https://github.com/jinjingmail/coadmin-web-quasar](coadmin-web-quasar) 对应前端vue代码。
+
+# 测试账号
+demo/123456
+admin/123456
+其他用户的密码也是123456
 
 ** TODO **
   - TODO BUG 定时任务不能正常暂停

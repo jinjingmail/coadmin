@@ -20,7 +20,7 @@ INSERT INTO sys_menu(pid, sub_count, `type`, title, title_letter, component_name
     VALUES (121, 4, 1, '演示管理', 'ysgl', 'TestPerson', 'testPerson/index', 10, 'testPerson', 0, 1, 0, 'testPerson:list');
 SELECT @lastId:=LAST_INSERT_ID();
 INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, permission)
-    VALUES (@lastId, 0, 2, '演示查看', 10, 'testPerson:view');
+    VALUES (@lastId, 0, 2, '演示查看', 10, 'testPerson:list');
 INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, permission)
     VALUES (@lastId, 0, 2, '演示新增', 10, 'testPerson:add');
 INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, permission)
@@ -44,7 +44,7 @@ public class TestPersonController {
     @GetMapping
     @Log("查询演示")
     @ApiOperation("查询演示")
-    @PreAuthorize("@el.check('testPerson:list', 'testPerson:view')")
+    @PreAuthorize("@el.check('testPerson:list')")
     public ResponseEntity query(TestPersonQueryParam query, Pageable pageable){
         return new ResponseEntity<>(testPersonService.queryAll(query,pageable),HttpStatus.OK);
     }
