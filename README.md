@@ -26,3 +26,6 @@ admin/123456
 - bug fix:修正用户缓存导致的修改头像不能正确显示问题
 - 初步实现用户-机构多对多映射
 
+# 界面截图
+## PC上的效果
+![user](https://gitee.com/jinjinge/coadmin-web-quasar/raw/main/public/img/screen.jpg)
