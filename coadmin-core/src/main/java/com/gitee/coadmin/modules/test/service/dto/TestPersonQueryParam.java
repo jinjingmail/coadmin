@@ -25,6 +25,7 @@ public class TestPersonQueryParam{
 
     /** 精确 */
     @Query
+    @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date birthday;
 
 

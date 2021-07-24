@@ -1,11 +1,11 @@
 <template>
   <div>
-    <coadmin-dialog title="查找" no-max seamless ref="search" @before-hide="crud.props.filterTable=''">
+    <co-dialog title="查找" no-max seamless ref="search" @before-hide="crud.props.filterTable=''">
       <q-input style="width:180px" placeholder="在当前页查找" dense outlined v-model="crud.props.filterTable" clearable class="q-mx-sm q-mt-none q-mb-sm"/>
-    </coadmin-dialog>
+    </co-dialog>
 
     <!-- 编辑表单对话框 -->
-    <coadmin-dialog
+    <co-dialog
       ref="formDialog"
       :value="crud.status.cu > 0"
       :title="crud.status.title"
@@ -13,9 +13,9 @@
       @before-hide="crud.cancelCU"
       card-style="width:600px; max-width:95vw;"
     >
-      <coadmin-form
+      <co-form
         ref="form"
-        label-width="small"
+        label-width="medium"
         label-align="right"
         class="q-pa-md row q-col-gutter-x-xl q-col-gutter-y-md">
 <#if columns??>
@@ -24,14 +24,15 @@
         <#assign formLabel="${column.changeColumnName}"/>
         <#if column.remark != ''><#assign formLabel="${column.remark}"/></#if>
       <#if column.formType = 'Input'>
-        <coadmin-input class="col-12" form-label="${formLabel}" v-model="form.${column.changeColumnName}" :disable="!!crud.status.view"
+        <co-input dense class="col-12" form-label="${formLabel}" v-model="form.${column.changeColumnName}" :disable="!!crud.status.view"
               <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>/>
       <#elseif column.formType = 'Textarea'>
-        <coadmin-input class="col-12" form-label="${formLabel}" v-model="form.${column.changeColumnName}" :disable="!!crud.status.view" type="textarea"
+        <co-input dense class="col-12" form-label="${formLabel}" v-model="form.${column.changeColumnName}" :disable="!!crud.status.view" type="textarea"
               <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>/>
       <#elseif column.formType = 'Radio'>
-        <coadmin-option-group
+        <co-option-group
             class="col-12"
+            dense
             form-label="${formLabel}"
             v-model="form.${column.changeColumnName}"
             value-to-string
@@ -41,8 +42,9 @@
             type="radio"
             <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>/>
       <#elseif column.formType = 'Checkbox'>
-        <coadmin-option-group
+        <co-option-group
             class="col-12"
+            dense
             form-label="${formLabel}"
             v-model="form.${column.changeColumnName}"
             value-to-string
@@ -52,11 +54,12 @@
             type="checkbox"
             <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>/>
       <#elseif column.formType = 'Select'>
-        <coadmin-select
+        <co-select
             v-model="form.${column.changeColumnName}"
             class="col-12"
+            dense
+            options-dense
             form-label="${formLabel}"
-            outlined
             :options='dict.<#if (column.dictName)?? && (column.dictName)!="">${column.dictName}<#else>未设置字典，请手动设置 Select</#if>'
             :disable="!!crud.status.view"
             no-filter
@@ -65,8 +68,9 @@
             map-options
             <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>/>
       <#elseif column.formType = 'Date'>
-        <coadmin-date-select
+        <co-date-select
             class="col-12"
+            dense
             form-label="${formLabel}"
             :value="form.${column.changeColumnName}"
             @input="val => form.${column.changeColumnName}=val"
@@ -76,11 +80,12 @@
           <template v-slot:append>
             <q-icon name="event" />
           </template>
-        </coadmin-date-select>
+        </co-date-select>
       <#elseif column.formType = 'DateRange'>
-        <coadmin-date-select
+        <co-date-select
             class="col-12"
             form-label="${formLabel}"
+            dense
             v-model="form.${column.changeColumnName}"
             range
             :default-time="[' 00:00:00', ' 23:59:59']"
@@ -90,24 +95,24 @@
           <template v-slot:append>
             <q-icon name="event" />
           </template>
-        </coadmin-date-select>
+        </co-date-select>
       <#else>
-        <coadmin-form-item class="col-12" form-label="${formLabel}">
-          <div class="q-pt-xs"><#if column.columnType = 'Date'>{{parseTime(form.${column.changeColumnName}}}<#else>{{form.${column.changeColumnName}}}</#if></div>
-        </coadmin-form-item>
+        <co-field dense class="col-12" form-label="${formLabel}" readonly>
+          <template v-slot:control><#if column.columnType = 'Date'>{{parseTime(form.${column.changeColumnName}}}<#else>{{form.${column.changeColumnName}}}</#if></template>
+        </co-field>
       </#if>
     </#if>
   </#list>
 </#if>
-      </coadmin-form>
+      </co-form>
       <q-card-actions class="q-pa-md" align="right">
         <q-btn label="取消" flat v-close-popup/>
         <q-btn label="保存" icon="check" color="primary" v-if="!crud.status.view" @click="crud.submitCU"
                :loading="crud.status.cu === crud.STATUS_PROCESSING" :disable="crud.status.cu === crud.STATUS_PROCESSING"/>
       </q-card-actions>
-    </coadmin-dialog>
+    </co-dialog>
 
-    <coadmin-table
+    <co-table
         ref="table"
         row-key="id"
         dense
@@ -129,11 +134,12 @@
     <#if column.remark != ''><#assign formLabel="${column.remark}"/></#if>
 
     <#if column.formType = 'Radio' || column.formType = 'Checkbox' || column.formType = 'Select'>
-          <coadmin-select
+          <co-select
               v-model="query.${column.changeColumnName}"
+              dense
+              options-dense
               placeholder="${formLabel}"
               content-style="width:120px"
-              outlined
               no-filter
               use-input
               fill-input
@@ -146,8 +152,9 @@
           />
     <#elseif column.formType ='Date' || column.formType ='DateRange' || column.columnType = 'Date'>
       <#if column.queryType = 'BetWeen'>
-          <coadmin-date-select
+          <co-date-select
               v-model="query.${column.changeColumnName}"
+              dense
               placeholder="${formLabel}"
               content-style="width:200px"
               range
@@ -156,8 +163,9 @@
               clearable
           />
       <#else>
-          <coadmin-date-select
+          <co-date-select
               v-model="query.${column.changeColumnName}"
+              dense
               placeholder="${formLabel}"
               content-style="width:120px"
               @input="crud.toQuery()"
@@ -165,8 +173,9 @@
           />
       </#if>
     <#else>
-          <coadmin-input
+          <co-input
               v-model="query.${column.changeColumnName}"
+              dense
               placeholder="${formLabel}"
               content-style="width:120px"
           />
@@ -178,7 +187,7 @@
           <q-space/>
 </#if>
           <!--如果想在工具栏加入更多按钮，可以使用插槽方式， 'start' or 'end'-->
-          <crud-operation :permission="permission" />
+          <crud-operation dense :permission="permission" />
           <div>
             <q-btn-dropdown dense color="primary" class="btn-dropdown-hide-droparrow" icon="apps" auto-close>
               <crud-more :tableSlotTopProps="props">
@@ -214,6 +223,7 @@
         <q-td key="action" :props="props">
           <crud-row
               flat
+              dense
               :type="$q.screen.gt.xs?'button':'menu'"
               :data="props.row"
               :permission="permission"
@@ -223,10 +233,10 @@
       </template>
 
       <template v-slot:pagination>
-        <crud-pagination />
+        <crud-pagination dense />
       </template>
 
-    </coadmin-table>
+    </co-table>
   </div>
 </template>
 

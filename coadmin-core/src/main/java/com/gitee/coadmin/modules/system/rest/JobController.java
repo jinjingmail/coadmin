@@ -15,6 +15,7 @@
  */
 package com.gitee.coadmin.modules.system.rest;
 
+import com.gitee.coadmin.base.ApiResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -78,9 +79,10 @@ public class JobController {
     @ApiOperation("修改岗位")
     @PutMapping
     @PreAuthorize("@el.check('job:edit')")
-    public ResponseEntity<Object> update(@Validated(Job.Update.class) @RequestBody Job resources){
+    public ResponseEntity<?> update(@Validated(Job.Update.class) @RequestBody Job resources){
         jobService.updateById(resources);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        //return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ApiResponse.success().responseEntity();
     }
 
     @Log("删除岗位")

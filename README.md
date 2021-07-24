@@ -25,6 +25,12 @@
 [Github](https://github.com/jinjingmail/coadmin-web-quasar)
 [Gitee](https://gitee.com/jinjinge/coadmin-web-quasar)
 
+# 编译
+mvn clean install
+
+# 开发机运行
+直接运行coadmin-core 下的 AppRun
+
 # 测试账号
 demo/123456
 admin/123456
