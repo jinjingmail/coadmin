@@ -28,7 +28,6 @@ public class TestPersonQueryParam{
     @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date birthday;
 
-
     /** BETWEEN */
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Query(type = Query.Type.BETWEEN)

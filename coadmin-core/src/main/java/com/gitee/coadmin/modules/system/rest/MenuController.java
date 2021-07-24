@@ -57,8 +57,6 @@ public class MenuController {
     @GetMapping
     @PreAuthorize("@el.check('menu:list')")
     public ResponseEntity<Object> query(MenuQueryParam criteria) throws Exception {
-        //List<MenuDto> menuDtoList = menuService.queryAll(criteria, true);
-        //return new ResponseEntity<>(PageUtil.toPage(menuDtoList, menuDtoList.size()),HttpStatus.OK);
         return new ResponseEntity<>(menuService.buildTree(criteria),HttpStatus.OK);
     }
 

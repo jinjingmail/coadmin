@@ -79,27 +79,7 @@ public class UserController {
     @PreAuthorize("@el.check('user:list')")
     public ResponseEntity<Object> query(UserQueryParam query, Pageable pageable){
         return new ResponseEntity<>(userService.queryAll(query, pageable), HttpStatus.OK);
-        /*if (!ObjectUtils.isEmpty(criteria.getDeptId())) {
-            criteria.getDeptIds().add(criteria.getDeptId());
-            // TODO criteria.getDeptIds().addAll(deptService.getDeptChildren(criteria.getDeptId(),
-            //        deptService.findByPid(criteria.getDeptId())));
-        }
-
-        // 数据权限
-        List<Long> dataScopes = dataService.getDeptIds(userService.findByName(com.gitee.coadmin.utils.SecurityUtils.getCurrentUsername()));
-        // criteria.getDeptIds() 不为空并且数据权限不为空则取交集
-        if (!CollectionUtils.isEmpty(criteria.getDeptIds()) && !CollectionUtils.isEmpty(dataScopes)){
-            // 取交集
-            criteria.getDeptIds().retainAll(dataScopes);
-            if(!CollectionUtil.isEmpty(criteria.getDeptIds())){
-                return new ResponseEntity<>(userService.queryAll(criteria,pageable),HttpStatus.OK);
-            }
-        } else {
-            // 否则取并集
-            criteria.getDeptIds().addAll(dataScopes);
-            return new ResponseEntity<>(userService.queryAll(criteria,pageable),HttpStatus.OK);
-        }*/
-    }
+     }
 
     @Log("新增用户")
     @ApiOperation("新增用户")
