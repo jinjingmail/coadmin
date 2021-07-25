@@ -5,14 +5,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.EqualsAndHashCode;
 import java.util.Date;
-import java.sql.Timestamp;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.gitee.coadmin.base.BaseDto;
 
 /**
 * @author jinjin
-* @date 2021-01-07
+* @date 2021-07-25
 */
 @Getter
 @Setter

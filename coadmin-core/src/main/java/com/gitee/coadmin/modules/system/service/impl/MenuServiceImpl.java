@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.modules.system.service.dto.*;
 import lombok.AllArgsConstructor;
 import com.gitee.coadmin.modules.tools.utils.QueryHelpMybatisPlus;
@@ -308,7 +309,7 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
     }
 
     @Override
-    public Map<String, Object> buildTree(MenuQueryParam query) {
+    public PageInfo<MenuDto> buildTree(MenuQueryParam query) {
 
         List<MenuDto> tree = new ArrayList<>();
         if (query.getPid() == null) {
@@ -332,10 +333,10 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
             wrapper.orderByAsc(Menu::getSort);
             tree = getChildren(wrapper, pid);
         }
-        Map<String, Object> map = new HashMap<>(2);
-        map.put("totalElements", tree.size());
-        map.put("content", tree);
-        return map;
+        //Map<String, Object> map = new HashMap<>(2);
+        //map.put("totalElements", tree.size());
+        //map.put("content", tree);
+        return new PageInfo<MenuDto>(tree.size(), tree);
     }
     private List<MenuDto> getChildren(final LambdaQueryWrapper<Menu> wrapperOrigin, Long pid) {
         LambdaQueryWrapper<Menu> wrapper = wrapperOrigin.clone();

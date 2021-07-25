@@ -63,10 +63,10 @@ public class GenConfig implements Serializable {
     private String moduleName;
 
     @NotBlank
-    @ApiModelProperty(value = "前端文件路径")
+    @ApiModelProperty(value = "前端页面文件（.vue）路径")
     private String path;
 
-    @ApiModelProperty(value = "前端文件路径")
+    @ApiModelProperty(value = "前端api文件（.js）路径")
     private String apiPath;
 
     @ApiModelProperty(value = "作者")

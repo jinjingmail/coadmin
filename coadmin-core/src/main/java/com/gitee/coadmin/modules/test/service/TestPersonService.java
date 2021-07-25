@@ -10,7 +10,7 @@ import java.util.Set;
 
 /**
 * @author jinjin
-* @date 2021-01-07
+* @date 2021-07-25
 */
 public interface TestPersonService {
 
@@ -41,12 +41,4 @@ public interface TestPersonService {
     int updateById(TestPersonDto resources);
     int removeById(Long id);
     int removeByIds(Set<Long> ids);
-
-    /**
-    * 导出数据
-    * @param all 待导出的数据
-    * @param response /
-    * @throws IOException /
-    */
-    // void download(List<TestPersonDto> all, HttpServletResponse response) throws IOException;
 }

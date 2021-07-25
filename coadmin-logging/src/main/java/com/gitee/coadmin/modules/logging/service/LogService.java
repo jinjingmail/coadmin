@@ -27,7 +27,7 @@ public interface LogService  extends BaseService<Log> {
     * @param pageable 分页参数
     * @return PageInfo<Log>
     */
-    Object queryAll(LogQueryParam query, Pageable pageable);
+    PageInfo queryAll(LogQueryParam query, Pageable pageable);
 
     /**
     * 查询所有数据不分页
@@ -77,10 +77,10 @@ public interface LogService  extends BaseService<Log> {
     /**
      * 删除所有错误日志
      */
-    void delAllByError();
+    boolean delAllByError();
 
     /**
      * 删除所有INFO日志
      */
-    void delAllByInfo();
+    boolean delAllByInfo();
 }

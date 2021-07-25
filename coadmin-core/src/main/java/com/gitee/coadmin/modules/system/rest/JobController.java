@@ -68,31 +68,28 @@ public class JobController {
     @ApiOperation("新增岗位")
     @PostMapping
     @PreAuthorize("@el.check('job:add')")
-    public ResponseEntity<? extends API<?>> create(@Validated @RequestBody Job resources){
+    public ResponseEntity<API<Integer>> create(@Validated @RequestBody Job resources){
         if (resources.getId() != null) {
             throw new BadRequestException("A new "+ ENTITY_NAME +" cannot already have an ID");
         }
-        jobService.save(resources);
-        return API.created().responseEntity();
+        return API.created(jobService.save(resources)?1:0).responseEntity();
     }
 
     @Log("修改岗位")
     @ApiOperation("修改岗位")
     @PutMapping
     @PreAuthorize("@el.check('job:edit')")
-    public ResponseEntity<? extends API<?>> update(@Validated(Job.Update.class) @RequestBody Job resources){
-        jobService.updateById(resources);
-        return API.updated().responseEntity();
+    public ResponseEntity<API<Integer>> update(@Validated(Job.Update.class) @RequestBody Job resources){
+        return API.updated(jobService.updateById(resources)?1:0).responseEntity();
     }
 
     @Log("删除岗位")
     @ApiOperation("删除岗位")
     @DeleteMapping
     @PreAuthorize("@el.check('job:del')")
-    public ResponseEntity<? extends API<?>> delete(@RequestBody Set<Long> ids){
+    public ResponseEntity<API<Integer>> delete(@RequestBody Set<Long> ids){
         // 验证是否被用户关联
         jobService.verification(ids);
-        jobService.removeByIds(ids);
-        return API.deleted().responseEntity();
+        return API.deleted(jobService.removeByIds(ids)?1:0).responseEntity();
     }
 }

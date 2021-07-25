@@ -4,13 +4,13 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.AllArgsConstructor;
 import com.gitee.coadmin.modules.tools.utils.QueryHelpMybatisPlus;
 import com.gitee.coadmin.base.PageInfo;
-import com.gitee.coadmin.utils.ConvertUtil;
 import com.gitee.coadmin.utils.PageUtil;
 import com.gitee.coadmin.modules.test.domain.TestPerson;
 import com.gitee.coadmin.modules.test.service.TestPersonService;
 import com.gitee.coadmin.modules.test.service.dto.TestPersonDto;
 import com.gitee.coadmin.modules.test.service.dto.TestPersonQueryParam;
 import com.gitee.coadmin.modules.test.service.mapper.TestPersonMapper;
+import com.gitee.coadmin.modules.test.service.converter.TestPersonConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +23,7 @@ import java.util.*;
 
 /**
 * @author jinjin
-* @date 2021-01-07
+* @date 2021-07-25
 */
 @Service
 @AllArgsConstructor
@@ -33,17 +33,18 @@ public class TestPersonServiceImpl implements TestPersonService {
 
     // private final RedisUtils redisUtils;
     private final TestPersonMapper testPersonMapper;
+    private final TestPersonConverter testPersonConverter;
 
     @Override
     public PageInfo<TestPersonDto> queryAll(TestPersonQueryParam query, Pageable pageable) {
         IPage<TestPerson> queryPage = PageUtil.toMybatisPage(pageable);
         IPage<TestPerson> page = testPersonMapper.selectPage(queryPage, QueryHelpMybatisPlus.getPredicate(query));
-        return ConvertUtil.convertPage(page, TestPersonDto.class);
+        return testPersonConverter.convertPage(page);
     }
 
     @Override
     public List<TestPersonDto> queryAll(TestPersonQueryParam query){
-        return ConvertUtil.convertList(testPersonMapper.selectList(QueryHelpMybatisPlus.getPredicate(query)), TestPersonDto.class);
+        return testPersonConverter.toDto(testPersonMapper.selectList(QueryHelpMybatisPlus.getPredicate(query)));
     }
 
     @Override
@@ -54,20 +55,20 @@ public class TestPersonServiceImpl implements TestPersonService {
     @Override
     // @Cacheable(key = "'id:' + #p0")
     public TestPersonDto getById(Long id) {
-        return ConvertUtil.convert(getEntityById(id), TestPersonDto.class);
+        return testPersonConverter.toDto(getEntityById(id));
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int insert(TestPersonDto resources) {
-        TestPerson entity = ConvertUtil.convert(resources, TestPerson.class);
+        TestPerson entity = testPersonConverter.toEntity(resources);
         return testPersonMapper.insert(entity);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int updateById(TestPersonDto resources){
-        TestPerson entity = ConvertUtil.convert(resources, TestPerson.class);
+        TestPerson entity = testPersonConverter.toEntity(resources);
         int ret = testPersonMapper.updateById(entity);
         // delCaches(resources.id);
         return ret;
@@ -97,24 +98,5 @@ public class TestPersonServiceImpl implements TestPersonService {
         for (Long id: ids) {
             delCaches(id);
         }
-    }*/
-
-    /*
-    @Override
-    public void download(List<TestPersonDto> all, HttpServletResponse response) throws IOException {
-      List<Map<String, Object>> list = new ArrayList<>();
-      for (TestPersonDto testPerson : all) {
-        Map<String,Object> map = new LinkedHashMap<>();
-              map.put("姓名", testPerson.getName());
-              map.put("性别", testPerson.getGender());
-              map.put("出生日期", testPerson.getBirthday());
-              map.put("创建时间", testPerson.getCreateTime());
-              map.put("创建人", testPerson.getCreateBy());
-              map.put("修改时间", testPerson.getUpdateTime());
-              map.put("修改人", testPerson.getUpdateBy());
-              map.put("备注", testPerson.getRemarks());
-        list.add(map);
-      }
-      FileUtil.downloadExcel(list, response);
     }*/
 }

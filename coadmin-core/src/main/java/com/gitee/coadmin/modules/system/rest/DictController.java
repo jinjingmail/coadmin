@@ -15,6 +15,10 @@
  */
 package com.gitee.coadmin.modules.system.rest;
 
+import com.gitee.coadmin.base.API;
+import com.gitee.coadmin.base.PageInfo;
+import com.gitee.coadmin.modules.system.service.dto.DictDto;
+import com.gitee.coadmin.modules.system.service.dto.JobDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +35,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -58,45 +63,42 @@ public class DictController {
     @ApiOperation("查询字典")
     @GetMapping(value = "all")
     @PreAuthorize("@el.check('dict:list')")
-    public ResponseEntity<Object> queryAll(){
-        return new ResponseEntity<>(dictService.queryAll(new DictQueryParam()),HttpStatus.OK);
+    public ResponseEntity<API<List<DictDto>>> queryAll(){
+        return API.ok(dictService.queryAll(new DictQueryParam())).responseEntity();
     }
 
     @Log("查询字典")
     @ApiOperation("查询字典")
     @GetMapping
     @PreAuthorize("@el.check('dict:list')")
-    public ResponseEntity<Object> query(DictQueryParam query, Pageable pageable){
-        return new ResponseEntity<>(dictService.queryAll(query,pageable),HttpStatus.OK);
+    public ResponseEntity<API<PageInfo<DictDto>>> query(DictQueryParam query, Pageable pageable){
+        return API.ok(dictService.queryAll(query,pageable)).responseEntity();
     }
 
     @Log("新增字典")
     @ApiOperation("新增字典")
     @PostMapping
     @PreAuthorize("@el.check('dict:add')")
-    public ResponseEntity<Object> create(@Validated @RequestBody Dict resources){
+    public ResponseEntity<API<Integer>> create(@Validated @RequestBody Dict resources){
         if (resources.getId() != null) {
             throw new BadRequestException("A new "+ ENTITY_NAME +" cannot already have an ID");
         }
-        dictService.save(resources);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return API.created(dictService.save(resources)?1:0).responseEntity();
     }
 
     @Log("修改字典")
     @ApiOperation("修改字典")
     @PutMapping
     @PreAuthorize("@el.check('dict:edit')")
-    public ResponseEntity<Object> update(@RequestBody Dict resources){
-        dictService.updateById(resources);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<API<Integer>> update(@RequestBody Dict resources){
+        return API.updated(dictService.updateById(resources)?1:0).responseEntity();
     }
 
     @Log("删除字典")
     @ApiOperation("删除字典")
     @DeleteMapping
     @PreAuthorize("@el.check('dict:del')")
-    public ResponseEntity<Object> delete(@RequestBody Set<Long> ids){
-        dictService.removeByIds(ids);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<API<Integer>> delete(@RequestBody Set<Long> ids){
+        return API.deleted(dictService.removeByIds(ids)?1:0).responseEntity();
     }
 }

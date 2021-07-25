@@ -41,12 +41,4 @@ public interface ${className}Service {
     int updateById(${className}Dto resources);
     int removeById(${pkColumnType} id);
     int removeByIds(Set<${pkColumnType}> ids);
-
-    /**
-    * 导出数据
-    * @param all 待导出的数据
-    * @param response /
-    * @throws IOException /
-    */
-    // void download(List<${className}Dto> all, HttpServletResponse response) throws IOException;
 }

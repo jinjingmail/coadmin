@@ -1,6 +1,7 @@
 package com.gitee.coadmin.modules.system.service;
 
 import com.gitee.coadmin.base.BaseService;
+import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.modules.system.domain.Dept;
 import com.gitee.coadmin.modules.system.service.dto.DeptCompactDto;
 import com.gitee.coadmin.modules.system.service.dto.DeptDto;
@@ -24,7 +25,7 @@ public interface DeptService extends BaseService<Dept> {
      * 构建树形数据
      * @return /
      */
-    Object buildTree(DeptQueryParam query, Long userId);
+    PageInfo<DeptCompactDto> buildTree(DeptQueryParam query, Long userId);
 
     Dept getById(Long id);
     DeptDto findById(Long id);

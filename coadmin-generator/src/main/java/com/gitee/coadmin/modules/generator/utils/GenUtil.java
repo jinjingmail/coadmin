@@ -45,6 +45,7 @@ import static com.gitee.coadmin.utils.FileUtil.SYS_TEM_DIR;
 public class GenUtil {
 
     private static final String TIMESTAMP = "Timestamp";
+    private static final String DATE = "Date";
 
     private static final String BIGDECIMAL = "BigDecimal";
 
@@ -68,6 +69,7 @@ public class GenUtil {
     private static List<String> getAdminTemplateNames() {
         List<String> templateNames = new ArrayList<>();
         templateNames.add("Controller");
+        templateNames.add("Converter");
         templateNames.add("Entity");
         templateNames.add("Dto");
         templateNames.add("Mapper");
@@ -140,7 +142,7 @@ public class GenUtil {
         templates = getFrontTemplateNames();
         for (String templateName : templates) {
             Template template = engine.getTemplate("generator/front/" + templateName + ".ftl");
-            String filePath = getFrontFilePath(templateName, genConfig.getApiPath(), genConfig.getPath(), genMap.get("changeClassName").toString());
+            String filePath = getFrontFilePath(templateName, genConfig.getApiPath(), genConfig.getPath(), genMap.get("minusClassName").toString());
 
             assert filePath != null;
             File file = new File(filePath);
@@ -209,6 +211,9 @@ public class GenUtil {
         if ("QueryParam".equals(templateName)) {
             return packagePath + "service" + File.separator + "dto" + File.separator + className + "QueryParam.java";
         }
+        if ("Converter".equals(templateName)) {
+            return packagePath + "service" + File.separator + "converter" + File.separator + className + "Converter.java";
+        }
         if ("Mapper".equals(templateName)) {
             return packagePath + "service" + File.separator + "mapper" + File.separator + className + "Mapper.java";
         }
@@ -242,17 +247,23 @@ public class GenUtil {
         String className = StringUtils.toCapitalizeCamelCase(genConfig.getTableName());
         // 小写开头的类名
         String changeClassName = StringUtils.toCamelCase(genConfig.getTableName());
+        // 减号分割的类名（比如 MyClass，变为 my-class）
+        String minusClassName = StrUtil.replace(StringUtils.toUnderScoreCase(changeClassName), "_", "-");
         // 判断是否去除表前缀
         if (StringUtils.isNotEmpty(genConfig.getPrefix())) {
             className = StringUtils.toCapitalizeCamelCase(StrUtil.removePrefix(genConfig.getTableName(), genConfig.getPrefix()));
             changeClassName = StringUtils.toCamelCase(StrUtil.removePrefix(genConfig.getTableName(), genConfig.getPrefix()));
+            minusClassName = StrUtil.replace(StringUtils.toUnderScoreCase(changeClassName), "_", "-");
         }
         // 保存类名
         genMap.put("className", className);
         // 保存小写开头的类名
         genMap.put("changeClassName", changeClassName);
+        // 保存减号分割的类名
+        genMap.put("minusClassName", minusClassName);
         // 存在 Timestamp 字段
         genMap.put("hasTimestamp", false);
+        genMap.put("hasDate", false);
         // 查询类中存在 Timestamp 字段
         genMap.put("queryHasTimestamp", false);
         // 存在 BigDecimal 字段
@@ -301,6 +312,9 @@ public class GenUtil {
             // 是否存在 Timestamp 类型的字段
             if (TIMESTAMP.equals(colType)) {
                 genMap.put("hasTimestamp", true);
+            }
+            if (DATE.equals(colType)) {
+                genMap.put("hasDate", true);
             }
             // 是否存在 BigDecimal 类型的字段
             if (BIGDECIMAL.equals(colType)) {
@@ -384,14 +398,14 @@ public class GenUtil {
     /**
      * 定义前端文件路径以及名称
      */
-    private static String getFrontFilePath(String templateName, String apiPath, String path, String apiName) {
+    private static String getFrontFilePath(String templateName, String apiPath, String pagesPath, String apiName) {
 
         if ("api".equals(templateName)) {
             return apiPath + File.separator + apiName + ".js";
         }
 
         if ("index".equals(templateName)) {
-            return path + File.separator + "index.vue";
+            return pagesPath + File.separator + apiName + File.separator + "index.vue";
         }
 
         return null;

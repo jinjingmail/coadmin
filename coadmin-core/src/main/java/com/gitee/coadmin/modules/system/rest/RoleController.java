@@ -16,6 +16,8 @@
 package com.gitee.coadmin.modules.system.rest;
 
 import cn.hutool.core.lang.Dict;
+import com.gitee.coadmin.base.API;
+import com.gitee.coadmin.base.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -57,8 +59,8 @@ public class RoleController {
     @ApiOperation("获取单个role")
     @GetMapping(value = "/{id}")
     @PreAuthorize("@el.check('roles:list')")
-    public ResponseEntity<Object> query(@PathVariable Long id){
-        return new ResponseEntity<>(roleService.findById(id), HttpStatus.OK);
+    public ResponseEntity<API<RoleDto>> query(@PathVariable Long id){
+        return API.ok(roleService.findById(id)).responseEntity();
     }
 
     @Log("导出角色数据")
@@ -72,45 +74,43 @@ public class RoleController {
     @ApiOperation("返回全部的角色")
     @GetMapping(value = "/all")
     @PreAuthorize("@el.check('roles:list','user:add','user:edit')")
-    public ResponseEntity<Object> query(){
-        return new ResponseEntity<>(roleService.queryAll(),HttpStatus.OK);
+    public ResponseEntity<API<List<RoleDto>>> query(){
+        return API.ok(roleService.queryAll()).responseEntity();
     }
 
     @Log("查询角色")
     @ApiOperation("查询角色")
     @GetMapping
     @PreAuthorize("@el.check('roles:list')")
-    public ResponseEntity<Object> query(RoleQueryParam criteria, Pageable pageable){
-        return new ResponseEntity<>(roleService.queryAll(criteria,pageable),HttpStatus.OK);
+    public ResponseEntity<API<PageInfo<RoleDto>>> query(RoleQueryParam criteria, Pageable pageable){
+        return API.ok(roleService.queryAll(criteria,pageable)).responseEntity();
     }
 
     @ApiOperation("获取用户级别")
     @GetMapping(value = "/level")
-    public ResponseEntity<Object> getLevel(){
-        return new ResponseEntity<>(Dict.create().set("level", getLevels(null)),HttpStatus.OK);
+    public ResponseEntity<API<Dict>> getLevel(){
+        return API.ok(Dict.create().set("level", getLevels(null))).responseEntity();
     }
 
     @Log("新增角色")
     @ApiOperation("新增角色")
     @PostMapping
     @PreAuthorize("@el.check('roles:add')")
-    public ResponseEntity<Object> create(@Validated @RequestBody RoleDto resources){
+    public ResponseEntity<API<Integer>> create(@Validated @RequestBody RoleDto resources){
         if (resources.getId() != null) {
             throw new BadRequestException("A new "+ ENTITY_NAME +" cannot already have an ID");
         }
         getLevels(resources.getLevel());
-        roleService.save(resources);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return API.created(roleService.save(resources)?1:0).responseEntity();
     }
 
     @Log("修改角色")
     @ApiOperation("修改角色")
     @PutMapping
     @PreAuthorize("@el.check('roles:edit')")
-    public ResponseEntity<Object> update(@Validated(Role.Update.class) @RequestBody RoleDto resources){
+    public ResponseEntity<API<Integer>> update(@Validated(Role.Update.class) @RequestBody RoleDto resources){
         getLevels(resources.getLevel());
-        roleService.updateById(resources);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return API.updated(roleService.updateById(resources)?1:0).responseEntity();
     }
 
     @Log("修改角色菜单")
@@ -128,15 +128,14 @@ public class RoleController {
     @ApiOperation("删除角色")
     @DeleteMapping
     @PreAuthorize("@el.check('roles:del')")
-    public ResponseEntity<Object> delete(@RequestBody Set<Long> ids){
+    public ResponseEntity<API<Integer>> delete(@RequestBody Set<Long> ids){
         for (Long id : ids) {
             RoleDto role = roleService.findById(id);
             getLevels(role.getLevel());
         }
         // 验证是否被用户关联
         roleService.verification(ids);
-        roleService.removeByIds(ids);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return API.deleted(roleService.removeByIds(ids)?1:0).responseEntity();
     }
 
     /**

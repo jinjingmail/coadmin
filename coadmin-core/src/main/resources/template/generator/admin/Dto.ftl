@@ -11,7 +11,6 @@ import java.sql.Timestamp;
 import java.math.BigDecimal;
 </#if>
 import java.util.Date;
-import java.sql.Timestamp;
 <#if !auto && pkColumnType == 'Long'>
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;

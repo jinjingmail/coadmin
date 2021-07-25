@@ -58,25 +58,28 @@ public class API<T> {
     /**
      * 创建成功
      */
-    public static API<?> created() {
-        API<?> api = new API<>();
-        api.setStatus(HttpStatus.HTTP_CREATED);
+    public static <E> API<E> created(E data) {
+        API<E> api = new API<>();
+        api.setStatus(HttpStatus.HTTP_OK);
+        api.setData(data);
         return api;
     }
     /**
      * 更新成功
      */
-    public static API<?> updated() {
-        API<?> api = new API<>();
+    public static <E> API<E> updated(E data) {
+        API<E> api = new API<>();
         api.setStatus(HttpStatus.HTTP_OK);
+        api.setData(data);
         return api;
     }
     /**
      * 删除成功
      */
-    public static API<?> deleted() {
-        API<?> api = new API<>();
+    public static <E> API<E> deleted(E data) {
+        API<E> api = new API<>();
         api.setStatus(HttpStatus.HTTP_OK);
+        api.setData(data);
         return api;
     }
     /**

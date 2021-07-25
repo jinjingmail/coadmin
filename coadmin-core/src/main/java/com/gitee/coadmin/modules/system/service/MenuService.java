@@ -1,7 +1,9 @@
 package com.gitee.coadmin.modules.system.service;
 
 import com.gitee.coadmin.base.BaseService;
+import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.modules.system.domain.Menu;
+import com.gitee.coadmin.modules.system.domain.vo.MenuVo;
 import com.gitee.coadmin.modules.system.service.dto.MenuDto;
 import com.gitee.coadmin.modules.system.service.dto.MenuQueryParam;
 
@@ -51,7 +53,7 @@ public interface MenuService  extends BaseService<Menu> {
      */
     Set<Menu> getDeleteMenus(List<Menu> menuList, Set<Menu> menuSet);
 
-    Map<String, Object> buildTree(MenuQueryParam query);
+    PageInfo<MenuDto> buildTree(MenuQueryParam query);
 
     /**
      * 构建菜单树
@@ -65,7 +67,7 @@ public interface MenuService  extends BaseService<Menu> {
      * @param menuDtos /
      * @return /
      */
-    Object buildMenus(List<MenuDto> menuDtos);
+    List<MenuVo> buildMenus(List<MenuDto> menuDtos);
 
     /**
      * 懒加载菜单数据

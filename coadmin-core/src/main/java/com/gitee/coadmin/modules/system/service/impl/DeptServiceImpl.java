@@ -4,6 +4,7 @@ import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.modules.security.service.UserCacheClean;
 import com.gitee.coadmin.modules.tools.utils.QueryHelpMybatisPlus;
 import com.gitee.coadmin.base.impl.BaseServiceImpl;
@@ -274,7 +275,7 @@ public class DeptServiceImpl extends BaseServiceImpl<Dept> implements DeptServic
     }
 
     @Override
-    public Map<String, Object> buildTree(DeptQueryParam query, Long userId) {
+    public PageInfo<DeptCompactDto> buildTree(DeptQueryParam query, Long userId) {
         QueryWrapper<Dept> wrapper1 = QueryHelpMybatisPlus.getPredicate(query);
         final LambdaQueryWrapper<Dept> wrapper = wrapper1.lambda();
         wrapper.orderByAsc(Dept::getTreeSorts);
@@ -296,10 +297,8 @@ public class DeptServiceImpl extends BaseServiceImpl<Dept> implements DeptServic
         } else {
             tree = getChildren(wrapper, query.getTreeId());
         }
-        Map<String, Object> map = new HashMap<>(2);
-        map.put("totalElements", tree.size());
-        map.put("content", ConvertUtil.convertList(tree, DeptCompactDto.class));
-        return map;
+        //Map<String, Object> map = new HashMap<>(2);
+        return new PageInfo<>(tree.size(), ConvertUtil.convertList(tree, DeptCompactDto.class));
     }
 
     private List<DeptDto> getChildren(final LambdaQueryWrapper<Dept> wrapperOrigin, Long pid) {

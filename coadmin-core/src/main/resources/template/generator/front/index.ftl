@@ -1,7 +1,7 @@
 <template>
   <div>
     <co-dialog title="查找" no-max seamless ref="search" @before-hide="crud.props.filterTable=''">
-      <q-input style="width:180px" placeholder="在当前页查找" dense outlined v-model="crud.props.filterTable" clearable class="q-mx-sm q-mt-none q-mb-sm"/>
+      <q-input dense style="width:180px" placeholder="在当前页查找" outlined v-model="crud.props.filterTable" clearable class="q-mx-sm q-mt-none q-mb-sm"/>
     </co-dialog>
 
     <!-- 编辑表单对话框 -->
@@ -27,12 +27,12 @@
         <co-input dense class="col-12" form-label="${formLabel}" v-model="form.${column.changeColumnName}" :disable="!!crud.status.view"
               <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>/>
       <#elseif column.formType = 'Textarea'>
-        <co-input dense class="col-12" form-label="${formLabel}" v-model="form.${column.changeColumnName}" :disable="!!crud.status.view" type="textarea"
+        <co-input dense class="col-12" form-label="${formLabel}" v-model="form.${column.changeColumnName}" :disable="!!crud.status.view" autogrow
               <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>/>
       <#elseif column.formType = 'Radio'>
         <co-option-group
-            class="col-12"
             dense
+            class="col-12"
             form-label="${formLabel}"
             v-model="form.${column.changeColumnName}"
             value-to-string
@@ -43,8 +43,8 @@
             <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>/>
       <#elseif column.formType = 'Checkbox'>
         <co-option-group
-            class="col-12"
             dense
+            class="col-12"
             form-label="${formLabel}"
             v-model="form.${column.changeColumnName}"
             value-to-string
@@ -55,10 +55,10 @@
             <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>/>
       <#elseif column.formType = 'Select'>
         <co-select
-            v-model="form.${column.changeColumnName}"
-            class="col-12"
             dense
             options-dense
+            v-model="form.${column.changeColumnName}"
+            class="col-12"
             form-label="${formLabel}"
             :options='dict.<#if (column.dictName)?? && (column.dictName)!="">${column.dictName}<#else>未设置字典，请手动设置 Select</#if>'
             :disable="!!crud.status.view"
@@ -69,10 +69,10 @@
             <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>/>
       <#elseif column.formType = 'Date'>
         <co-date-select
-            class="col-12"
             dense
+            class="col-12"
             form-label="${formLabel}"
-            :value="form.${column.changeColumnName}"
+            :value="formatTime(form.${column.changeColumnName}, '{y}-{m}-{d}')"
             @input="val => form.${column.changeColumnName}=val"
             clearable
             :disable="!!crud.status.view"
@@ -83,9 +83,9 @@
         </co-date-select>
       <#elseif column.formType = 'DateRange'>
         <co-date-select
+            dense
             class="col-12"
             form-label="${formLabel}"
-            dense
             v-model="form.${column.changeColumnName}"
             range
             :default-time="[' 00:00:00', ' 23:59:59']"
@@ -97,18 +97,19 @@
           </template>
         </co-date-select>
       <#else>
-        <co-field dense class="col-12" form-label="${formLabel}" readonly>
-          <template v-slot:control><#if column.columnType = 'Date'>{{parseTime(form.${column.changeColumnName}}}<#else>{{form.${column.changeColumnName}}}</#if></template>
-        </co-field>
+        <co-input dense class="col-12" form-label="${formLabel}" :value="<#if column.columnType = 'Date'>parseTime(form.${column.changeColumnName}, '{y}-{m}-{d} {h}:{i}:{s}')<#else>form.${column.changeColumnName}</#if>" readonly borderless/>
       </#if>
     </#if>
   </#list>
 </#if>
       </co-form>
       <q-card-actions class="q-pa-md" align="right">
-        <q-btn label="取消" flat v-close-popup/>
-        <q-btn label="保存" icon="check" color="primary" v-if="!crud.status.view" @click="crud.submitCU"
-               :loading="crud.status.cu === crud.STATUS_PROCESSING" :disable="crud.status.cu === crud.STATUS_PROCESSING"/>
+        <q-btn dense label="取消" flat v-close-popup/>
+        <q-btn dense label="保存" color="primary"
+                v-if="!crud.status.view"
+                @click="crud.submitCU"
+               :loading="crud.status.cu === crud.STATUS_PROCESSING"
+               :disable="crud.status.cu === crud.STATUS_PROCESSING"/>
       </q-card-actions>
     </co-dialog>
 
@@ -126,19 +127,19 @@
         :filter="crud.props.filterTable"
         @row-click="(evt, row, index) => crud.selections = [row]"
     >
-      <template v-slot:top-right="props">
+      <template v-slot:top-left>
         <div class='row q-col-gutter-x-sm q-col-gutter-y-xs q-pa-xs full-width'>
 <#if hasQuery>
   <#list queryColumns as column>
-    <#assign formLabel="${column.changeColumnName}"/>
-    <#if column.remark != ''><#assign formLabel="${column.remark}"/></#if>
-
-    <#if column.formType = 'Radio' || column.formType = 'Checkbox' || column.formType = 'Select'>
+          <#assign formLabel="${column.changeColumnName}"/>
+          <#if column.remark != ''><#assign formLabel="${column.remark}"/></#if>
+          <#if column.formType = 'Radio' || column.formType = 'Checkbox' || column.formType = 'Select'>
           <co-select
               v-model="query.${column.changeColumnName}"
               dense
+              filled
               options-dense
-              placeholder="${formLabel}"
+              label="${formLabel}"
               content-style="width:120px"
               no-filter
               use-input
@@ -150,42 +151,54 @@
               emit-value
               map-options
           />
-    <#elseif column.formType ='Date' || column.formType ='DateRange' || column.columnType = 'Date'>
-      <#if column.queryType = 'BetWeen'>
+          <#elseif column.formType = 'Date' || column.formType = 'DateRange' || column.columnType = 'Date'>
+            <#if column.queryType = 'BetWeen'>
           <co-date-select
               v-model="query.${column.changeColumnName}"
               dense
-              placeholder="${formLabel}"
+              filled
+              label="${formLabel}"
               content-style="width:200px"
               range
               :default-time="[' 00:00:00', ' 23:59:59']"
               @input="crud.toQuery()"
               clearable
           />
-      <#else>
+            <#else>
           <co-date-select
               v-model="query.${column.changeColumnName}"
               dense
-              placeholder="${formLabel}"
+              filled
+              label="${formLabel}"
               content-style="width:120px"
               @input="crud.toQuery()"
               clearable
           />
-      </#if>
-    <#else>
+            </#if>
+          <#else>
           <co-input
               v-model="query.${column.changeColumnName}"
               dense
-              placeholder="${formLabel}"
+              filled
+              label="${formLabel}"
               content-style="width:120px"
           />
-    </#if>
+          </#if>
   </#list>
+          <!-- 点击“更多..”才显示的搜索项 -->
+          <template v-if="crud.props.queryMore">
+          </template>
           <div>
-            <q-btn dense padding="xs sm" color="primary" icon="search" @click="crud.toQuery()" />
+            <q-btn dense label="查询" padding="xs sm" color="primary" @click="crud.toQuery()" />
+            <q-btn dense label="重置" flat @click="crud.resetQuery()" />
+            <q-btn dense :label="crud.props.queryMore?'更少«':'更多»'" flat @click="crud.props.queryMore = !crud.props.queryMore"/>
           </div>
           <q-space/>
 </#if>
+        </div>
+      </template>
+      <template v-slot:top-right="props">
+        <div class='row q-col-gutter-x-sm q-col-gutter-y-xs q-pa-xs full-width'>
           <!--如果想在工具栏加入更多按钮，可以使用插槽方式， 'start' or 'end'-->
           <crud-operation dense :permission="permission" />
           <div>
@@ -203,13 +216,7 @@
 
 <#if columns??>
   <#list columns as column>
-    <#if column.columnType = 'Date'>
-      <template v-slot:body-cell-${column.changeColumnName}="props">
-        <q-td key="${column.changeColumnName}" :props="props">
-          {{formatTime(props.row.${column.changeColumnName})}}
-        </q-td>
-      </template>
-      <#elseif (column.dictName)?? && (column.dictName)!="">
+    <#if (column.dictName)?? && (column.dictName)!="">
       <template v-slot:body-cell-${column.changeColumnName}="props">
         <q-td key="${column.changeColumnName}" :props="props">
           {{dict.label.${column.dictName}[props.row.${column.changeColumnName}]}}
@@ -228,6 +235,7 @@
               :data="props.row"
               :permission="permission"
               no-add
+              no-icon
           />
         </q-td>
       </template>
@@ -242,12 +250,13 @@
 
 <script>
 <#if hasDict>import { mapGetters } from 'vuex'</#if>
+<#if hasDate>import { formatTime } from '@/utils/index'</#if>
 import CRUD, { presenter, header, form, crud } from '@crud/crud'
-import crudOperation from '@crud/CRUD.operation'
-import crudPagination from '@crud/CRUD.pagination'
-import crudRow from '@crud/CRUD.row'
-import crudMore from '@crud/CRUD.more'
-import crud${className} from '@/api/${changeClassName}'
+import CrudOperation from '@crud/crud-operation'
+import CrudPagination from '@crud/crud-pagination'
+import CrudRow from '@crud/crud-row'
+import CrudMore from '@crud/crud-more'
+import Crud${className} from '@/api/${minusClassName}'
 
 const defaultForm = { <#if columns??><#list columns as column>${column.changeColumnName}: null<#if column_has_next>, </#if></#list></#if> }
 
@@ -257,16 +266,16 @@ const columns = [
 <#if columns??><#list columns as column>
   <#assign formLabel="${column.changeColumnName}"/>
   <#if column.remark != ''><#assign formLabel="${column.remark}"/></#if>
-  { name: '${column.changeColumnName}', field: '${column.changeColumnName}', label: '${formLabel}', align: 'left' },
+  { name: '${column.changeColumnName}', field: '${column.changeColumnName}', label: '${formLabel}', align: 'left'<#if column.columnType = 'Date'>, format: val => formatTime(val)</#if> },
 </#list></#if>
   { name: 'action', label: '操作', align: 'center', required: false, sortable: false }
 ]
 
 export default {
   name: '${className}',
-  components: { crudOperation, crudMore, crudPagination, crudRow },
+  components: { CrudOperation, CrudMore, CrudPagination, CrudRow },
   cruds() {
-    return CRUD({ columns, visibleColumns, title: '${apiAlias}', idField: '${pkChangeColName}', sort: ['${pkChangeColName},desc'], url: 'api/${changeClassName}', crudMethod: { ...crud${className} } })
+    return CRUD({ columns, visibleColumns, title: '${apiAlias}', idField: '${pkChangeColName}', sort: ['${pkChangeColName},desc'], url: 'api/${minusClassName}', crudMethod: { ...Crud${className} } })
   },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   data () {
@@ -284,6 +293,7 @@ export default {
         </#if>
       },*/
       permission: {
+        view: ['admin', '${changeClassName}:list'],
         add: ['admin', '${changeClassName}:add'],
         edit: ['admin', '${changeClassName}:edit'],
         del: ['admin', '${changeClassName}:del']
@@ -297,7 +307,15 @@ export default {
     ])
   },
 </#if>
+  created () {
+    this.crud.updateProp('queryMore', false)
+  },
+  mounted () {
+  },
   methods: {
+    [CRUD.HOOK.beforeRefresh] () {
+      console.log('${changeClassName} CRUD.HOOK.beforeRefresh')
+    }
   }
 }
 </script>

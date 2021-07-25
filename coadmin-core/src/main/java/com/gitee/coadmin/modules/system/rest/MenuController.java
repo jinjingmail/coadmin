@@ -16,6 +16,9 @@
 package com.gitee.coadmin.modules.system.rest;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.gitee.coadmin.base.API;
+import com.gitee.coadmin.base.PageInfo;
+import com.gitee.coadmin.modules.system.domain.vo.MenuVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -56,75 +59,72 @@ public class MenuController {
     @ApiOperation("查询菜单")
     @GetMapping
     @PreAuthorize("@el.check('menu:list')")
-    public ResponseEntity<Object> query(MenuQueryParam criteria) throws Exception {
-        return new ResponseEntity<>(menuService.buildTree(criteria),HttpStatus.OK);
+    public ResponseEntity<API<PageInfo<MenuDto>>> query(MenuQueryParam criteria) throws Exception {
+        return API.ok(menuService.buildTree(criteria)).responseEntity();
     }
 
     @ApiOperation("返回全部的菜单")
     @GetMapping(value = "/lazy")
     @PreAuthorize("@el.check('menu:list','roles:list')")
-    public ResponseEntity<Object> query(@RequestParam Long pid){
-        return new ResponseEntity<>(menuService.getMenus(pid),HttpStatus.OK);
+    public ResponseEntity<API<List<MenuDto>>> query(@RequestParam Long pid){
+        return API.ok(menuService.getMenus(pid)).responseEntity();
     }
 
     @GetMapping(value = "/build")
     @ApiOperation("获取前端所需菜单")
-    public ResponseEntity<Object> buildMenus(){
+    public ResponseEntity<API<List<MenuVo>>> buildMenus(){
         List<MenuDto> menuDtoList = menuService.findByUser(SecurityUtils.getCurrentUserId());
         List<MenuDto> menuDtos = menuService.buildTree(menuDtoList);
-        return new ResponseEntity<>(menuService.buildMenus(menuDtos),HttpStatus.OK);
+        return API.ok(menuService.buildMenus(menuDtos)).responseEntity();
     }
 
     @Log("查询菜单")
     @ApiOperation("查询菜单:根据ID获取同级与上级数据")
     @PostMapping("/superior")
     @PreAuthorize("@el.check('menu:list')")
-    public ResponseEntity<Object> getSuperior(@RequestBody List<Long> ids) {
+    public ResponseEntity<API<List<MenuDto>>> getSuperior(@RequestBody List<Long> ids) {
         Set<MenuDto> menuDtos = new LinkedHashSet<>();
         if(CollectionUtil.isNotEmpty(ids)){
             for (Long id : ids) {
                 MenuDto menuDto = menuService.findById(id);
                 menuDtos.addAll(menuService.getSuperior(menuDto, new ArrayList<>()));
             }
-            return new ResponseEntity<>(menuService.buildTree(new ArrayList<>(menuDtos)),HttpStatus.OK);
+            return API.ok(menuService.buildTree(new ArrayList<>(menuDtos))).responseEntity();
         }
-        return new ResponseEntity<>(menuService.getMenus(null),HttpStatus.OK);
+        return API.ok(menuService.getMenus(null)).responseEntity();
     }
 
     @Log("新增菜单")
     @ApiOperation("新增菜单")
     @PostMapping
     @PreAuthorize("@el.check('menu:add')")
-    public ResponseEntity<Object> create(@Validated @RequestBody Menu resources){
+    public ResponseEntity<API<Integer>> create(@Validated @RequestBody Menu resources){
         if (resources.getId() != null) {
             throw new BadRequestException("A new "+ ENTITY_NAME +" cannot already have an ID");
         }
-        menuService.save(resources);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return API.created(menuService.save(resources)?1:0).responseEntity();
     }
 
     @Log("修改菜单")
     @ApiOperation("修改菜单")
     @PutMapping
     @PreAuthorize("@el.check('menu:edit')")
-    public ResponseEntity<Object> update(@Validated(Menu.Update.class) @RequestBody Menu resources){
-        menuService.updateById(resources);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<API<Integer>> update(@Validated(Menu.Update.class) @RequestBody Menu resources){
+        return API.updated(menuService.updateById(resources)?1:0).responseEntity();
     }
 
     @Log("删除菜单")
     @ApiOperation("删除菜单")
     @DeleteMapping
     @PreAuthorize("@el.check('menu:del')")
-    public ResponseEntity<Object> delete(@RequestBody Set<Long> ids){
+    public ResponseEntity<API<Integer>> delete(@RequestBody Set<Long> ids){
         Set<Menu> menuSet = new HashSet<>();
         for (Long id : ids) {
             List<MenuDto> menuList = menuService.getMenus(id);
             menuSet.add(menuService.getById(id));
             menuSet = menuService.getDeleteMenus(ConvertUtil.convertList(menuList, Menu.class), menuSet);
         }
-        menuService.removeByIds(ids);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return API.deleted(menuService.removeByIds(ids)?1:0).responseEntity();
     }
 
     @Log("导出菜单数据")

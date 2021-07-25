@@ -16,6 +16,8 @@
 package com.gitee.coadmin.modules.system.rest;
 
 import com.gitee.coadmin.annotation.AnonymousAccess;
+import com.gitee.coadmin.base.API;
+import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.modules.system.service.DeptService;
 import com.gitee.coadmin.modules.system.service.dto.DeptCompactDto;
 import com.gitee.coadmin.modules.tools.utils.SecurityUtils;
@@ -61,16 +63,16 @@ public class DeptController {
     @ApiOperation("查询机构")
     @GetMapping
     @PreAuthorize("@el.check('user:list','dept:list')")
-    public ResponseEntity<Object> query(DeptQueryParam query) throws Exception {
-        return new ResponseEntity<>(deptService.buildTree(query, SecurityUtils.getCurrentUserId()),HttpStatus.OK);
+    public ResponseEntity<API<PageInfo<DeptCompactDto>>> query(DeptQueryParam query) throws Exception {
+        return API.ok(deptService.buildTree(query, SecurityUtils.getCurrentUserId())).responseEntity();
     }
 
     @Log("查询机构")
     @ApiOperation("查询机构:根据ID获取同级与上级数据")
     @PostMapping("/superior")
     @PreAuthorize("@el.check('user:list','dept:list')")
-    public ResponseEntity<Object> getSuperior(@RequestBody LinkedHashSet<Long> ids) {
-        return new ResponseEntity<>(deptService.buildTree(new DeptQueryParam(), SecurityUtils.getCurrentUserId()),HttpStatus.OK);
+    public ResponseEntity<API<PageInfo<DeptCompactDto>>> getSuperior(@RequestBody LinkedHashSet<Long> ids) {
+        return API.ok(deptService.buildTree(new DeptQueryParam(), SecurityUtils.getCurrentUserId())).responseEntity();
     }
 
     /**
@@ -81,38 +83,35 @@ public class DeptController {
     @GetMapping("/tree")
     //@PreAuthorize("@el.check('user:list','dept:list')")
     @AnonymousAccess
-    public ResponseEntity<Object> tree(@RequestParam LinkedHashSet<Long> ids) {
+    public ResponseEntity<API<PageInfo<DeptCompactDto>>> tree(@RequestParam LinkedHashSet<Long> ids) {
         log.info("tree:{}", ids);
-        return new ResponseEntity<>(deptService.buildTree(new DeptQueryParam(), SecurityUtils.getCurrentUserId()),HttpStatus.OK);
+        return API.ok(deptService.buildTree(new DeptQueryParam(), SecurityUtils.getCurrentUserId())).responseEntity();
     }
 
     @Log("新增机构")
     @ApiOperation("新增机构")
     @PostMapping
     @PreAuthorize("@el.check('dept:add')")
-    public ResponseEntity<Object> create(@Validated @RequestBody Dept resources){
+    public ResponseEntity<API<Integer>> create(@Validated @RequestBody Dept resources){
         if (resources.getId() != null) {
             throw new BadRequestException("A new "+ ENTITY_NAME +" cannot already have an ID");
         }
-        deptService.save(resources);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return API.created(deptService.save(resources)?1:0).responseEntity();
     }
 
     @Log("修改机构")
     @ApiOperation("修改机构")
     @PutMapping
     @PreAuthorize("@el.check('dept:edit')")
-    public ResponseEntity<Object> update(@Validated(Dept.Update.class) @RequestBody DeptCompactDto resources){
-        deptService.updateById(resources);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<API<Integer>> update(@Validated(Dept.Update.class) @RequestBody DeptCompactDto resources){
+        return API.updated(deptService.updateById(resources)?1:0).responseEntity();
     }
 
     @Log("删除机构")
     @ApiOperation("删除机构")
     @DeleteMapping
     @PreAuthorize("@el.check('dept:del')")
-    public ResponseEntity<Object> delete(@RequestBody Set<Long> ids){
-        deptService.removeByIds(ids);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<API<Integer>> delete(@RequestBody Set<Long> ids){
+        return API.deleted(deptService.removeByIds(ids)?1:0).responseEntity();
     }
 }

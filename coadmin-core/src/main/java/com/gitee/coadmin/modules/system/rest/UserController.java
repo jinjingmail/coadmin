@@ -15,6 +15,8 @@
  */
 package com.gitee.coadmin.modules.system.rest;
 
+import com.gitee.coadmin.base.API;
+import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.modules.tools.utils.SecurityUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -77,30 +79,28 @@ public class UserController {
     @ApiOperation("查询用户")
     @GetMapping
     @PreAuthorize("@el.check('user:list')")
-    public ResponseEntity<Object> query(UserQueryParam query, Pageable pageable){
-        return new ResponseEntity<>(userService.queryAll(query, pageable), HttpStatus.OK);
+    public ResponseEntity<API<PageInfo<UserDto>>> query(UserQueryParam query, Pageable pageable){
+        return API.ok(userService.queryAll(query, pageable)).responseEntity();
      }
 
     @Log("新增用户")
     @ApiOperation("新增用户")
     @PostMapping
     @PreAuthorize("@el.check('user:add')")
-    public ResponseEntity<Object> create(@Validated @RequestBody UserDto resources){
+    public ResponseEntity<API<Integer>> create(@Validated @RequestBody UserDto resources){
         checkLevel(resources);
         // 默认密码 123456
         resources.setPassword(passwordEncoder.encode("123456"));
-        userService.save(resources);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return API.created(userService.save(resources)?1:0).responseEntity();
     }
 
     @Log("修改用户")
     @ApiOperation("修改用户")
     @PutMapping
     @PreAuthorize("@el.check('user:edit')")
-    public ResponseEntity<Object> update(@Validated(User.Update.class) @RequestBody UserDto resources){
+    public ResponseEntity<API<Integer>> update(@Validated(User.Update.class) @RequestBody UserDto resources){
         checkLevel(resources);
-        userService.updateById(resources);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return API.updated(userService.updateById(resources)?1:0).responseEntity();
     }
 
     @Log("修改用户：个人中心")
@@ -118,7 +118,7 @@ public class UserController {
     @ApiOperation("删除用户")
     @DeleteMapping
     @PreAuthorize("@el.check('user:del')")
-    public ResponseEntity<Object> delete(@RequestBody Set<Long> ids){
+    public ResponseEntity<API<Integer>> delete(@RequestBody Set<Long> ids){
         for (Long id : ids) {
             Integer currentLevel =  Collections.min(roleService.findByUsersId(SecurityUtils.getCurrentUserId()).stream().map(RoleSmallDto::getLevel).collect(Collectors.toList()));
             Integer optLevel =  Collections.min(roleService.findByUsersId(id).stream().map(RoleSmallDto::getLevel).collect(Collectors.toList()));
@@ -126,13 +126,12 @@ public class UserController {
                 throw new BadRequestException("角色权限不足，不能删除：" + userService.findById(id).getUsername());
             }
         }
-        userService.removeByIds(ids);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return API.deleted(userService.removeByIds(ids)?1:0).responseEntity();
     }
 
     @ApiOperation("修改密码")
     @PostMapping(value = "/updatePass")
-    public ResponseEntity<Object> updatePass(@RequestBody UserPassVo passVo) throws Exception {
+    public ResponseEntity<? extends API<?>> updatePass(@RequestBody UserPassVo passVo) throws Exception {
         String oldPass = com.gitee.coadmin.utils.RsaUtils.decryptByPrivateKey(RsaProperties.privateKey,passVo.getOldPass());
         String newPass = com.gitee.coadmin.utils.RsaUtils.decryptByPrivateKey(RsaProperties.privateKey,passVo.getNewPass());
         UserDto user = userService.findByName(SecurityUtils.getCurrentUsername());
@@ -143,19 +142,19 @@ public class UserController {
             throw new BadRequestException("新密码不能与旧密码相同");
         }
         userService.updatePass(user.getUsername(),passwordEncoder.encode(newPass));
-        return new ResponseEntity<>(HttpStatus.OK);
+        return API.ok().responseEntity();
     }
 
     @ApiOperation("修改头像")
     @PostMapping(value = "/updateAvatar")
-    public ResponseEntity<Object> updateAvatar(@RequestParam MultipartFile avatar){
-        return new ResponseEntity<>(userService.updateAvatar(avatar), HttpStatus.OK);
+    public ResponseEntity<API<Map<String, String>>> updateAvatar(@RequestParam MultipartFile avatar){
+        return API.ok(userService.updateAvatar(avatar)).responseEntity();
     }
 
     @Log("修改邮箱")
     @ApiOperation("修改邮箱")
     @PostMapping(value = "/updateEmail/{code}")
-    public ResponseEntity<Object> updateEmail(@PathVariable String code,@RequestBody User user) throws Exception {
+    public ResponseEntity<? extends API<?>> updateEmail(@PathVariable String code,@RequestBody User user) throws Exception {
         String password = com.gitee.coadmin.utils.RsaUtils.decryptByPrivateKey(RsaProperties.privateKey,user.getPassword());
         UserDto userDto = userService.findByName(SecurityUtils.getCurrentUsername());
         if(!passwordEncoder.matches(password, userDto.getPassword())){
@@ -163,7 +162,7 @@ public class UserController {
         }
         verificationCodeService.validated(CodeEnum.EMAIL_RESET_EMAIL_CODE.getKey() + user.getEmail(), code);
         userService.updateEmail(userDto.getUsername(),user.getEmail());
-        return new ResponseEntity<>(HttpStatus.OK);
+        return API.ok().responseEntity();
     }
 
     /**

@@ -19,7 +19,6 @@
         <module>app-demo</module>
         <module>app-demo-dao-share</module>
         <module>app-dao-share</module>
-        <module>coadmin-test</module>
     </modules>
 
     <name>CoAdmin 后台管理</name>
@@ -41,6 +40,7 @@
         <druid.version>1.1.22</druid.version>
         <commons-pool2.version>2.5.0</commons-pool2.version>
         <hutool.version>5.3.4</hutool.version>
+        <mapstruct.version>1.4.2.Final</mapstruct.version>
     </properties>
 
     <dependencies>
@@ -104,6 +104,10 @@
             <version>${swagger.version}</version>
             <exclusions>
                 <exclusion>
+                    <artifactId>org.mapstruct</artifactId>
+                    <groupId>mapstruct</groupId>
+                </exclusion>
+                <exclusion>
                     <groupId>io.swagger</groupId>
                     <artifactId>swagger-annotations</artifactId>
                 </exclusion>
@@ -129,6 +133,13 @@
             <version>1.5.21</version>
         </dependency>
 
+        <!--mapStruct依赖-->
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>${mapstruct.version}</version>
+        </dependency>
+
         <!--Mysql依赖包-->
         <dependency>
             <groupId>mysql</groupId>
@@ -151,7 +162,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.16</version>
+            <version>${lombok.version}</version>
             <optional>true</optional>
         </dependency>
 
@@ -203,6 +214,27 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${mapstruct.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
             <!-- 打包时跳过测试 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

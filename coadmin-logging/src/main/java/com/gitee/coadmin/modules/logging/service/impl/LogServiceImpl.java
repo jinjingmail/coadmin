@@ -50,7 +50,7 @@ public class LogServiceImpl extends BaseServiceImpl<Log> implements LogService {
     private final LogMapper logMapper;
 
     @Override
-    public Object queryAll(LogQueryParam query, Pageable pageable) {
+    public PageInfo queryAll(LogQueryParam query, Pageable pageable) {
         IPage<Log> page = PageUtil.toMybatisPage(pageable);
         IPage<Log> pageList = logMapper.selectPage(page, QHMP.getPredicate(query));
         String status = "ERROR";
@@ -159,13 +159,13 @@ public class LogServiceImpl extends BaseServiceImpl<Log> implements LogService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void delAllByError() {
-        this.removeByLogType("ERROR");
+    public boolean delAllByError() {
+        return this.removeByLogType("ERROR");
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void delAllByInfo() {
-        this.removeByLogType("INFO");
+    public boolean delAllByInfo() {
+        return this.removeByLogType("INFO");
     }
 }
