@@ -17,9 +17,9 @@ package com.gitee.coadmin.modules.mnt.util;
 
 import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.SCPClient;
-import com.google.common.collect.Maps;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,7 +31,7 @@ import java.util.logging.Logger;
  */
 public class ScpClientUtil {
 
-	static private Map<String,ScpClientUtil> instance = Maps.newHashMap();
+	static private Map<String,ScpClientUtil> instance = new HashMap<>();
 
 	static synchronized public ScpClientUtil getInstance(String ip, int port, String username, String password) {
 		if (instance.get(ip) == null) {

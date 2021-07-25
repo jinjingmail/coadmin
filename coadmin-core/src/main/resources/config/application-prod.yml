@@ -96,15 +96,15 @@ generator:
   enabled: false
 
 #如果生产环境要开启swagger，需要配置请求地址
-#springfox:
-#  documentation:
-#    swagger:
-#      v2:
-#        host: # 接口域名或外网ip
+springfox:
+  documentation:
+    swagger:
+      v2:
+        host: localhost # 接口域名或外网ip
 
 #是否开启 swagger-ui
 swagger:
-  enabled: false
+  enabled: true
 
 # 文件存储路径
 file:

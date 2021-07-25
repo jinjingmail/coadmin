@@ -17,7 +17,6 @@ package com.gitee.coadmin.modules.mnt.util;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.util.StringUtils;
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.sql.DataSource;
@@ -27,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -179,7 +179,7 @@ public class SqlUtils {
      * @throws Exception e
      */
     private static List<String> readSqlList(File sqlFile) throws Exception {
-        List<String> sqlList = Lists.newArrayList();
+        List<String> sqlList = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
                 new FileInputStream(sqlFile), StandardCharsets.UTF_8))) {

@@ -22,6 +22,8 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.Collections;
+
 /**
  * @ClassName 拦截器配置
  * @Author hupeng <610796224@qq.com>
@@ -54,10 +56,18 @@ public class InterceptorConfig implements WebMvcConfigurer {
     public CorsFilter corsFilter()  {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
+        //config.addAllowedOrigin("*");
+        //config.addAllowedHeader("*");
+        //config.addAllowedMethod("*");
+        //1,允许任何来源
+        config.setAllowedOriginPatterns(Collections.singletonList("*"));
+        //2,允许任何请求头
+        config.addAllowedHeader(CorsConfiguration.ALL);
+        //3,允许任何方法
+        config.addAllowedMethod(CorsConfiguration.ALL);
+        //4,允许凭证
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("*");
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
+
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
 

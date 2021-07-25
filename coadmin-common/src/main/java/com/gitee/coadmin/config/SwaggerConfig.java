@@ -16,10 +16,10 @@
 package com.gitee.coadmin.config;
 
 import com.fasterxml.classmate.TypeResolver;
-import com.google.common.base.Predicates;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.commons.collections4.functors.NotPredicate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,7 +38,7 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import java.util.ArrayList;
 import java.util.List;
-import static com.google.common.collect.Lists.newArrayList;
+
 import static springfox.documentation.schema.AlternateTypeRules.newRule;
 
 /**
@@ -71,11 +71,12 @@ public class SwaggerConfig {
                 .required(true)
                 .build();
         pars.add(ticketPar.build());
-        return new Docket(DocumentationType.SWAGGER_2)
+        return new Docket(DocumentationType.OAS_30)
                 .enable(enabled)
                 .apiInfo(apiInfo())
                 .select()
-                .paths(Predicates.not(PathSelectors.regex("/error.*")))
+                // TODO .paths(Predicates.not(PathSelectors.regex("/error.*")))
+                .paths(PathSelectors.any())
                 .build()
                 .globalOperationParameters(pars);
     }
@@ -106,7 +107,9 @@ class SwaggerDataConfig {
 
             @Override
             public List<AlternateTypeRule> rules() {
-                return newArrayList(newRule(resolver.resolve(Pageable.class), resolver.resolve(Page.class)));
+                ArrayList<AlternateTypeRule> list = new ArrayList<>();
+                list.add(newRule(resolver.resolve(Pageable.class), resolver.resolve(Page.class)));
+                return list;
             }
         };
     }

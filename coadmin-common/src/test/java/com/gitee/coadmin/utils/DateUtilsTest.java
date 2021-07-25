@@ -1,7 +1,7 @@
 package com.gitee.coadmin.utils;
 
 import com.gitee.coadmin.utils.DateUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.Date;
