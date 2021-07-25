@@ -43,7 +43,7 @@ import java.util.Set;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/jobs")
-@Api(tags = "系统:定时任务管理")
+@Api(tags = "系统：定时任务管理")
 public class QuartzJobController {
 
     private static final String ENTITY_NAME = "quartzJob";
