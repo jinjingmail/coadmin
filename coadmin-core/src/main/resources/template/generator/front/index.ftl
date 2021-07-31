@@ -1,7 +1,7 @@
 <template>
   <div>
-    <co-dialog title="查找" no-max seamless ref="search" @before-hide="crud.props.filterTable=''">
-      <q-input dense style="width:180px" placeholder="在当前页查找" outlined v-model="crud.props.filterTable" clearable class="q-mx-sm q-mt-none q-mb-sm"/>
+    <co-dialog title="查找" no-max ref="search" @before-hide="crud.props.filterTable=''" @show="$refs.findInCurrentPage.focus()">
+      <co-input ref="findInCurrentPage" dense style="width:180px" placeholder="在当前页查找" outlined v-model="crud.props.filterTable" clearable class="q-mx-sm q-mt-none q-mb-sm"/>
     </co-dialog>
 
     <!-- 编辑表单对话框 -->
@@ -191,7 +191,7 @@
           <div>
             <q-btn dense label="查询" padding="xs sm" color="primary" @click="crud.toQuery()" />
             <q-btn dense label="重置" flat @click="crud.resetQuery()" />
-            <q-btn dense :label="crud.props.queryMore?'更少«':'更多»'" flat @click="crud.props.queryMore = !crud.props.queryMore"/>
+            <q-btn dense :label="crud.props.queryMore?'«更少':'更多»'" flat @click="crud.props.queryMore = !crud.props.queryMore"/>
           </div>
           <q-space/>
 </#if>
@@ -203,9 +203,9 @@
           <crud-operation dense :permission="permission" />
           <div>
             <q-btn-dropdown dense color="primary" class="btn-dropdown-hide-droparrow" icon="apps" auto-close>
-              <crud-more :tableSlotTopProps="props">
+              <crud-more dense :tableSlotTopProps="props">
                 <template v-slot:start>
-                  <q-btn flat align="left" label="在当前页查找" icon="find_in_page" @click.native="$refs.search.show()" />
+                  <q-btn dense align="left" label="在当前页查找" icon="find_in_page" @click.native="$refs.search.show()" />
                   <q-separator/>
                 </template>
               </crud-more>
@@ -213,18 +213,6 @@
           </div>
         </div>
       </template>
-
-<#if columns??>
-  <#list columns as column>
-    <#if (column.dictName)?? && (column.dictName)!="">
-      <template v-slot:body-cell-${column.changeColumnName}="props">
-        <q-td key="${column.changeColumnName}" :props="props">
-          {{dict.label.${column.dictName}[props.row.${column.changeColumnName}]}}
-        </q-td>
-      </template>
-    </#if>
-  </#list>
-</#if>
 
       <template v-slot:body-cell-action="props">
         <q-td key="action" :props="props">
@@ -249,7 +237,10 @@
 </template>
 
 <script>
-<#if hasDict>import { mapGetters } from 'vuex'</#if>
+<#if hasDict>
+import { mapGetters } from 'vuex'
+import { getDictLabel } from '@/utils/store'
+</#if>
 <#if hasDate>import { formatTime } from '@/utils/index'</#if>
 import CRUD, { presenter, header, form, crud } from '@crud/crud'
 import CrudOperation from '@crud/crud-operation'
@@ -266,7 +257,7 @@ const columns = [
 <#if columns??><#list columns as column>
   <#assign formLabel="${column.changeColumnName}"/>
   <#if column.remark != ''><#assign formLabel="${column.remark}"/></#if>
-  { name: '${column.changeColumnName}', field: '${column.changeColumnName}', label: '${formLabel}', align: 'left'<#if column.columnType = 'Date'>, format: val => formatTime(val)</#if> },
+  { name: '${column.changeColumnName}', field: '${column.changeColumnName}', label: '${formLabel}', align: 'left'<#if column.columnType = 'Date'>, format: val => formatTime(val)<#elseif (column.dictName)?? && (column.dictName)!="">, format: val => getDictLabel('${column.dictName}', val)</#if> },
 </#list></#if>
   { name: 'action', label: '操作', align: 'center', required: false, sortable: false }
 ]
@@ -280,18 +271,6 @@ export default {
   mixins: [presenter(), header(), form(defaultForm), crud()],
   data () {
     return {
-      /*
-      rules: {
-        <#if isNotNullColumns??>
-        <#list isNotNullColumns as column>
-        <#if column.istNotNull>
-        ${column.changeColumnName}: [
-          { required: true, message: '<#if column.remark != ''>${column.remark}</#if>不能为空', trigger: 'blur' }
-        ]<#if column_has_next>,</#if>
-        </#if>
-        </#list>
-        </#if>
-      },*/
       permission: {
         view: ['admin', '${changeClassName}:list'],
         add: ['admin', '${changeClassName}:add'],

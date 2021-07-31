@@ -43,6 +43,7 @@ admin/123456
   - TODO 删除菜单，同步删除子菜单、菜单-角色关联
   - TODO 修改机构可用状态后，user.dataScopes 没有更新
   - TODO QueryParam.blurry 增加新配置，比如：@Query(blurry = "id=eq,treeNames,name=like,desc=like_right")
+  - TODO BUG 不能将一个子菜单，修改为顶级菜单
 
 ** 2020-10-09 **
 - bug fix:修正用户缓存导致的修改头像不能正确显示问题

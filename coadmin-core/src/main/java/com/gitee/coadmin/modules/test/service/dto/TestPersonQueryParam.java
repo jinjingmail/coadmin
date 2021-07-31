@@ -24,6 +24,7 @@ public class TestPersonQueryParam{
     private String gender;
 
     /** 精确 */
+    @DateTimeFormat(pattern="yyyy-MM-dd")
     @Query
     private Date birthday;
 
