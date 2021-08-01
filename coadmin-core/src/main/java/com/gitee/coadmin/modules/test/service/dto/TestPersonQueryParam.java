@@ -9,7 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 /**
 * @author jinjin
-* @date 2021-07-25
+* @date 2021-08-01
 */
 @Getter
 @Setter
@@ -24,7 +24,6 @@ public class TestPersonQueryParam{
     private String gender;
 
     /** 精确 */
-    @DateTimeFormat(pattern="yyyy-MM-dd")
     @Query
     private Date birthday;
 

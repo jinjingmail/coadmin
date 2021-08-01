@@ -1,7 +1,7 @@
 <template>
   <div>
     <co-dialog title="查找" no-max ref="search" @before-hide="crud.props.filterTable=''" @show="$refs.findInCurrentPage.focus()">
-      <co-input ref="findInCurrentPage" dense style="width:180px" placeholder="在当前页查找" outlined v-model="crud.props.filterTable" clearable class="q-mx-sm q-mt-none q-mb-sm"/>
+      <co-input ref="findInCurrentPage" style="width:180px" placeholder="在当前页查找" outlined v-model="crud.props.filterTable" clearable class="q-mx-sm q-mt-none q-mb-sm"/>
     </co-dialog>
 
     <!-- 编辑表单对话框 -->
@@ -24,88 +24,75 @@
         <#assign formLabel="${column.changeColumnName}"/>
         <#if column.remark != ''><#assign formLabel="${column.remark}"/></#if>
       <#if column.formType = 'Input'>
-        <co-input dense class="col-12" form-label="${formLabel}" v-model="form.${column.changeColumnName}" :disable="!!crud.status.view"
+        <co-input class="col-12" form-label="${formLabel}" v-model="form.${column.changeColumnName}" :disable="!!crud.status.view"
               <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>/>
       <#elseif column.formType = 'Textarea'>
-        <co-input dense class="col-12" form-label="${formLabel}" v-model="form.${column.changeColumnName}" :disable="!!crud.status.view" autogrow
+        <co-input class="col-12" form-label="${formLabel}" v-model="form.${column.changeColumnName}" :disable="!!crud.status.view" autogrow
               <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>/>
       <#elseif column.formType = 'Radio'>
-        <co-option-group
-            dense
-            class="col-12"
-            form-label="${formLabel}"
-            v-model="form.${column.changeColumnName}"
-            value-to-string
-            :disable="!!crud.status.view"
-            inline
-            :options='dict.<#if (column.dictName)?? && (column.dictName)!="">${column.dictName}<#else>未设置字典，请手动设置 Radio</#if>'
-            type="radio"
+        <co-field class="col-12" form-label="${formLabel}">
+          <template v-slot:control>
+            <co-option-group
+                v-model="form.${column.changeColumnName}"
+                value-to-string
+                :disable="!!crud.status.view"
+                inline
+                :options='dict.<#if (column.dictName)?? && (column.dictName)!="">${column.dictName}<#else>未设置字典，请手动设置 Radio</#if>'
+                type="radio"
             <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>/>
+          </template>
+        </co-field>
       <#elseif column.formType = 'Checkbox'>
-        <co-option-group
-            dense
-            class="col-12"
-            form-label="${formLabel}"
-            v-model="form.${column.changeColumnName}"
-            value-to-string
-            :disable="!!crud.status.view"
-            inline
-            :options='dict.<#if (column.dictName)?? && (column.dictName)!="">${column.dictName}<#else>未设置字典，请手动设置 Checkbox</#if>'
-            type="checkbox"
+        <co-field class="col-12" form-label="${formLabel}">
+          <template v-slot:control>
+            <co-option-group
+                v-model="form.${column.changeColumnName}"
+                value-to-string
+                :disable="!!crud.status.view"
+                inline
+                :options='dict.<#if (column.dictName)?? && (column.dictName)!="">${column.dictName}<#else>未设置字典，请手动设置 Checkbox</#if>'
+                type="checkbox"
             <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>/>
+          </template>
+        </co-field>
       <#elseif column.formType = 'Select'>
         <co-select
-            dense
-            options-dense
             v-model="form.${column.changeColumnName}"
             class="col-12"
             form-label="${formLabel}"
             :options='dict.<#if (column.dictName)?? && (column.dictName)!="">${column.dictName}<#else>未设置字典，请手动设置 Select</#if>'
             :disable="!!crud.status.view"
             no-filter
-            clearable
             emit-value
             map-options
             <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>/>
       <#elseif column.formType = 'Date'>
         <co-date-select
-            dense
             class="col-12"
             form-label="${formLabel}"
             :value="formatTime(form.${column.changeColumnName}, '{y}-{m}-{d}')"
             @input="val => form.${column.changeColumnName}=val"
-            clearable
             :disable="!!crud.status.view"
-           <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if> >
-          <template v-slot:append>
-            <q-icon name="event" />
-          </template>
-        </co-date-select>
+           <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if> />
       <#elseif column.formType = 'DateRange'>
         <co-date-select
-            dense
             class="col-12"
             form-label="${formLabel}"
             v-model="form.${column.changeColumnName}"
             range
             :default-time="[' 00:00:00', ' 23:59:59']"
-            clearable
             :disable="!!crud.status.view"
-           <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if> >
-          <template v-slot:append>
-            <q-icon name="event" />
-          </template>
-        </co-date-select>
+           <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if> />
       <#else>
-        <co-input dense class="col-12" form-label="${formLabel}" :value="<#if column.columnType = 'Date'>parseTime(form.${column.changeColumnName}, '{y}-{m}-{d} {h}:{i}:{s}')<#else>form.${column.changeColumnName}</#if>" readonly borderless/>
+        <co-field class="col-12" form-label="${formLabel}" :value="<#if column.columnType = 'Date'>parseTime(form.${column.changeColumnName}, '{y}-{m}-{d} {h}:{i}:{s}')<#else>form.${column.changeColumnName}</#if>" readonly borderless v-show="form.${column.changeColumnName}"/>
       </#if>
     </#if>
   </#list>
 </#if>
       </co-form>
       <q-card-actions class="q-pa-md" align="right">
-        <q-btn dense label="取消" flat v-close-popup/>
-        <q-btn dense label="保存" color="primary"
+        <co-btn label="取消" flat v-close-popup/>
+        <co-btn label="保存" color="primary"
                 v-if="!crud.status.view"
                 @click="crud.submitCU"
                :loading="crud.status.cu === crud.STATUS_PROCESSING"
@@ -116,7 +103,6 @@
     <co-table
         ref="table"
         row-key="id"
-        dense
         :data="crud.data"
         :columns="crud.columns"
         :visible-columns="crud.visibleColumns"
@@ -136,29 +122,24 @@
           <#if column.formType = 'Radio' || column.formType = 'Checkbox' || column.formType = 'Select'>
           <co-select
               v-model="query.${column.changeColumnName}"
-              dense
-              filled
-              options-dense
               label="${formLabel}"
-              content-style="width:120px"
+              content-style="width:160px"
               no-filter
               use-input
               fill-input
               hide-selected
               :options='dict.<#if (column.dictName)?? && (column.dictName)!="">${column.dictName}<#else>未设置字典，请手动设置 Select</#if>'
               @input="crud.toQuery()"
-              clearable
               emit-value
               map-options
+              clearable
           />
           <#elseif column.formType = 'Date' || column.formType = 'DateRange' || column.columnType = 'Date'>
             <#if column.queryType = 'BetWeen'>
           <co-date-select
               v-model="query.${column.changeColumnName}"
-              dense
-              filled
               label="${formLabel}"
-              content-style="width:200px"
+              content-style="width:240px"
               range
               :default-time="[' 00:00:00', ' 23:59:59']"
               @input="crud.toQuery()"
@@ -167,10 +148,8 @@
             <#else>
           <co-date-select
               v-model="query.${column.changeColumnName}"
-              dense
-              filled
               label="${formLabel}"
-              content-style="width:120px"
+              content-style="width:160px"
               @input="crud.toQuery()"
               clearable
           />
@@ -178,10 +157,8 @@
           <#else>
           <co-input
               v-model="query.${column.changeColumnName}"
-              dense
-              filled
               label="${formLabel}"
-              content-style="width:120px"
+              content-style="width:160px"
           />
           </#if>
   </#list>
@@ -189,9 +166,9 @@
           <template v-if="crud.props.queryMore">
           </template>
           <div>
-            <q-btn dense label="查询" padding="xs sm" color="primary" @click="crud.toQuery()" />
-            <q-btn dense label="重置" flat @click="crud.resetQuery()" />
-            <q-btn dense :label="crud.props.queryMore?'«更少':'更多»'" flat @click="crud.props.queryMore = !crud.props.queryMore"/>
+            <co-btn label="查询" color="primary" @click="crud.toQuery()" />
+            <co-btn label="重置" flat @click="crud.resetQuery()" />
+            <co-btn :label="crud.props.queryMore?'«更少':'更多»'" flat @click="crud.props.queryMore = !crud.props.queryMore"/>
           </div>
           <q-space/>
 </#if>
@@ -200,16 +177,16 @@
       <template v-slot:top-right="props">
         <div class='row q-col-gutter-x-sm q-col-gutter-y-xs q-pa-xs full-width'>
           <!--如果想在工具栏加入更多按钮，可以使用插槽方式， 'start' or 'end'-->
-          <crud-operation dense :permission="permission" />
+          <crud-operation :permission="permission" />
           <div>
-            <q-btn-dropdown dense color="primary" class="btn-dropdown-hide-droparrow" icon="apps" auto-close>
-              <crud-more dense :tableSlotTopProps="props">
+            <co-btn-dropdown color="primary" class="btn-dropdown-hide-droparrow" icon="apps" auto-close>
+              <crud-more :tableSlotTopProps="props">
                 <template v-slot:start>
-                  <q-btn dense align="left" label="在当前页查找" icon="find_in_page" @click.native="$refs.search.show()" />
+                  <co-btn flat align="left" label="在当前页查找" icon="find_in_page" @click.native="$refs.search.show()" />
                   <q-separator/>
                 </template>
               </crud-more>
-            </q-btn-dropdown>
+            </co-btn-dropdown>
           </div>
         </div>
       </template>
@@ -218,7 +195,6 @@
         <q-td key="action" :props="props">
           <crud-row
               flat
-              dense
               :type="$q.screen.gt.xs?'button':'menu'"
               :data="props.row"
               :permission="permission"
@@ -229,7 +205,7 @@
       </template>
 
       <template v-slot:pagination>
-        <crud-pagination dense />
+        <crud-pagination />
       </template>
 
     </co-table>
