@@ -17,7 +17,7 @@
         ref="form"
         label-width="medium"
         label-align="right"
-        class="q-pa-md row q-col-gutter-x-xl q-col-gutter-y-md">
+        class="q-pa-md row q-col-gutter-x-md q-col-gutter-y-md">
 <#if columns??>
   <#list columns as column>
     <#if column.formShow>
@@ -124,6 +124,7 @@
               v-model="query.${column.changeColumnName}"
               label="${formLabel}"
               content-style="width:160px"
+              filled
               no-filter
               use-input
               fill-input
@@ -140,6 +141,7 @@
               v-model="query.${column.changeColumnName}"
               label="${formLabel}"
               content-style="width:240px"
+              filled
               range
               :default-time="[' 00:00:00', ' 23:59:59']"
               @input="crud.toQuery()"
@@ -150,6 +152,7 @@
               v-model="query.${column.changeColumnName}"
               label="${formLabel}"
               content-style="width:160px"
+              filled
               @input="crud.toQuery()"
               clearable
           />
@@ -159,6 +162,7 @@
               v-model="query.${column.changeColumnName}"
               label="${formLabel}"
               content-style="width:160px"
+              filled
           />
           </#if>
   </#list>
@@ -177,7 +181,7 @@
       <template v-slot:top-right="props">
         <div class='row q-col-gutter-x-sm q-col-gutter-y-xs q-pa-xs full-width'>
           <!--如果想在工具栏加入更多按钮，可以使用插槽方式， 'start' or 'end'-->
-          <crud-operation :permission="permission" />
+          <crud-operation :permission="permission" no-label no-view no-edit/>
           <div>
             <co-btn-dropdown color="primary" class="btn-dropdown-hide-droparrow" icon="apps" auto-close>
               <crud-more :tableSlotTopProps="props">
@@ -195,7 +199,7 @@
         <q-td key="action" :props="props">
           <crud-row
               flat
-              :type="$q.screen.gt.xs?'button':'menu'"
+              type="menu"
               :data="props.row"
               :permission="permission"
               no-add
