@@ -4,7 +4,7 @@ import com.gitee.coadmin.base.API;
 import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.modules.logging.annotation.Log;
 import ${package}.service.${className}Service;
-import ${package}.service.dto.${className}Dto;
+import ${package}.service.dto.${className}DTO;
 import ${package}.service.dto.${className}QueryParam;
 import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import java.util.Set;
 /*  添加菜单的 SQL
 <#if hasMenuPid>
 INSERT INTO sys_menu(pid, sub_count, `type`, title, title_letter, component_name, `component`, sort, `path`, i_frame, `cache`, hidden, permission)
-    VALUES (${menuPid}, 4, 1, '${apiAlias}', '${apiAliasLetter}', '${className}', '${changeClassName}/index', 10, '${changeClassName}', 0, 0, 0, '${changeClassName}:list');
+    VALUES (${menuPid}, 4, 1, '${apiAlias}', '${apiAliasLetter}', '${className}', '${changeClassName}/index', 10, '${changeClassName}', 0, 0, 0, '');
 SELECT @lastId:=LAST_INSERT_ID();
 INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, i_frame, `cache`, hidden, permission)
     VALUES (@lastId, 0, 2, '查看${apiAlias}', 10, 0, 0, 0, '${changeClassName}:list');
@@ -59,7 +59,7 @@ public class ${className}Controller {
     @Log("查询${apiAlias}")
     @ApiOperation("查询${apiAlias}")
     @PreAuthorize("@el.check('${changeClassName}:list')")
-    public ResponseEntity<API<PageInfo<${className}Dto>>> query(${className}QueryParam query, Pageable pageable){
+    public ResponseEntity<API<PageInfo<${className}DTO>>> query(${className}QueryParam query, Pageable pageable){
         return API.ok(${changeClassName}Service.queryAll(query,pageable)).responseEntity();
     }
 
@@ -67,7 +67,7 @@ public class ${className}Controller {
     @Log("新增${apiAlias}")
     @ApiOperation("新增${apiAlias}")
     @PreAuthorize("@el.check('${changeClassName}:add')")
-    public ResponseEntity<API<Integer>> create(@Validated @RequestBody ${className}Dto resources){
+    public ResponseEntity<API<Integer>> create(@Validated @RequestBody ${className}DTO resources){
         return API.created(${changeClassName}Service.insert(resources)).responseEntity();
     }
 
@@ -75,7 +75,7 @@ public class ${className}Controller {
     @Log("修改${apiAlias}")
     @ApiOperation("修改${apiAlias}")
     @PreAuthorize("@el.check('${changeClassName}:edit')")
-    public ResponseEntity<API<Integer>> update(@Validated @RequestBody ${className}Dto resources){
+    public ResponseEntity<API<Integer>> update(@Validated @RequestBody ${className}DTO resources){
         return API.updated(${changeClassName}Service.updateById(resources)).responseEntity();
     }
 

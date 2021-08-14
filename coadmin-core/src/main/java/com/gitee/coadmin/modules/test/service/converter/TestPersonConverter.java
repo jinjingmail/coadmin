@@ -3,7 +3,7 @@ package com.gitee.coadmin.modules.test.service.converter;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.modules.test.domain.TestPerson;
-import com.gitee.coadmin.modules.test.service.dto.TestPersonDto;
+import com.gitee.coadmin.modules.test.service.dto.TestPersonDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
 * @author jinjin
-* @date 2021-08-01
+* @date 2021-08-08
 */
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface TestPersonConverter {
@@ -20,34 +20,34 @@ public interface TestPersonConverter {
      * @param dto /
      * @return /
      */
-    TestPerson toEntity(TestPersonDto dto);
+    TestPerson toEntity(TestPersonDTO dto);
 
     /**
      * Entity转DTO
      * @param entity /
      * @return /
      */
-    TestPersonDto toDto(TestPerson entity);
+    TestPersonDTO toDto(TestPerson entity);
 
     /**
      * DTO集合转Entity集合
      * @param dtoList /
      * @return /
      */
-    List<TestPerson> toEntity(List<TestPersonDto> dtoList);
+    List<TestPerson> toEntity(List<TestPersonDTO> dtoList);
 
     /**
      * Entity集合转DTO集合
      * @param entityList /
      * @return /
      */
-    List <TestPersonDto> toDto(List<TestPerson> entityList);
+    List <TestPersonDTO> toDto(List<TestPerson> entityList);
 
-    default PageInfo<TestPersonDto> convertPage(IPage<TestPerson> page) {
+    default PageInfo<TestPersonDTO> convertPage(IPage<TestPerson> page) {
         if (page == null) {
             return null;
         }
-        PageInfo<TestPersonDto> pageInfo = new PageInfo<>();
+        PageInfo<TestPersonDTO> pageInfo = new PageInfo<>();
         pageInfo.setTotalElements(page.getTotal());
         pageInfo.setContent(toDto(page.getRecords()));
         return pageInfo;

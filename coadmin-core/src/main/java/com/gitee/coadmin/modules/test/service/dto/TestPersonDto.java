@@ -11,13 +11,13 @@ import com.gitee.coadmin.base.BaseDto;
 
 /**
 * @author jinjin
-* @date 2021-08-01
+* @date 2021-08-08
 */
 @Getter
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class TestPersonDto extends BaseDto {
+public class TestPersonDTO extends BaseDto {
     private static final long serialVersionUID = 1L;
 
     @JsonSerialize(using= ToStringSerializer.class) // 防止精度丢失

@@ -15,7 +15,7 @@
     >
       <co-form
         ref="form"
-        label-width="medium"
+        label-width="small"
         label-align="right"
         class="q-pa-md row q-col-gutter-x-md q-col-gutter-y-md">
 <#if columns??>
@@ -25,12 +25,12 @@
         <#if column.remark != ''><#assign formLabel="${column.remark}"/></#if>
       <#if column.formType = 'Input'>
         <co-input class="col-12" form-label="${formLabel}" v-model="form.${column.changeColumnName}" :disable="!!crud.status.view"
-              <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>/>
+                  <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>/>
       <#elseif column.formType = 'Textarea'>
         <co-input class="col-12" form-label="${formLabel}" v-model="form.${column.changeColumnName}" :disable="!!crud.status.view" autogrow
-              <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>/>
+                  <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>/>
       <#elseif column.formType = 'Radio'>
-        <co-field class="col-12" form-label="${formLabel}">
+        <co-field class="col-12" form-label="${formLabel}" borderless :value="form.${column.changeColumnName}" <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>>
           <template v-slot:control>
             <co-option-group
                 v-model="form.${column.changeColumnName}"
@@ -39,11 +39,11 @@
                 inline
                 :options='dict.<#if (column.dictName)?? && (column.dictName)!="">${column.dictName}<#else>未设置字典，请手动设置 Radio</#if>'
                 type="radio"
-            <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>/>
+            />
           </template>
         </co-field>
       <#elseif column.formType = 'Checkbox'>
-        <co-field class="col-12" form-label="${formLabel}">
+        <co-field class="col-12" form-label="${formLabel}" borderless :value="form.${column.changeColumnName}" <#if column.istNotNull>:rules="[ val => (val && val.length > 0) || '必填' ]"</#if>>
           <template v-slot:control>
             <co-option-group
                 v-model="form.${column.changeColumnName}"
@@ -52,7 +52,7 @@
                 inline
                 :options='dict.<#if (column.dictName)?? && (column.dictName)!="">${column.dictName}<#else>未设置字典，请手动设置 Checkbox</#if>'
                 type="checkbox"
-            <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>/>
+            />
           </template>
         </co-field>
       <#elseif column.formType = 'Select'>
@@ -124,7 +124,6 @@
               v-model="query.${column.changeColumnName}"
               label="${formLabel}"
               content-style="width:160px"
-              filled
               no-filter
               use-input
               fill-input
@@ -141,7 +140,6 @@
               v-model="query.${column.changeColumnName}"
               label="${formLabel}"
               content-style="width:240px"
-              filled
               range
               :default-time="[' 00:00:00', ' 23:59:59']"
               @input="crud.toQuery()"
@@ -152,7 +150,6 @@
               v-model="query.${column.changeColumnName}"
               label="${formLabel}"
               content-style="width:160px"
-              filled
               @input="crud.toQuery()"
               clearable
           />
@@ -162,7 +159,7 @@
               v-model="query.${column.changeColumnName}"
               label="${formLabel}"
               content-style="width:160px"
-              filled
+              @keyup.enter="crud.toQuery()"
           />
           </#if>
   </#list>
@@ -170,7 +167,7 @@
           <template v-if="crud.props.queryMore">
           </template>
           <div>
-            <co-btn label="查询" color="primary" @click="crud.toQuery()" />
+            <co-btn icon="search" color="primary" @click="crud.toQuery()" />
             <co-btn label="重置" flat @click="crud.resetQuery()" />
             <co-btn :label="crud.props.queryMore?'«更少':'更多»'" flat @click="crud.props.queryMore = !crud.props.queryMore"/>
           </div>
@@ -198,8 +195,7 @@
       <template v-slot:body-cell-action="props">
         <q-td key="action" :props="props">
           <crud-row
-              flat
-              type="menu"
+              type="button"
               :data="props.row"
               :permission="permission"
               no-add

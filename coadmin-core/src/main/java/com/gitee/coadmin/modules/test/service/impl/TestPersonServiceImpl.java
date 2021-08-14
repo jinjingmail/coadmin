@@ -7,7 +7,7 @@ import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.utils.PageUtil;
 import com.gitee.coadmin.modules.test.domain.TestPerson;
 import com.gitee.coadmin.modules.test.service.TestPersonService;
-import com.gitee.coadmin.modules.test.service.dto.TestPersonDto;
+import com.gitee.coadmin.modules.test.service.dto.TestPersonDTO;
 import com.gitee.coadmin.modules.test.service.dto.TestPersonQueryParam;
 import com.gitee.coadmin.modules.test.service.mapper.TestPersonMapper;
 import com.gitee.coadmin.modules.test.service.converter.TestPersonConverter;
@@ -23,7 +23,7 @@ import java.util.*;
 
 /**
 * @author jinjin
-* @date 2021-08-01
+* @date 2021-08-08
 */
 @Service
 @AllArgsConstructor
@@ -36,14 +36,14 @@ public class TestPersonServiceImpl implements TestPersonService {
     private final TestPersonConverter testPersonConverter;
 
     @Override
-    public PageInfo<TestPersonDto> queryAll(TestPersonQueryParam query, Pageable pageable) {
+    public PageInfo<TestPersonDTO> queryAll(TestPersonQueryParam query, Pageable pageable) {
         IPage<TestPerson> queryPage = PageUtil.toMybatisPage(pageable);
         IPage<TestPerson> page = testPersonMapper.selectPage(queryPage, QueryHelpMybatisPlus.getPredicate(query));
         return testPersonConverter.convertPage(page);
     }
 
     @Override
-    public List<TestPersonDto> queryAll(TestPersonQueryParam query){
+    public List<TestPersonDTO> queryAll(TestPersonQueryParam query){
         return testPersonConverter.toDto(testPersonMapper.selectList(QueryHelpMybatisPlus.getPredicate(query)));
     }
 
@@ -54,20 +54,20 @@ public class TestPersonServiceImpl implements TestPersonService {
 
     @Override
     // @Cacheable(key = "'id:' + #p0")
-    public TestPersonDto getById(Long id) {
+    public TestPersonDTO getById(Long id) {
         return testPersonConverter.toDto(getEntityById(id));
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int insert(TestPersonDto resources) {
+    public int insert(TestPersonDTO resources) {
         TestPerson entity = testPersonConverter.toEntity(resources);
         return testPersonMapper.insert(entity);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int updateById(TestPersonDto resources){
+    public int updateById(TestPersonDTO resources){
         TestPerson entity = testPersonConverter.toEntity(resources);
         int ret = testPersonMapper.updateById(entity);
         // delCaches(resources.id);

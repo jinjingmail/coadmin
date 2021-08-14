@@ -4,7 +4,7 @@ import com.gitee.coadmin.base.API;
 import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.modules.logging.annotation.Log;
 import com.gitee.coadmin.modules.test.service.TestPersonService;
-import com.gitee.coadmin.modules.test.service.dto.TestPersonDto;
+import com.gitee.coadmin.modules.test.service.dto.TestPersonDTO;
 import com.gitee.coadmin.modules.test.service.dto.TestPersonQueryParam;
 import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ import java.util.Set;
 
 /*  添加菜单的 SQL
 INSERT INTO sys_menu(pid, sub_count, `type`, title, title_letter, component_name, `component`, sort, `path`, i_frame, `cache`, hidden, permission)
-    VALUES (121, 4, 1, '演示', 'ys', 'TestPerson', 'testPerson/index', 10, 'testPerson', 0, 0, 0, 'testPerson:list');
+    VALUES (121, 4, 1, '演示', 'ys', 'TestPerson', 'testPerson/index', 10, 'testPerson', 0, 0, 0, '');
 SELECT @lastId:=LAST_INSERT_ID();
 INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, i_frame, `cache`, hidden, permission)
     VALUES (@lastId, 0, 2, '查看演示', 10, 0, 0, 0, 'testPerson:list');
@@ -31,7 +31,7 @@ INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, i_frame, `cache`, hidd
 
 /**
  * @author jinjin
- * @date 2021-08-01
+ * @date 2021-08-08
  **/
 @RestController
 @RequiredArgsConstructor
@@ -45,7 +45,7 @@ public class TestPersonController {
     @Log("查询演示")
     @ApiOperation("查询演示")
     @PreAuthorize("@el.check('testPerson:list')")
-    public ResponseEntity<API<PageInfo<TestPersonDto>>> query(TestPersonQueryParam query, Pageable pageable){
+    public ResponseEntity<API<PageInfo<TestPersonDTO>>> query(TestPersonQueryParam query, Pageable pageable){
         return API.ok(testPersonService.queryAll(query,pageable)).responseEntity();
     }
 
@@ -53,7 +53,7 @@ public class TestPersonController {
     @Log("新增演示")
     @ApiOperation("新增演示")
     @PreAuthorize("@el.check('testPerson:add')")
-    public ResponseEntity<API<Integer>> create(@Validated @RequestBody TestPersonDto resources){
+    public ResponseEntity<API<Integer>> create(@Validated @RequestBody TestPersonDTO resources){
         return API.created(testPersonService.insert(resources)).responseEntity();
     }
 
@@ -61,7 +61,7 @@ public class TestPersonController {
     @Log("修改演示")
     @ApiOperation("修改演示")
     @PreAuthorize("@el.check('testPerson:edit')")
-    public ResponseEntity<API<Integer>> update(@Validated @RequestBody TestPersonDto resources){
+    public ResponseEntity<API<Integer>> update(@Validated @RequestBody TestPersonDTO resources){
         return API.updated(testPersonService.updateById(resources)).responseEntity();
     }
 

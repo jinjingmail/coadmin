@@ -25,7 +25,7 @@ import com.gitee.coadmin.base.BaseDto;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class ${className}Dto extends BaseDto {
+public class ${className}DTO extends BaseDto {
     private static final long serialVersionUID = 1L;
 <#if columns??>
     <#list columns as column>

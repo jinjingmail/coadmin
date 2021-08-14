@@ -16,7 +16,7 @@ import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.utils.PageUtil;
 import ${package}.domain.${className};
 import ${package}.service.${className}Service;
-import ${package}.service.dto.${className}Dto;
+import ${package}.service.dto.${className}DTO;
 import ${package}.service.dto.${className}QueryParam;
 import ${package}.service.mapper.${className}Mapper;
 import ${package}.service.converter.${className}Converter;
@@ -45,14 +45,14 @@ public class ${className}ServiceImpl implements ${className}Service {
     private final ${className}Converter ${changeClassName}Converter;
 
     @Override
-    public PageInfo<${className}Dto> queryAll(${className}QueryParam query, Pageable pageable) {
+    public PageInfo<${className}DTO> queryAll(${className}QueryParam query, Pageable pageable) {
         IPage<${className}> queryPage = PageUtil.toMybatisPage(pageable);
         IPage<${className}> page = ${changeClassName}Mapper.selectPage(queryPage, QueryHelpMybatisPlus.getPredicate(query));
         return ${changeClassName}Converter.convertPage(page);
     }
 
     @Override
-    public List<${className}Dto> queryAll(${className}QueryParam query){
+    public List<${className}DTO> queryAll(${className}QueryParam query){
         return testPersonConverter.toDto(${changeClassName}Mapper.selectList(QueryHelpMybatisPlus.getPredicate(query)));
     }
 
@@ -63,20 +63,20 @@ public class ${className}ServiceImpl implements ${className}Service {
 
     @Override
     // @Cacheable(key = "'id:' + #p0")
-    public ${className}Dto getById(${pkColumnType} id) {
+    public ${className}DTO getById(${pkColumnType} id) {
         return testPersonConverter.toDto(getEntityById(id));
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int insert(${className}Dto resources) {
+    public int insert(${className}DTO resources) {
         ${className} entity = testPersonConverter.toEntity(resources);
         return ${changeClassName}Mapper.insert(entity);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int updateById(${className}Dto resources){
+    public int updateById(${className}DTO resources){
         ${className} entity = testPersonConverter.toEntity(resources);
         int ret = ${changeClassName}Mapper.updateById(entity);
         // delCaches(resources.id);
