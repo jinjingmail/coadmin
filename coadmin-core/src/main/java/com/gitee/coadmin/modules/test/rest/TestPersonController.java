@@ -1,6 +1,6 @@
 package com.gitee.coadmin.modules.test.rest;
 
-import com.gitee.coadmin.base.API;
+import com.gitee.coadmin.annotation.UnifiedAPI;
 import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.modules.logging.annotation.Log;
 import com.gitee.coadmin.modules.test.service.TestPersonService;
@@ -8,7 +8,6 @@ import com.gitee.coadmin.modules.test.service.dto.TestPersonDTO;
 import com.gitee.coadmin.modules.test.service.dto.TestPersonQueryParam;
 import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -31,8 +30,9 @@ INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, i_frame, `cache`, hidd
 
 /**
  * @author jinjin
- * @date 2021-08-08
+ * @date 2021-08-15
  **/
+@UnifiedAPI
 @RestController
 @RequiredArgsConstructor
 @Api(tags = "演示")
@@ -45,31 +45,31 @@ public class TestPersonController {
     @Log("查询演示")
     @ApiOperation("查询演示")
     @PreAuthorize("@el.check('testPerson:list')")
-    public ResponseEntity<API<PageInfo<TestPersonDTO>>> query(TestPersonQueryParam query, Pageable pageable){
-        return API.ok(testPersonService.queryAll(query,pageable)).responseEntity();
+    public PageInfo<TestPersonDTO> query(TestPersonQueryParam query, Pageable pageable){
+        return testPersonService.queryAll(query,pageable);
     }
 
     @PostMapping
     @Log("新增演示")
     @ApiOperation("新增演示")
     @PreAuthorize("@el.check('testPerson:add')")
-    public ResponseEntity<API<Integer>> create(@Validated @RequestBody TestPersonDTO resources){
-        return API.created(testPersonService.insert(resources)).responseEntity();
+    public Integer create(@Validated @RequestBody TestPersonDTO resources){
+        return testPersonService.insert(resources);
     }
 
     @PutMapping
     @Log("修改演示")
     @ApiOperation("修改演示")
     @PreAuthorize("@el.check('testPerson:edit')")
-    public ResponseEntity<API<Integer>> update(@Validated @RequestBody TestPersonDTO resources){
-        return API.updated(testPersonService.updateById(resources)).responseEntity();
+    public Integer update(@Validated @RequestBody TestPersonDTO resources){
+        return testPersonService.updateById(resources);
     }
 
     @DeleteMapping
     @Log("删除演示")
     @ApiOperation("删除演示")
     @PreAuthorize("@el.check('testPerson:del')")
-    public ResponseEntity<API<Integer>> delete(@RequestBody Set<Long> ids) {
-        return API.deleted(testPersonService.removeByIds(ids)).responseEntity();
+    public Integer delete(@RequestBody Set<Long> ids) {
+        return testPersonService.removeByIds(ids);
     }
 }

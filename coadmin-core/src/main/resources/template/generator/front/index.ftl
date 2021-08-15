@@ -30,7 +30,7 @@
         <co-input class="col-12" form-label="${formLabel}" v-model="form.${column.changeColumnName}" :disable="!!crud.status.view" autogrow
                   <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>/>
       <#elseif column.formType = 'Radio'>
-        <co-field class="col-12" form-label="${formLabel}" borderless :value="form.${column.changeColumnName}" <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>>
+        <co-field class="col-12" form-label="${formLabel}" :disable="!!crud.status.view" :value="form.${column.changeColumnName}" <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>>
           <template v-slot:control>
             <co-option-group
                 v-model="form.${column.changeColumnName}"
@@ -43,7 +43,7 @@
           </template>
         </co-field>
       <#elseif column.formType = 'Checkbox'>
-        <co-field class="col-12" form-label="${formLabel}" borderless :value="form.${column.changeColumnName}" <#if column.istNotNull>:rules="[ val => (val && val.length > 0) || '必填' ]"</#if>>
+        <co-field class="col-12" form-label="${formLabel}" :disable="!!crud.status.view" :value="form.${column.changeColumnName}" <#if column.istNotNull>:rules="[ val => (val && val.length > 0) || '必填' ]"</#if>>
           <template v-slot:control>
             <co-option-group
                 v-model="form.${column.changeColumnName}"
@@ -71,6 +71,7 @@
             class="col-12"
             form-label="${formLabel}"
             :value="formatTime(form.${column.changeColumnName}, '{y}-{m}-{d}')"
+            date-mask="YYYY-MM-DD"
             @input="val => form.${column.changeColumnName}=val"
             :disable="!!crud.status.view"
            <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if> />
@@ -80,7 +81,8 @@
             form-label="${formLabel}"
             v-model="form.${column.changeColumnName}"
             range
-            :default-time="[' 00:00:00', ' 23:59:59']"
+            :default-time="['00:00:00', '23:59:59']"
+            date-mask="YYYY-MM-DD"
             :disable="!!crud.status.view"
            <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if> />
       <#else>
@@ -139,11 +141,13 @@
           <co-date-select
               v-model="query.${column.changeColumnName}"
               label="${formLabel}"
-              content-style="width:240px"
+              content-style="width:230px"
               range
-              :default-time="[' 00:00:00', ' 23:59:59']"
-              @input="crud.toQuery()"
+              edit-time
+              :default-time="['00:00:00', '23:59:59']"
+              date-mask="YYYY-MM-DD"
               clearable
+              @input="crud.toQuery()"
           />
             <#else>
           <co-date-select
@@ -151,6 +155,7 @@
               label="${formLabel}"
               content-style="width:160px"
               @input="crud.toQuery()"
+              date-mask="YYYY-MM-DD"
               clearable
           />
             </#if>

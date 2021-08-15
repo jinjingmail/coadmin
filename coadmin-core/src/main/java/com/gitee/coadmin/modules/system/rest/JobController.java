@@ -15,7 +15,7 @@
  */
 package com.gitee.coadmin.modules.system.rest;
 
-import com.gitee.coadmin.base.API;
+import com.gitee.coadmin.annotation.UnifiedAPI;
 import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.modules.system.service.dto.JobDto;
 import io.swagger.annotations.Api;
@@ -27,7 +27,6 @@ import com.gitee.coadmin.modules.system.domain.Job;
 import com.gitee.coadmin.modules.system.service.JobService;
 import com.gitee.coadmin.modules.system.service.dto.JobQueryParam;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +38,7 @@ import java.util.Set;
 * @author Zheng Jie
 * @date 2019-03-29
 */
+@UnifiedAPI
 @RestController
 @RequiredArgsConstructor
 @Api(tags = "系统：岗位管理")
@@ -50,6 +50,7 @@ public class JobController {
 
     @Log("导出岗位数据")
     @ApiOperation("导出岗位数据")
+    @UnifiedAPI(enable = false)
     @GetMapping(value = "/download")
     @PreAuthorize("@el.check('job:list')")
     public void download(HttpServletResponse response, JobQueryParam criteria) throws IOException {
@@ -60,36 +61,36 @@ public class JobController {
     @ApiOperation("查询岗位")
     @GetMapping
     @PreAuthorize("@el.check('job:list','user:list')")
-    public ResponseEntity<API<PageInfo<JobDto>>> query(JobQueryParam criteria, Pageable pageable){
-        return API.ok(jobService.queryAll(criteria, pageable)).responseEntity();
+    public PageInfo<JobDto> query(JobQueryParam criteria, Pageable pageable){
+        return jobService.queryAll(criteria, pageable);
     }
 
     @Log("新增岗位")
     @ApiOperation("新增岗位")
     @PostMapping
     @PreAuthorize("@el.check('job:add')")
-    public ResponseEntity<API<Integer>> create(@Validated @RequestBody Job resources){
+    public Integer create(@Validated @RequestBody Job resources){
         if (resources.getId() != null) {
             throw new BadRequestException("A new "+ ENTITY_NAME +" cannot already have an ID");
         }
-        return API.created(jobService.save(resources)?1:0).responseEntity();
+        return jobService.save(resources)?1:0;
     }
 
     @Log("修改岗位")
     @ApiOperation("修改岗位")
     @PutMapping
     @PreAuthorize("@el.check('job:edit')")
-    public ResponseEntity<API<Integer>> update(@Validated(Job.Update.class) @RequestBody Job resources){
-        return API.updated(jobService.updateById(resources)?1:0).responseEntity();
+    public Integer update(@Validated(Job.Update.class) @RequestBody Job resources){
+        return jobService.updateById(resources)?1:0;
     }
 
     @Log("删除岗位")
     @ApiOperation("删除岗位")
     @DeleteMapping
     @PreAuthorize("@el.check('job:del')")
-    public ResponseEntity<API<Integer>> delete(@RequestBody Set<Long> ids){
+    public Integer delete(@RequestBody Set<Long> ids){
         // 验证是否被用户关联
         jobService.verification(ids);
-        return API.deleted(jobService.removeByIds(ids)?1:0).responseEntity();
+        return jobService.removeByIds(ids)?1:0;
     }
 }

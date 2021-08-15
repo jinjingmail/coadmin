@@ -1,8 +1,9 @@
 package com.gitee.coadmin.base;
 
 import cn.hutool.http.HttpStatus;
-import com.alibaba.fastjson.annotation.JSONField;
+//import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,15 +19,13 @@ import static org.springframework.http.HttpStatus.valueOf;
  */
 @Getter
 @Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class API<T> {
     /*
     http://www.ruanyifeng.com/blog/2014/05/restful_api.html
     服务器向用户返回的状态码和提示信息，常见的有以下一些（方括号中是该状态码对应的HTTP动词）
-    200 OK - [GET]：服务器成功返回用户请求的数据，该操作是幂等的（Idempotent）。
-    201 CREATED - [POST/PUT/PATCH]：用户新建或修改数据成功。
-    202 Accepted - [*]：表示一个请求已经进入后台排队（异步任务）
-    204 NO CONTENT - [DELETE]：用户删除数据成功。
-    400 INVALID REQUEST - [POST/PUT/PATCH]：用户发出的请求有错误，服务器没有进行新建或修改数据的操作，该操作是幂等的。
+    200 OK - [*]：服务器成功返回用户请求的数据，该操作是幂等的（Idempotent）。
+    400 INVALID REQUEST - [*]：用户发出的请求有错误，服务器没有进行新建或修改数据的操作，该操作是幂等的。
     401 Unauthorized - [*]：表示用户没有权限（令牌、用户名、密码错误）。
     403 Forbidden - [*] 表示用户得到授权（与401错误相对），但是访问是被禁止的。
     404 NOT FOUND - [*]：用户发出的请求针对的是不存在的记录，服务器没有进行操作，该操作是幂等的。
@@ -41,7 +40,7 @@ public class API<T> {
     private Integer status;
 
     @ApiModelProperty(value = "响应时间")
-    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
+    //@JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private LocalDateTime timestamp;
 
@@ -88,15 +87,6 @@ public class API<T> {
     public static API<?> ok(){
         API<?> api = new API<>();
         api.setStatus(HttpStatus.HTTP_OK);
-        return api;
-    }
-    /**
-     * 正确返回（带message）
-     */
-    public static API<?> ok(String message){
-        API<?> api = new API<>();
-        api.setStatus(HttpStatus.HTTP_OK);
-        api.setMessage(message);
         return api;
     }
     /**

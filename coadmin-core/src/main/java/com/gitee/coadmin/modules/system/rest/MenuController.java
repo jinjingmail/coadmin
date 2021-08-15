@@ -16,7 +16,7 @@
 package com.gitee.coadmin.modules.system.rest;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.gitee.coadmin.base.API;
+import com.gitee.coadmin.annotation.UnifiedAPI;
 import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.modules.system.domain.vo.MenuVo;
 import io.swagger.annotations.Api;
@@ -32,8 +32,6 @@ import com.gitee.coadmin.modules.system.service.mapper.MenuMapper;
 import com.gitee.coadmin.utils.ConvertUtil;
 import com.gitee.coadmin.utils.PageUtil;
 import com.gitee.coadmin.modules.tools.utils.SecurityUtils;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +42,7 @@ import java.util.*;
  * @author Zheng Jie
  * @date 2018-12-03
  */
-
+@UnifiedAPI
 @RestController
 @RequiredArgsConstructor
 @Api(tags = "系统：菜单管理")
@@ -59,76 +57,77 @@ public class MenuController {
     @ApiOperation("查询菜单")
     @GetMapping
     @PreAuthorize("@el.check('menu:list')")
-    public ResponseEntity<API<PageInfo<MenuDto>>> query(MenuQueryParam criteria) throws Exception {
-        return API.ok(menuService.buildTree(criteria)).responseEntity();
+    public PageInfo<MenuDto>  query(MenuQueryParam criteria) throws Exception {
+        return menuService.buildTree(criteria);
     }
 
     @ApiOperation("返回全部的菜单")
     @GetMapping(value = "/lazy")
     @PreAuthorize("@el.check('menu:list','roles:list')")
-    public ResponseEntity<API<List<MenuDto>>> query(@RequestParam Long pid){
-        return API.ok(menuService.getMenus(pid)).responseEntity();
+    public List<MenuDto>  query(@RequestParam Long pid){
+        return menuService.getMenus(pid);
     }
 
     @GetMapping(value = "/build")
     @ApiOperation("获取前端所需菜单")
-    public ResponseEntity<API<List<MenuVo>>> buildMenus(){
+    public List<MenuVo>  buildMenus(){
         List<MenuDto> menuDtoList = menuService.findByUser(SecurityUtils.getCurrentUserId());
         List<MenuDto> menuDtos = menuService.buildTree(menuDtoList);
-        return API.ok(menuService.buildMenus(menuDtos)).responseEntity();
+        return menuService.buildMenus(menuDtos);
     }
 
     @Log("查询菜单")
     @ApiOperation("查询菜单:根据ID获取同级与上级数据")
     @PostMapping("/superior")
     @PreAuthorize("@el.check('menu:list')")
-    public ResponseEntity<API<List<MenuDto>>> getSuperior(@RequestBody List<Long> ids) {
+    public List<MenuDto>  getSuperior(@RequestBody List<Long> ids) {
         Set<MenuDto> menuDtos = new LinkedHashSet<>();
         if(CollectionUtil.isNotEmpty(ids)){
             for (Long id : ids) {
                 MenuDto menuDto = menuService.findById(id);
                 menuDtos.addAll(menuService.getSuperior(menuDto, new ArrayList<>()));
             }
-            return API.ok(menuService.buildTree(new ArrayList<>(menuDtos))).responseEntity();
+            return menuService.buildTree(new ArrayList<>(menuDtos));
         }
-        return API.ok(menuService.getMenus(null)).responseEntity();
+        return menuService.getMenus(null);
     }
 
     @Log("新增菜单")
     @ApiOperation("新增菜单")
     @PostMapping
     @PreAuthorize("@el.check('menu:add')")
-    public ResponseEntity<API<Integer>> create(@Validated @RequestBody Menu resources){
+    public Integer create(@Validated @RequestBody Menu resources){
         if (resources.getId() != null) {
             throw new BadRequestException("A new "+ ENTITY_NAME +" cannot already have an ID");
         }
-        return API.created(menuService.save(resources)?1:0).responseEntity();
+        return menuService.save(resources)?1:0;
     }
 
     @Log("修改菜单")
     @ApiOperation("修改菜单")
     @PutMapping
     @PreAuthorize("@el.check('menu:edit')")
-    public ResponseEntity<API<Integer>> update(@Validated(Menu.Update.class) @RequestBody Menu resources){
-        return API.updated(menuService.updateById(resources)?1:0).responseEntity();
+    public Integer update(@Validated(Menu.Update.class) @RequestBody Menu resources){
+        return menuService.updateById(resources)?1:0;
     }
 
     @Log("删除菜单")
     @ApiOperation("删除菜单")
     @DeleteMapping
     @PreAuthorize("@el.check('menu:del')")
-    public ResponseEntity<API<Integer>> delete(@RequestBody Set<Long> ids){
+    public Integer  delete(@RequestBody Set<Long> ids){
         Set<Menu> menuSet = new HashSet<>();
         for (Long id : ids) {
             List<MenuDto> menuList = menuService.getMenus(id);
             menuSet.add(menuService.getById(id));
             menuSet = menuService.getDeleteMenus(ConvertUtil.convertList(menuList, Menu.class), menuSet);
         }
-        return API.deleted(menuService.removeByIds(ids)?1:0).responseEntity();
+        return menuService.removeByIds(ids)?1:0;
     }
 
     @Log("导出菜单数据")
     @ApiOperation("导出菜单数据")
+    @UnifiedAPI(enable = false)
     @GetMapping(value = "/download")
     @PreAuthorize("@el.check('menu:list')")
     public void download(HttpServletResponse response, MenuQueryParam criteria) throws Exception {

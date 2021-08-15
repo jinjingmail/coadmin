@@ -8,22 +8,25 @@ import com.gitee.coadmin.annotation.Query;
 import org.springframework.format.annotation.DateTimeFormat;
 
 /**
-* @author jinjin
-* @date 2021-08-08
-*/
+ * @author jinjin
+ * @date 2021-08-15
+ */
 @Getter
 @Setter
 public class TestPersonQueryParam{
 
     /** 精确 */
+    
     @Query
     private Long id;
 
     /** 精确 */
+    
     @Query
     private String gender;
 
     /** 精确 */
+    @DateTimeFormat(pattern="yyyy-MM-dd")
     @Query
     private Date birthday;
 

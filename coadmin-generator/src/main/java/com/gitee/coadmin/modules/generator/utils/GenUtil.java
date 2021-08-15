@@ -71,7 +71,7 @@ public class GenUtil {
         templateNames.add("Controller");
         templateNames.add("Converter");
         templateNames.add("Entity");
-        templateNames.add("Dto");
+        templateNames.add("DTO");
         templateNames.add("Mapper");
         templateNames.add("MapperXml");
         templateNames.add("QueryParam");
@@ -199,8 +199,8 @@ public class GenUtil {
         if ("Entity".equals(templateName)) {
             return packagePath + "domain" + File.separator + className + ".java";
         }
-        if ("Dto".equals(templateName)) {
-            return packagePath + "service" + File.separator + "dto" + File.separator + className + "Dto.java";
+        if ("DTO".equals(templateName)) {
+            return packagePath + "service" + File.separator + "dto" + File.separator + className + "DTO.java";
         }
         if ("Service".equals(templateName)) {
             return packagePath + "service" + File.separator + className + "Service.java";

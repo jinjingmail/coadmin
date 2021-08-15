@@ -15,10 +15,9 @@
  */
 package com.gitee.coadmin.modules.system.rest;
 
-import com.gitee.coadmin.base.API;
+import com.gitee.coadmin.annotation.UnifiedAPI;
 import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.modules.system.service.dto.DictDto;
-import com.gitee.coadmin.modules.system.service.dto.JobDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +27,6 @@ import com.gitee.coadmin.modules.system.domain.Dict;
 import com.gitee.coadmin.modules.system.service.DictService;
 import com.gitee.coadmin.modules.system.service.dto.DictQueryParam;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -42,6 +39,7 @@ import java.util.Set;
 * @author Zheng Jie
 * @date 2019-04-10
 */
+@UnifiedAPI
 @RestController
 @RequiredArgsConstructor
 @Api(tags = "系统：字典管理")
@@ -53,6 +51,7 @@ public class DictController {
 
     @Log("导出字典数据")
     @ApiOperation("导出字典数据")
+    @UnifiedAPI(enable = false)
     @GetMapping(value = "/download")
     @PreAuthorize("@el.check('dict:list')")
     public void download(HttpServletResponse response, DictQueryParam criteria) throws IOException {
@@ -63,42 +62,42 @@ public class DictController {
     @ApiOperation("查询字典")
     @GetMapping(value = "all")
     @PreAuthorize("@el.check('dict:list')")
-    public ResponseEntity<API<List<DictDto>>> queryAll(){
-        return API.ok(dictService.queryAll(new DictQueryParam())).responseEntity();
+    public List<DictDto> queryAll(){
+        return dictService.queryAll(new DictQueryParam());
     }
 
     @Log("查询字典")
     @ApiOperation("查询字典")
     @GetMapping
     @PreAuthorize("@el.check('dict:list')")
-    public ResponseEntity<API<PageInfo<DictDto>>> query(DictQueryParam query, Pageable pageable){
-        return API.ok(dictService.queryAll(query,pageable)).responseEntity();
+    public PageInfo<DictDto> query(DictQueryParam query, Pageable pageable){
+        return dictService.queryAll(query,pageable);
     }
 
     @Log("新增字典")
     @ApiOperation("新增字典")
     @PostMapping
     @PreAuthorize("@el.check('dict:add')")
-    public ResponseEntity<API<Integer>> create(@Validated @RequestBody Dict resources){
+    public Integer create(@Validated @RequestBody Dict resources){
         if (resources.getId() != null) {
             throw new BadRequestException("A new "+ ENTITY_NAME +" cannot already have an ID");
         }
-        return API.created(dictService.save(resources)?1:0).responseEntity();
+        return dictService.save(resources)?1:0;
     }
 
     @Log("修改字典")
     @ApiOperation("修改字典")
     @PutMapping
     @PreAuthorize("@el.check('dict:edit')")
-    public ResponseEntity<API<Integer>> update(@RequestBody Dict resources){
-        return API.updated(dictService.updateById(resources)?1:0).responseEntity();
+    public Integer update(@RequestBody Dict resources){
+        return dictService.updateById(resources)?1:0;
     }
 
     @Log("删除字典")
     @ApiOperation("删除字典")
     @DeleteMapping
     @PreAuthorize("@el.check('dict:del')")
-    public ResponseEntity<API<Integer>> delete(@RequestBody Set<Long> ids){
-        return API.deleted(dictService.removeByIds(ids)?1:0).responseEntity();
+    public Integer delete(@RequestBody Set<Long> ids){
+        return dictService.removeByIds(ids)?1:0;
     }
 }

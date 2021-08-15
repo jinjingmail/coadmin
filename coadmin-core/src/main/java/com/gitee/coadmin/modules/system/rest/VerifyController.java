@@ -15,6 +15,7 @@
  */
 package com.gitee.coadmin.modules.system.rest;
 
+import com.gitee.coadmin.annotation.UnifiedAPI;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ import java.util.Objects;
  * @author Zheng Jie
  * @date 2018-12-26
  */
+@UnifiedAPI
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/code")
@@ -43,23 +45,21 @@ public class VerifyController {
 
     @PostMapping(value = "/resetEmail")
     @ApiOperation("重置邮箱，发送验证码")
-    public ResponseEntity<Object> resetEmail(@RequestParam String email){
+    public void resetEmail(@RequestParam String email){
         EmailVo emailVo = verificationCodeService.sendEmail(email, CodeEnum.EMAIL_RESET_EMAIL_CODE.getKey());
         emailService.send(emailVo,emailService.find());
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping(value = "/email/resetPass")
     @ApiOperation("重置密码，发送验证码")
-    public ResponseEntity<Object> resetPass(@RequestParam String email){
+    public void resetPass(@RequestParam String email){
         EmailVo emailVo = verificationCodeService.sendEmail(email, CodeEnum.EMAIL_RESET_PWD_CODE.getKey());
         emailService.send(emailVo,emailService.find());
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping(value = "/validated")
     @ApiOperation("验证码验证")
-    public ResponseEntity<Object> validated(@RequestParam String email, @RequestParam String code, @RequestParam Integer codeBi){
+    public void validated(@RequestParam String email, @RequestParam String code, @RequestParam Integer codeBi){
         CodeBiEnum biEnum = CodeBiEnum.find(codeBi);
         switch (Objects.requireNonNull(biEnum)){
             case ONE:
@@ -71,6 +71,5 @@ public class VerifyController {
             default:
                 break;
         }
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

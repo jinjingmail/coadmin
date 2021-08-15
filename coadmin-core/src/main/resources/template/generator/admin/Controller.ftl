@@ -1,6 +1,6 @@
 package ${package}.rest;
 
-import com.gitee.coadmin.base.API;
+import com.gitee.coadmin.annotation.UnifiedAPI;
 import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.modules.logging.annotation.Log;
 import ${package}.service.${className}Service;
@@ -8,7 +8,6 @@ import ${package}.service.dto.${className}DTO;
 import ${package}.service.dto.${className}QueryParam;
 import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -47,6 +46,7 @@ INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, i_frame, `cache`, hidd
  * @author ${author}
  * @date ${date}
  **/
+@UnifiedAPI
 @RestController
 @RequiredArgsConstructor
 @Api(tags = "${apiAlias}")
@@ -59,31 +59,31 @@ public class ${className}Controller {
     @Log("查询${apiAlias}")
     @ApiOperation("查询${apiAlias}")
     @PreAuthorize("@el.check('${changeClassName}:list')")
-    public ResponseEntity<API<PageInfo<${className}DTO>>> query(${className}QueryParam query, Pageable pageable){
-        return API.ok(${changeClassName}Service.queryAll(query,pageable)).responseEntity();
+    public PageInfo<${className}DTO> query(${className}QueryParam query, Pageable pageable){
+        return ${changeClassName}Service.queryAll(query,pageable);
     }
 
     @PostMapping
     @Log("新增${apiAlias}")
     @ApiOperation("新增${apiAlias}")
     @PreAuthorize("@el.check('${changeClassName}:add')")
-    public ResponseEntity<API<Integer>> create(@Validated @RequestBody ${className}DTO resources){
-        return API.created(${changeClassName}Service.insert(resources)).responseEntity();
+    public Integer create(@Validated @RequestBody ${className}DTO resources){
+        return ${changeClassName}Service.insert(resources);
     }
 
     @PutMapping
     @Log("修改${apiAlias}")
     @ApiOperation("修改${apiAlias}")
     @PreAuthorize("@el.check('${changeClassName}:edit')")
-    public ResponseEntity<API<Integer>> update(@Validated @RequestBody ${className}DTO resources){
-        return API.updated(${changeClassName}Service.updateById(resources)).responseEntity();
+    public Integer update(@Validated @RequestBody ${className}DTO resources){
+        return ${changeClassName}Service.updateById(resources);
     }
 
     @DeleteMapping
     @Log("删除${apiAlias}")
     @ApiOperation("删除${apiAlias}")
     @PreAuthorize("@el.check('${changeClassName}:del')")
-    public ResponseEntity<API<Integer>> delete(@RequestBody Set<${pkColumnType}> ids) {
-        return API.deleted(${changeClassName}Service.removeByIds(ids)).responseEntity();
+    public Integer delete(@RequestBody Set<${pkColumnType}> ids) {
+        return ${changeClassName}Service.removeByIds(ids);
     }
 }

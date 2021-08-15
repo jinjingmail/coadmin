@@ -18,9 +18,9 @@ import com.gitee.coadmin.annotation.Query;
 import org.springframework.format.annotation.DateTimeFormat;
 
 /**
-* @author ${author}
-* @date ${date}
-*/
+ * @author ${author}
+ * @date ${date}
+ */
 @Getter
 @Setter
 public class ${className}QueryParam{
@@ -29,6 +29,7 @@ public class ${className}QueryParam{
 
 <#if column.queryType = '='>
     /** 精确 */
+    <#if column.formType = 'Date'>@DateTimeFormat(pattern="yyyy-MM-dd")</#if>
     @Query
     private ${column.columnType} ${column.changeColumnName};
 </#if>

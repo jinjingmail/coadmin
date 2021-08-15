@@ -1,5 +1,6 @@
 package com.gitee.coadmin.app.modules.test.rest;
 
+import com.gitee.coadmin.annotation.UnifiedAPI;
 import com.gitee.coadmin.app.common.interceptor.AuthAccess;
 import com.gitee.coadmin.base.API;
 import io.swagger.annotations.ApiOperation;
@@ -18,26 +19,27 @@ import org.springframework.web.bind.annotation.RestController;
  * 这时再访问 localhost:8003/test_need_auth 就会提示成功。
  */
 @Slf4j
+@UnifiedAPI
 @RestController
 @RequiredArgsConstructor
 public class TestController {
     @AuthAccess
     @ApiOperation("测试登录（需授权）")
     @GetMapping(value = "/test_need_auth")
-    public ResponseEntity<? extends API<?>> test_need_auth() {
-        return API.ok("success need_auth").responseEntity();
+    public String test_need_auth() {
+        return "success need_auth";
     }
 
     @AuthAccess(level = 0)
     @ApiOperation("测试登录（需授权，scope=0）")
     @GetMapping(value = "/test_need_auth_scope0")
-    public ResponseEntity<? extends API<?>> test_need_auth_scope0() {
-        return API.ok("success need_auth scope0").responseEntity();
+    public String test_need_auth_scope0() {
+        return "success need_auth scope0";
     }
 
     @ApiOperation("测试登录（无需授权）")
     @GetMapping(value = "/test_widthout_auth")
-    public ResponseEntity<? extends API<?>> test_widthout_auth() {
-        return API.ok("success widthout_auth").responseEntity();
+    public String test_widthout_auth() {
+        return "success widthout_auth";
     }
 }
