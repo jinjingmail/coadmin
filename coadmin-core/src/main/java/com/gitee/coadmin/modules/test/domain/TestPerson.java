@@ -12,15 +12,14 @@ import lombok.Setter;
 import lombok.EqualsAndHashCode;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
-import javax.validation.constraints.*;
 import java.util.Date;
 import java.sql.Timestamp;
 import com.gitee.coadmin.base.BaseEntity;
 
 /**
-* @author jinjin
-* @date 2021-08-15
-*/
+ * @author jinjin
+ * @since 2021-08-16
+ */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -34,7 +33,6 @@ public class TestPerson extends BaseEntity {
     private Long id;
 
     @ApiModelProperty(value = "姓名")
-    @NotBlank
     private String name;
 
     @ApiModelProperty(value = "性别")
@@ -44,7 +42,6 @@ public class TestPerson extends BaseEntity {
     private Date birthday;
 
     @ApiModelProperty(value = "创建时间")
-    @NotNull
     @TableField(fill= FieldFill.INSERT)
     private Date createTime;
 
@@ -52,7 +49,7 @@ public class TestPerson extends BaseEntity {
     private String createBy;
 
     @ApiModelProperty(value = "修改时间")
-    @TableField(fill= FieldFill.INSERT_UPDATE)
+    @TableField(fill= FieldFill.UPDATE)
     private Date updateTime;
 
     @ApiModelProperty(value = "修改人")

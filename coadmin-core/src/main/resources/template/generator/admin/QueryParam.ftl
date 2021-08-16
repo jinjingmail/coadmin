@@ -19,7 +19,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * @author ${author}
- * @date ${date}
+ * @since ${date}
  */
 @Getter
 @Setter

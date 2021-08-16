@@ -1,5 +1,6 @@
 package ${package}.service.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,12 +16,15 @@ import java.util.Date;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 </#if>
+<#if isNotNullColumns??>
+import javax.validation.constraints.*;
+</#if>
 import com.gitee.coadmin.base.BaseDto;
 
 /**
-* @author ${author}
-* @date ${date}
-*/
+ * @author ${author}
+ * @since ${date}
+ */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -30,6 +34,19 @@ public class ${className}DTO extends BaseDto {
 <#if columns??>
     <#list columns as column>
 
+    <#if column.remark != ''>
+    @ApiModelProperty(value = "${column.remark}")
+    </#if>
+    <#if column.istNotNull && column.columnKey != 'PRI'>
+      <#if column.columnType = 'String'>
+    @NotBlank
+    <#else>
+    @NotNull
+      </#if>
+    </#if>
+    <#if column.changeColumnName = 'remarks'>
+    @Size(max = 60, message = "备注长度大于60")
+    </#if>
     <#if column.columnType = 'Long'>
     @JsonSerialize(using= ToStringSerializer.class) // 防止精度丢失
     </#if>

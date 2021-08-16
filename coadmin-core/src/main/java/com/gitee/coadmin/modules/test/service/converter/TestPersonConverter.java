@@ -10,9 +10,9 @@ import org.mapstruct.ReportingPolicy;
 import java.util.List;
 
 /**
-* @author jinjin
-* @date 2021-08-15
-*/
+ * @author jinjin
+ * @since 2021-08-16
+ */
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface TestPersonConverter {
     /**

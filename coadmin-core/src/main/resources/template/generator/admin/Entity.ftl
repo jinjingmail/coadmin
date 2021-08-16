@@ -12,9 +12,7 @@ import lombok.Setter;
 import lombok.EqualsAndHashCode;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
-<#if isNotNullColumns??>
-import javax.validation.constraints.*;
-</#if>
+import java.util.Date;
 <#if hasDateAnnotation>
 </#if>
 <#if hasTimestamp>
@@ -23,14 +21,12 @@ import java.sql.Timestamp;
 <#if hasBigDecimal>
 import java.math.BigDecimal;
 </#if>
-import java.util.Date;
-import java.sql.Timestamp;
 import com.gitee.coadmin.base.BaseEntity;
 
 /**
-* @author ${author}
-* @date ${date}
-*/
+ * @author ${author}
+ * @since ${date}
+ */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -51,16 +47,11 @@ public class ${className} extends BaseEntity {
     @TableId(type= IdType.ASSIGN_ID)
       </#if>
     </#if>
-    <#if column.istNotNull && column.columnKey != 'PRI'>
-        <#if column.columnType = 'String'>
-    @NotBlank
-        <#else>
-    @NotNull
-        </#if>
-    </#if>
     <#if column.dateAnnotation??>
     <#if column.dateAnnotation = 'CreationTimestamp'>
     @TableField(fill= FieldFill.INSERT)
+    <#elseif column.dateAnnotation = 'UpdateTimestamp'>
+    @TableField(fill= FieldFill.UPDATE)
     <#else>
     @TableField(fill= FieldFill.INSERT_UPDATE)
     </#if>

@@ -44,7 +44,7 @@ INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, i_frame, `cache`, hidd
 
 /**
  * @author ${author}
- * @date ${date}
+ * @since ${date}
  **/
 @UnifiedAPI
 @RestController

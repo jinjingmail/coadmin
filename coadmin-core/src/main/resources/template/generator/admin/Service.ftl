@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Set;
 
 /**
-* @author ${author}
-* @date ${date}
-*/
+ * @author ${author}
+ * @since ${date}
+ */
 public interface ${className}Service {
 
     static final String CACHE_KEY = "${changeClassName}";

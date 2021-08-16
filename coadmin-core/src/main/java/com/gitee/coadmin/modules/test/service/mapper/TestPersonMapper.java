@@ -5,9 +5,9 @@ import com.gitee.coadmin.modules.test.domain.TestPerson;
 import org.springframework.stereotype.Repository;
 
 /**
-* @author jinjin
-* @date 2021-08-15
-*/
+ * @author jinjin
+ * @since 2021-08-16
+ */
 @Repository
 public interface TestPersonMapper extends CommonMapper<TestPerson> {
 

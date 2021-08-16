@@ -1,7 +1,7 @@
 <template>
   <div>
-    <co-dialog title="查找" no-max ref="search" @before-hide="crud.props.filterTable=''" @show="$refs.findInCurrentPage.focus()">
-      <co-input ref="findInCurrentPage" style="width:180px" placeholder="在当前页查找" outlined v-model="crud.props.filterTable" clearable class="q-mx-sm q-mt-none q-mb-sm"/>
+    <co-dialog title="查找当前页" seamless no-max ref="search" @before-hide="filterTable=''">
+      <co-input autofocus clearable style="width:180px" placeholder="" v-model="filterTable" class="q-mx-sm q-mt-none q-mb-sm" @keyup.escape.native="$refs.search.hide()"/>
     </co-dialog>
 
     <!-- 编辑表单对话框 -->
@@ -112,7 +112,7 @@
         :loading="crud.loading"
         selection="single"
         :selected.sync="crud.selections"
-        :filter="crud.props.filterTable"
+        :filter="filterTable"
         @row-click="(evt, row, index) => crud.selections = [row]"
     >
       <template v-slot:top-left>
@@ -188,7 +188,7 @@
             <co-btn-dropdown color="primary" class="btn-dropdown-hide-droparrow" icon="apps" auto-close>
               <crud-more :tableSlotTopProps="props">
                 <template v-slot:start>
-                  <co-btn flat align="left" label="在当前页查找" icon="find_in_page" @click.native="$refs.search.show()" />
+                  <co-btn flat align="left" label="查找当前页" icon="find_in_page" @click.native="$refs.search.show()" />
                   <q-separator/>
                 </template>
               </crud-more>
@@ -257,7 +257,8 @@ export default {
         add: ['admin', '${changeClassName}:add'],
         edit: ['admin', '${changeClassName}:edit'],
         del: ['admin', '${changeClassName}:del']
-      }
+      },
+      filterTable: ''
     }
   },
 <#if hasDict>
