@@ -37,6 +37,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Zheng Jie
@@ -115,14 +116,16 @@ public class MenuController {
     @ApiOperation("删除菜单")
     @DeleteMapping
     @PreAuthorize("@el.check('menu:del')")
-    public Integer  delete(@RequestBody Set<Long> ids){
+    public Integer delete(@RequestBody Set<Long> ids){
         Set<Menu> menuSet = new HashSet<>();
         for (Long id : ids) {
             List<MenuDto> menuList = menuService.getMenus(id);
             menuSet.add(menuService.getById(id));
             menuSet = menuService.getDeleteMenus(ConvertUtil.convertList(menuList, Menu.class), menuSet);
         }
-        return menuService.removeByIds(ids)?1:0;
+        //return menuService.removeByIds(ids)?1:0;
+        Set<Long> deleteIds = menuSet.stream().map(Menu::getId).collect(Collectors.toSet());
+        return menuService.removeByIds(deleteIds)?1:0;
     }
 
     @Log("导出菜单数据")
