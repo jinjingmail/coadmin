@@ -436,12 +436,12 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
         }
         QueryWrapper<Menu> query = new QueryWrapper<Menu>();
         query.lambda().eq(Menu::getPid, menuId);
-        int count = menuMapper.selectCount(query);
+        Long count = menuMapper.selectCount(query);
 
         UpdateWrapper<Menu> update = new UpdateWrapper<Menu>();
         update.lambda().eq(Menu::getId, menuId);
         Menu menu = new Menu();
-        menu.setSubCount(count);
+        menu.setSubCount(count.intValue());
         menuMapper.update(menu, update);
     }
 

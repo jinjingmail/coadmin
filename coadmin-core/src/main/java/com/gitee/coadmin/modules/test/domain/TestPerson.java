@@ -9,21 +9,19 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.EqualsAndHashCode;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import java.util.Date;
-import java.sql.Timestamp;
+import java.util.Objects;
 import com.gitee.coadmin.base.BaseEntity;
 
 /**
  * @author jinjin
- * @since 2021-08-16
+ * @since 2021-08-22
  */
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = false)
 @TableName("test_person")
 public class TestPerson extends BaseEntity {
     private static final long serialVersionUID = 1L;
@@ -46,6 +44,7 @@ public class TestPerson extends BaseEntity {
     private Date createTime;
 
     @ApiModelProperty(value = "创建人")
+    @TableField(fill= FieldFill.INSERT)
     private String createBy;
 
     @ApiModelProperty(value = "修改时间")
@@ -53,10 +52,31 @@ public class TestPerson extends BaseEntity {
     private Date updateTime;
 
     @ApiModelProperty(value = "修改人")
+    @TableField(fill= FieldFill.UPDATE)
     private String updateBy;
 
     @ApiModelProperty(value = "备注")
     private String remarks;
+
+    @ApiModelProperty(value = "测试enum")
+    private Integer mysqlEngine;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        TestPerson obj = (TestPerson) o;
+        return Objects.equals(id, obj.id);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
     public void copyFrom(TestPerson source){
         BeanUtil.copyProperties(source,this, CopyOptions.create().setIgnoreNullValue(true));

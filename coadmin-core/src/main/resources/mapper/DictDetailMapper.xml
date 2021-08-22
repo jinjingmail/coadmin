@@ -9,7 +9,7 @@
   </sql>
 
     <select id="getDictDetailsByDictName" resultType="com.gitee.coadmin.modules.system.service.dto.DictDetailDto">
-        SELECT dict.id as "dict.id", detail.* FROM sys_dict_detail detail
+        SELECT detail.* FROM sys_dict_detail detail
             LEFT JOIN sys_dict dict ON detail.dict_id = dict.id
         WHERE dict.name = #{dictName}
         ORDER BY sort ASC

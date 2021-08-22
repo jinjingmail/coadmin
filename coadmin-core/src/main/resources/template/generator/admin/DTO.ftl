@@ -4,7 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.EqualsAndHashCode;
+import java.util.Objects;
 <#if hasTimestamp>
 import java.sql.Timestamp;
 </#if>
@@ -28,7 +28,6 @@ import com.gitee.coadmin.base.BaseDto;
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = false)
 public class ${className}DTO extends BaseDto {
     private static final long serialVersionUID = 1L;
 <#if columns??>
@@ -54,5 +53,22 @@ public class ${className}DTO extends BaseDto {
     private ${column.columnType} ${column.changeColumnName};
     </#if>
     </#list>
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      ${className}DTO obj = (${className}DTO) o;
+      return Objects.equals(id, obj.id);
+    }
+    
+    @Override
+    public int hashCode() {
+      return Objects.hash(id);
+    }
 </#if>
 }

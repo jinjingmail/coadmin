@@ -5,7 +5,7 @@
   <!-- 通用查询结果列 -->
   <!--
   <sql id="Base_Column_List">
-      a.id, a.name, a.gender, a.birthday, a.create_time, a.create_by, a.update_time, a.update_by, a.remarks
+      a.id, a.name, a.gender, a.birthday, a.create_time, a.create_by, a.update_time, a.update_by, a.remarks, a.mysql_engine
   </sql>
   -->
 </mapper>

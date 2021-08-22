@@ -105,7 +105,7 @@ public class DictDetailController {
         if (resources.getId() != null) {
             throw new BadRequestException("A new "+ ENTITY_NAME +" cannot already have an ID");
         }
-        if (resources.getDict() == null || resources.getDict().getId() == null) {
+        if (resources.getDictId() == null) {
             throw new BadRequestException("请指定Dict.id");
         }
         return dictDetailService.save(resources)?1:0;

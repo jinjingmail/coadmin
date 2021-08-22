@@ -17,7 +17,7 @@ import java.util.Set;
 /*  添加菜单的 SQL
 <#if hasMenuPid>
 INSERT INTO sys_menu(pid, sub_count, `type`, title, title_letter, component_name, `component`, sort, `path`, i_frame, `cache`, hidden, permission)
-    VALUES (${menuPid}, 4, 1, '${apiAlias}', '${apiAliasLetter}', '${className}', '${changeClassName}/index', 10, '${changeClassName}', 0, 0, 0, '');
+    VALUES (${menuPid}, 4, 1, '${apiAlias}', '${apiAliasLetter}', '${className}', '${subModuleName}/${minusClassName}/index', 10, '${minusClassName}', 0, 0, 0, '');
 SELECT @lastId:=LAST_INSERT_ID();
 INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, i_frame, `cache`, hidden, permission)
     VALUES (@lastId, 0, 2, '查看${apiAlias}', 10, 0, 0, 0, '${changeClassName}:list');
@@ -29,7 +29,7 @@ INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, i_frame, `cache`, hidd
     VALUES (@lastId, 0, 2, '删除${apiAlias}', 40, 0, 0, 0, '${changeClassName}:del');
 <#else>
 INSERT INTO sys_menu(pid, sub_count, `type`, title, title_letter, component_name, `component`, sort, `path`, i_frame, `cache`, hidden, permission)
-    VALUES (null, 4, 1, '${apiAlias}', '${apiAliasLetter}', '${className}', '${minusClassName}/index', 10, '${minusClassName}', 0, 0, 0, '${changeClassName}:list');
+    VALUES (null, 4, 1, '${apiAlias}', '${apiAliasLetter}', '${className}', '${subModuleName}/${minusClassName}/index', 10, '${minusClassName}', 0, 0, 0, '${changeClassName}:list');
 SELECT @lastId:=LAST_INSERT_ID();
 INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, i_frame, `cache`, hidden, permission)
     VALUES (@lastId, 0, 2, '查看${apiAlias}', 10, 0, 0, 0, '${changeClassName}:list');
@@ -50,7 +50,7 @@ INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, i_frame, `cache`, hidd
 @RestController
 @RequiredArgsConstructor
 @Api(tags = "${apiAlias}")
-@RequestMapping("/api/${minusClassName}")
+@RequestMapping("/api/${subModuleName}/${minusClassName}")
 public class ${className}Controller {
 
     private final ${className}Service ${changeClassName}Service;

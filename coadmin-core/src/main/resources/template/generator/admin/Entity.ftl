@@ -9,10 +9,10 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.EqualsAndHashCode;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import java.util.Date;
+import java.util.Objects;
 <#if hasDateAnnotation>
 </#if>
 <#if hasTimestamp>
@@ -30,7 +30,6 @@ import com.gitee.coadmin.base.BaseEntity;
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = false)
 @TableName("${tableName}")
 public class ${className} extends BaseEntity {
     private static final long serialVersionUID = 1L;
@@ -65,6 +64,23 @@ public class ${className} extends BaseEntity {
     </#if>
     </#list>
 </#if>
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ${className} obj = (${className}) o;
+        return Objects.equals(id, obj.id);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
     public void copyFrom(${className} source){
         BeanUtil.copyProperties(source,this, CopyOptions.create().setIgnoreNullValue(true));

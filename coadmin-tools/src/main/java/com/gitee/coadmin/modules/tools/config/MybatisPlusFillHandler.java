@@ -16,6 +16,11 @@ public class MybatisPlusFillHandler implements MetaObjectHandler{
     @Override
     public void insertFill(MetaObject metaObject) {
         Date currentTime = new Date();
+        strictInsertFill(metaObject, "createTime", Date.class, currentTime);
+        strictInsertFill(metaObject, "createBy", String.class, getUsername());
+        strictUpdateFill(metaObject, "updateTime", Date.class, currentTime);
+        strictUpdateFill(metaObject, "updateBy", String.class, getUsername());
+        /*
         if (metaObject.hasSetter("createTime")) {
             setFieldValByName("createTime", currentTime, metaObject);
         }
@@ -27,18 +32,21 @@ public class MybatisPlusFillHandler implements MetaObjectHandler{
         }
         if (metaObject.hasSetter("updateBy")) {
             setFieldValByName("updateBy", getUsername(), metaObject);
-        }
+        }*/
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
         Date currentTime = new Date();
+        strictUpdateFill(metaObject, "updateTime", Date.class, currentTime);
+        strictUpdateFill(metaObject, "updateBy", String.class, getUsername());
+        /*
         if (metaObject.hasSetter("updateTime")) {
             setFieldValByName("updateTime", currentTime, metaObject);
         }
         if (metaObject.hasSetter("updateBy")) {
             setFieldValByName("updateBy", getUsername(), metaObject);
-        }
+        }*/
     }
 
     private String getUsername() {

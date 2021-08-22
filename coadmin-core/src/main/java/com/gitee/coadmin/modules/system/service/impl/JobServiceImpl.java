@@ -126,7 +126,7 @@ public class JobServiceImpl extends BaseServiceImpl<Job> implements JobService {
     public void verification(Set<Long> ids) {
         QueryWrapper<UsersJobs> wrapper = new QueryWrapper<>();
         wrapper.lambda().in(UsersJobs::getUserId, ids);
-        int count = usersJobsMapper.selectCount(wrapper);
+        long count = usersJobsMapper.selectCount(wrapper);
         if(count > 0){
             throw new BadRequestException("所选的岗位中存在用户关联，请解除关联再试！");
         }

@@ -16,7 +16,7 @@ import java.util.Set;
 
 /*  添加菜单的 SQL
 INSERT INTO sys_menu(pid, sub_count, `type`, title, title_letter, component_name, `component`, sort, `path`, i_frame, `cache`, hidden, permission)
-    VALUES (121, 4, 1, '演示', 'ys', 'TestPerson', 'testPerson/index', 10, 'testPerson', 0, 0, 0, '');
+    VALUES (121, 4, 1, '演示', 'ys', 'TestPerson', 'test/test-person/index', 10, 'test-person', 0, 0, 0, '');
 SELECT @lastId:=LAST_INSERT_ID();
 INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, i_frame, `cache`, hidden, permission)
     VALUES (@lastId, 0, 2, '查看演示', 10, 0, 0, 0, 'testPerson:list');
@@ -30,13 +30,13 @@ INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, i_frame, `cache`, hidd
 
 /**
  * @author jinjin
- * @since 2021-08-16
+ * @since 2021-08-22
  **/
 @UnifiedAPI
 @RestController
 @RequiredArgsConstructor
 @Api(tags = "演示")
-@RequestMapping("/api/test-person")
+@RequestMapping("/api/test/test-person")
 public class TestPersonController {
 
     private final TestPersonService testPersonService;

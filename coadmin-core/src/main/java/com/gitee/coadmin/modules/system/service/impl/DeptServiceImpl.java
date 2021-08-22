@@ -216,7 +216,7 @@ public class DeptServiceImpl extends BaseServiceImpl<Dept> implements DeptServic
         return deptMapper.selectOne(wrapper);
     }
 
-    private int countOfChildren(Long pid) {
+    private long countOfChildren(Long pid) {
         QueryWrapper<Dept> wrapper = new QueryWrapper<>();
         wrapper.lambda().eq(Dept::getPid, pid);
         return deptMapper.selectCount(wrapper);

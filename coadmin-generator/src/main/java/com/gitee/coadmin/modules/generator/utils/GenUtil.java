@@ -106,7 +106,7 @@ public class GenUtil {
             String path = tempPath + "coadmin-web" + File.separator;
             String apiPath = path + "src" + File.separator + "api" + File.separator;
             String srcPath = path + "src" + File.separator + "views" + File.separator + genMap.get("changeClassName").toString() + File.separator;
-            String filePath = getFrontFilePath(templateName, apiPath, srcPath, genMap.get("changeClassName").toString());
+            String filePath = getFrontFilePath(templateName, apiPath, srcPath, genMap.get("changeClassName").toString(), genConfig.getSubModuleName());
             assert filePath != null;
             File file = new File(filePath);
             // 如果非覆盖生成
@@ -142,7 +142,8 @@ public class GenUtil {
         templates = getFrontTemplateNames();
         for (String templateName : templates) {
             Template template = engine.getTemplate("generator/front/" + templateName + ".ftl");
-            String filePath = getFrontFilePath(templateName, genConfig.getApiPath(), genConfig.getPath(), genMap.get("minusClassName").toString());
+            String filePath = getFrontFilePath(templateName, genConfig.getApiPath(), genConfig.getPath(),
+                    genMap.get("minusClassName").toString(), genConfig.getSubModuleName());
 
             assert filePath != null;
             File file = new File(filePath);
@@ -235,6 +236,7 @@ public class GenUtil {
         genMap.put("package", genConfig.getPack());
         // 模块名称
         genMap.put("moduleName", genConfig.getModuleName());
+        genMap.put("subModuleName", genConfig.getSubModuleName());
         // 作者
         genMap.put("author", genConfig.getAuthor());
         // 创建日期
@@ -398,14 +400,14 @@ public class GenUtil {
     /**
      * 定义前端文件路径以及名称
      */
-    private static String getFrontFilePath(String templateName, String apiPath, String pagesPath, String apiName) {
+    private static String getFrontFilePath(String templateName, String apiPath, String pagesPath, String apiName, String subModuleName) {
 
         if ("api".equals(templateName)) {
-            return apiPath + File.separator + apiName + ".js";
+            return apiPath + File.separator + (StrUtil.isNotBlank(subModuleName)?subModuleName + File.separator : "") + apiName + ".js";
         }
 
         if ("index".equals(templateName)) {
-            return pagesPath + File.separator + apiName + File.separator + "index.vue";
+            return pagesPath + File.separator + apiName + File.separator + (StrUtil.isNotBlank(subModuleName)?subModuleName + File.separator : "") + "index.vue";
         }
 
         return null;

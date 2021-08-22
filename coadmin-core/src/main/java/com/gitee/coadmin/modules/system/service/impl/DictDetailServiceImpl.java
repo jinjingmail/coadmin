@@ -88,7 +88,6 @@ public class DictDetailServiceImpl extends BaseServiceImpl<DictDetail> implement
     @Transactional(rollbackFor = Exception.class)
     public boolean save(DictDetailDto resources){
         DictDetail detail = ConvertUtil.convert(resources, DictDetail.class);
-        detail.setDictId(resources.getDict().getId());
         boolean ret = dictDetailMapper.insert(detail) > 0;
         // 清理缓存
         delCaches(detail.getDictId());

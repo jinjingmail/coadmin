@@ -25,12 +25,12 @@
         <#if column.remark != ''><#assign formLabel="${column.remark}"/></#if>
       <#if column.formType = 'Input'>
         <co-input class="col-12" form-label="${formLabel}" v-model="form.${column.changeColumnName}" :disable="!!crud.status.view"
-                  <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>/>
+                  <#if column.istNotNull>:rules="[ val => required(val) || '必填' ]"</#if>/>
       <#elseif column.formType = 'Textarea'>
         <co-input class="col-12" form-label="${formLabel}" v-model="form.${column.changeColumnName}" :disable="!!crud.status.view" autogrow
-                  <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>/>
+                  <#if column.istNotNull>:rules="[ val => required(val) || '必填' ]"</#if>/>
       <#elseif column.formType = 'Radio'>
-        <co-field class="col-12" form-label="${formLabel}" :disable="!!crud.status.view" :value="form.${column.changeColumnName}" <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>>
+        <co-field class="col-12" form-label="${formLabel}" :disable="!!crud.status.view" :value="form.${column.changeColumnName}" <#if column.istNotNull>:rules="[ val => required(val) || '必填' ]"</#if>>
           <template v-slot:control>
             <co-option-group
                 v-model="form.${column.changeColumnName}"
@@ -62,10 +62,11 @@
             form-label="${formLabel}"
             :options='dict.<#if (column.dictName)?? && (column.dictName)!="">${column.dictName}<#else>未设置字典，请手动设置 Select</#if>'
             :disable="!!crud.status.view"
+            value-to-string
             no-filter
             emit-value
             map-options
-            <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if>/>
+            <#if column.istNotNull>:rules="[ val => required(val) || '必填' ]"</#if>/>
       <#elseif column.formType = 'Date'>
         <co-date-select
             class="col-12"
@@ -74,7 +75,7 @@
             date-mask="YYYY-MM-DD"
             @input="val => form.${column.changeColumnName}=val"
             :disable="!!crud.status.view"
-           <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if> />
+           <#if column.istNotNull>:rules="[ val => required(val) || '必填' ]"</#if> />
       <#elseif column.formType = 'DateRange'>
         <co-date-select
             class="col-12"
@@ -84,7 +85,14 @@
             :default-time="['00:00:00', '23:59:59']"
             date-mask="YYYY-MM-DD"
             :disable="!!crud.status.view"
-           <#if column.istNotNull>:rules="[ val => (!!val) || '必填' ]"</#if> />
+           <#if column.istNotNull>:rules="[ val => required(val) || '必填' ]"</#if> />
+      <#elseif column.formType = 'Toggle'>
+      <co-field label="${formLabel}" :value="form.${column.changeColumnName}" borderless
+          <#if column.istNotNull>:rules="[ val => required(val) || '必填' ]"</#if>>
+        <template v-slot:control>
+          <co-toggle v-model="form.${column.changeColumnName}" :disable="!!crud.status.view"/>
+        </template>
+      </co-field>
       <#else>
         <co-field class="col-12" form-label="${formLabel}" :value="<#if column.columnType = 'Date'>parseTime(form.${column.changeColumnName}, '{y}-{m}-{d} {h}:{i}:{s}')<#else>form.${column.changeColumnName}</#if>" readonly borderless v-show="form.${column.changeColumnName}"/>
       </#if>
@@ -126,6 +134,7 @@
               v-model="query.${column.changeColumnName}"
               label="${formLabel}"
               content-style="width:160px"
+              value-to-string
               no-filter
               use-input
               fill-input
@@ -159,12 +168,14 @@
               clearable
           />
             </#if>
+          <#elseif column.formType = 'Toggle'>
+          <co-toggle label="${formLabel}" v-model="query.${column.changeColumnName}" toggle-indeterminate @input="crud.toQuery()"/>
           <#else>
           <co-input
               v-model="query.${column.changeColumnName}"
               label="${formLabel}"
               content-style="width:160px"
-              @keyup.enter="crud.toQuery()"
+              @change="crud.toQuery()"
           />
           </#if>
   </#list>
@@ -203,6 +214,7 @@
               type="button"
               :data="props.row"
               :permission="permission"
+              flat
               no-add
               no-icon
           />
@@ -220,6 +232,7 @@
 <script>
 <#if hasDict>
 import { mapGetters } from 'vuex'
+import { required, integer, between } from '@/utils/vuelidate'
 import { getDictLabel } from '@/utils/store'
 </#if>
 <#if hasDate>import { formatTime } from '@/utils/index'</#if>
@@ -228,7 +241,7 @@ import CrudOperation from '@crud/crud-operation'
 import CrudPagination from '@crud/crud-pagination'
 import CrudRow from '@crud/crud-row'
 import CrudMore from '@crud/crud-more'
-import Crud${className} from '@/api/${minusClassName}'
+import Crud${className} from '@/api/${subModuleName}/${minusClassName}'
 
 const defaultForm = { <#if columns??><#list columns as column>${column.changeColumnName}: null<#if column_has_next>, </#if></#list></#if> }
 
@@ -247,7 +260,7 @@ export default {
   name: '${className}',
   components: { CrudOperation, CrudMore, CrudPagination, CrudRow },
   cruds() {
-    return CRUD({ columns, visibleColumns, title: '${apiAlias}', idField: '${pkChangeColName}', sort: ['${pkChangeColName},desc'], url: 'api/${minusClassName}', crudMethod: { ...Crud${className} } })
+    return CRUD({ columns, visibleColumns, title: '${apiAlias}', idField: '${pkChangeColName}', sort: ['${pkChangeColName},desc'], url: 'api/${subModuleName}/${minusClassName}', crudMethod: { ...Crud${className} } })
   },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   data () {
@@ -274,6 +287,9 @@ export default {
   mounted () {
   },
   methods: {
+    required,
+    integer,
+    between,
     [CRUD.HOOK.beforeRefresh] () {
       console.log('${changeClassName} CRUD.HOOK.beforeRefresh')
     }

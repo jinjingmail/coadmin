@@ -9,7 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * @author jinjin
- * @since 2021-08-16
+ * @since 2021-08-22
  */
 @Getter
 @Setter
@@ -19,6 +19,10 @@ public class TestPersonQueryParam{
     
     @Query
     private Long id;
+
+    /** 模糊 */
+    @Query(type = Query.Type.INNER_LIKE)
+    private String name;
 
     /** 精确 */
     
@@ -30,6 +34,11 @@ public class TestPersonQueryParam{
     @Query
     private Date birthday;
 
+
+    /** 精确 */
+    
+    @Query
+    private Integer mysqlEngine;
 
     /** BETWEEN */
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")

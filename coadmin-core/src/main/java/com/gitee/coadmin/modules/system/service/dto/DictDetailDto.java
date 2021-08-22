@@ -15,7 +15,7 @@ public class DictDetailDto implements Serializable {
 
     private Long id;
 
-    private DictSmallDto dict;
+    private Long dictId;
 
     private String label;
 

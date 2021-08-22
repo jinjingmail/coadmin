@@ -42,7 +42,7 @@
         <commons-pool2.version>2.10.0</commons-pool2.version>
         <hutool.version>5.7.5</hutool.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
-        <mybatisplus.version>3.4.3.1</mybatisplus.version>
+        <mybatisplus.version>3.4.3.2</mybatisplus.version>
     </properties>
 
     <dependencies>

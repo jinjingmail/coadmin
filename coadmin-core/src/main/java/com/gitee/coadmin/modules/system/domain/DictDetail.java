@@ -27,13 +27,9 @@ public class DictDetail implements Serializable {
     @TableId(value = "id", type= IdType.AUTO)
     private Long id;
 
-    @NotNull
-    private Long dictId;
-
     @ApiModelProperty(value = "字典id")
     @NotNull
-    @TableField(exist = false)
-    private DictSmallDto dict;
+    private Long dictId;
 
     @ApiModelProperty(value = "字典标签")
     @NotBlank

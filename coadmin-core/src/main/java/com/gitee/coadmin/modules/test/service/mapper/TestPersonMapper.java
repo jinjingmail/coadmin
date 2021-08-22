@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 /**
  * @author jinjin
- * @since 2021-08-16
+ * @since 2021-08-22
  */
 @Repository
 public interface TestPersonMapper extends CommonMapper<TestPerson> {

@@ -67,7 +67,7 @@ public class User extends DataEntity implements Serializable {
     @ApiModelProperty(value = "是否为admin账号")
     private Boolean isAdmin;
 
-    @ApiModelProperty(value = "状态：1启用、0禁用")
+    @ApiModelProperty(value = "状态：true启用、false禁用")
     private Boolean enabled;
 
     @ApiModelProperty(value = "修改密码的时间")
