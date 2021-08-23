@@ -82,7 +82,6 @@
             form-label="${formLabel}"
             v-model="form.${column.changeColumnName}"
             range
-            :default-time="['00:00:00', '23:59:59']"
             date-mask="YYYY-MM-DD"
             :disable="!!crud.status.view"
            <#if column.istNotNull>:rules="[ val => required(val) || '必填' ]"</#if> />
@@ -153,6 +152,7 @@
               content-style="width:230px"
               range
               edit-time
+              with-seconds
               :default-time="['00:00:00', '23:59:59']"
               date-mask="YYYY-MM-DD"
               clearable
