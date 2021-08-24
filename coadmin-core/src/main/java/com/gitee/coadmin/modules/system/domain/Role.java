@@ -1,8 +1,6 @@
 package com.gitee.coadmin.modules.system.domain;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.*;
 import com.gitee.coadmin.utils.PinyinUtil;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -30,12 +28,8 @@ public class Role extends DataEntity implements Serializable {
     @NotBlank
     private String name;
 
-    public void setName(String name) {
-        this.name = name;
-        this.nameLetter = PinyinUtil.getAllFirstPinyin(this.name);
-    }
-
     @ApiModelProperty(value = "名称首字母")
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private String nameLetter;
 
     @ApiModelProperty(value = "角色级别")

@@ -1,9 +1,6 @@
 package com.gitee.coadmin.modules.system.domain;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.*;
 import com.gitee.coadmin.utils.PinyinUtil;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -39,11 +36,7 @@ public class Menu extends DataEntity implements Serializable {
     @ApiModelProperty(value = "菜单标题")
     private String title;
 
-    public void setTitle(String title) {
-        this.title = title;
-        this.titleLetter = PinyinUtil.getAllFirstPinyin(this.title);
-    }
-
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private String titleLetter;
 
     @ApiModelProperty(value = "组件名称")

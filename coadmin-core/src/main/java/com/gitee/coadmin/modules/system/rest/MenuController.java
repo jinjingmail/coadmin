@@ -123,7 +123,6 @@ public class MenuController {
             menuSet.add(menuService.getById(id));
             menuSet = menuService.getDeleteMenus(ConvertUtil.convertList(menuList, Menu.class), menuSet);
         }
-        //return menuService.removeByIds(ids)?1:0;
         Set<Long> deleteIds = menuSet.stream().map(Menu::getId).collect(Collectors.toSet());
         return menuService.removeByIds(deleteIds)?1:0;
     }

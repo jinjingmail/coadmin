@@ -22,7 +22,7 @@ public abstract class DataEntity extends BaseEntity {
     private String createBy;
 
     @ApiModelProperty(value = "更新者")
-    @TableField(fill= FieldFill.INSERT_UPDATE)
+    @TableField(fill= FieldFill.UPDATE)
     private String updateBy;
 
     @ApiModelProperty(value = "创建日期")
@@ -30,6 +30,6 @@ public abstract class DataEntity extends BaseEntity {
     private Date createTime;
 
     @ApiModelProperty(value = "更新时间")
-    @TableField(fill= FieldFill.INSERT_UPDATE)
+    @TableField(fill= FieldFill.UPDATE)
     private Date updateTime;
 }

@@ -46,7 +46,7 @@ public class ${className}DTO extends BaseDto {
     <#if column.changeColumnName = 'remarks'>
     @Size(max = 60, message = "备注长度大于60")
     </#if>
-    <#if column.columnType = 'Long'>
+    <#if column.columnType = 'Long' || column.columnType = 'BigDecimal'>
     @JsonSerialize(using= ToStringSerializer.class) // 防止精度丢失
     </#if>
     <#if column.changeColumnName != 'delFlag'>

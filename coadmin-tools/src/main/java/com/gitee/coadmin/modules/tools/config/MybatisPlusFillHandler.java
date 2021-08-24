@@ -3,6 +3,7 @@ package com.gitee.coadmin.modules.tools.config;
 import java.util.Date;
 
 import com.gitee.coadmin.modules.tools.utils.SecurityUtils;
+import com.gitee.coadmin.utils.PinyinUtil;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,14 +14,12 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
  */
 @Configuration
 public class MybatisPlusFillHandler implements MetaObjectHandler{
+
+    private final String[] pinyinFields = new String[] {"name", "label", "description", "treeNames", "title"};
+
     @Override
     public void insertFill(MetaObject metaObject) {
         Date currentTime = new Date();
-        strictInsertFill(metaObject, "createTime", Date.class, currentTime);
-        strictInsertFill(metaObject, "createBy", String.class, getUsername());
-        strictUpdateFill(metaObject, "updateTime", Date.class, currentTime);
-        strictUpdateFill(metaObject, "updateBy", String.class, getUsername());
-        /*
         if (metaObject.hasSetter("createTime")) {
             setFieldValByName("createTime", currentTime, metaObject);
         }
@@ -32,21 +31,34 @@ public class MybatisPlusFillHandler implements MetaObjectHandler{
         }
         if (metaObject.hasSetter("updateBy")) {
             setFieldValByName("updateBy", getUsername(), metaObject);
-        }*/
+        }
+        for (String field: pinyinFields) {
+            if (metaObject.hasSetter(field + "Letter")) {
+                Object o = metaObject.getValue(field);
+                if (o != null) {
+                    setFieldValByName(field + "Letter", PinyinUtil.getAllFirstPinyin(o.toString()), metaObject);
+                }
+            }
+        }
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
         Date currentTime = new Date();
-        strictUpdateFill(metaObject, "updateTime", Date.class, currentTime);
-        strictUpdateFill(metaObject, "updateBy", String.class, getUsername());
-        /*
         if (metaObject.hasSetter("updateTime")) {
             setFieldValByName("updateTime", currentTime, metaObject);
         }
         if (metaObject.hasSetter("updateBy")) {
             setFieldValByName("updateBy", getUsername(), metaObject);
-        }*/
+        }
+        for (String field: pinyinFields) {
+            if (metaObject.hasSetter(field + "Letter")) {
+                Object o = metaObject.getValue(field);
+                if (o != null) {
+                    setFieldValByName(field + "Letter", PinyinUtil.getAllFirstPinyin(o.toString()), metaObject);
+                }
+            }
+        }
     }
 
     private String getUsername() {
