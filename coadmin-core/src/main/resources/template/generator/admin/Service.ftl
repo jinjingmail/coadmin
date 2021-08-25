@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * ${apiAlias}
  * @author ${author}
  * @since ${date}
  */

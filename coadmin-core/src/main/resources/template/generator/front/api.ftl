@@ -1,5 +1,9 @@
 import request from '@/utils/request'
 
+/*
+ * ${apiAlias}
+ */
+
 export function add(data) {
   return request({
     url: 'api/${subModuleName}/${minusClassName}',

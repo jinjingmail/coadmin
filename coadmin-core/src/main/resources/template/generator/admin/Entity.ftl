@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import com.gitee.coadmin.base.BaseEntity;
 
 /**
+ * ${apiAlias}
  * @author ${author}
  * @since ${date}
  */

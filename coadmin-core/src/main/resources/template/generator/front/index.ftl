@@ -117,9 +117,9 @@
         :visible-columns="crud.visibleColumns"
         :title="crud.title"
         :loading="crud.loading"
-        selection="single"
-        :selected.sync="crud.selections"
         :filter="filterTable"
+        :selected.sync="crud.selections"
+        selection="single"
         @row-click="(evt, row, index) => crud.selections = [row]"
     >
       <template v-slot:top-left>
@@ -128,7 +128,7 @@
   <#list queryColumns as column>
           <#assign formLabel="${column.changeColumnName}"/>
           <#if column.remark != ''><#assign formLabel="${column.remark}"/></#if>
-          <#if column.formType = 'Radio' || column.formType = 'Checkbox' || column.formType = 'Select'>
+          <#if column.formType = 'Radio' || column.formType = 'Checkbox' || column.formType = 'Select' || ((column.dictName)?? && (column.dictName)!="")>
           <co-select
               v-model="query.${column.changeColumnName}"
               label="${formLabel}"
@@ -155,8 +155,8 @@
               with-seconds
               :default-time="['00:00:00', '23:59:59']"
               date-mask="YYYY-MM-DD"
-              clearable
               @input="crud.toQuery()"
+              clearable
           />
             <#else>
           <co-date-select
@@ -169,13 +169,18 @@
           />
             </#if>
           <#elseif column.formType = 'Toggle'>
-          <co-toggle label="${formLabel}" v-model="query.${column.changeColumnName}" toggle-indeterminate @input="crud.toQuery()"/>
+          <co-toggle
+             label="${formLabel}"
+             v-model="query.${column.changeColumnName}"
+             toggle-indeterminate
+             @input="crud.toQuery()"/>
           <#else>
           <co-input
               v-model="query.${column.changeColumnName}"
               label="${formLabel}"
               content-style="width:160px"
               @change="crud.toQuery()"
+              clearable
           />
           </#if>
   </#list>

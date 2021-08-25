@@ -5,6 +5,7 @@ import ${package}.domain.${className};
 import org.springframework.stereotype.Repository;
 
 /**
+ * ${apiAlias}
  * @author ${author}
  * @since ${date}
  */

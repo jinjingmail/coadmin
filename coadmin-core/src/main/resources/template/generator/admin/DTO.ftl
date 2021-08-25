@@ -22,6 +22,7 @@ import javax.validation.constraints.*;
 import com.gitee.coadmin.base.BaseDto;
 
 /**
+ * ${apiAlias}
  * @author ${author}
  * @since ${date}
  */
