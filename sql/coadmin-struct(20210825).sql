@@ -12,13 +12,9 @@ MySQL - 8.0.12 : Database - coadmin
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`coadmin` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
-
 USE `coadmin`;
 
 /*Table structure for table `code_column_config` */
-
-DROP TABLE IF EXISTS `code_column_config`;
 
 CREATE TABLE `code_column_config` (
   `id` bigint(20) NOT NULL COMMENT 'ID',
@@ -41,14 +37,13 @@ CREATE TABLE `code_column_config` (
 
 /*Table structure for table `code_gen_config` */
 
-DROP TABLE IF EXISTS `code_gen_config`;
-
 CREATE TABLE `code_gen_config` (
   `id` bigint(20) NOT NULL COMMENT 'ID',
   `table_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '表名',
   `author` varchar(255) DEFAULT NULL COMMENT '作者',
   `cover` bit(1) DEFAULT NULL COMMENT '是否覆盖',
   `module_name` varchar(255) DEFAULT NULL COMMENT '模块名称',
+  `sub_module_name` varchar(20) DEFAULT NULL COMMENT '子模块名称',
   `pack` varchar(255) DEFAULT NULL COMMENT '至于哪个包下',
   `path` varchar(255) DEFAULT NULL COMMENT '前端代码生成的路径',
   `api_path` varchar(255) DEFAULT NULL COMMENT '前端Api文件路径',
@@ -60,8 +55,6 @@ CREATE TABLE `code_gen_config` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=COMPACT COMMENT='代码生成器配置';
 
 /*Table structure for table `mnt_app` */
-
-DROP TABLE IF EXISTS `mnt_app`;
 
 CREATE TABLE `mnt_app` (
   `id` bigint(20) NOT NULL COMMENT 'ID',
@@ -81,8 +74,6 @@ CREATE TABLE `mnt_app` (
 
 /*Table structure for table `mnt_database` */
 
-DROP TABLE IF EXISTS `mnt_database`;
-
 CREATE TABLE `mnt_database` (
   `id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'ID',
   `name` varchar(255) NOT NULL COMMENT '名称',
@@ -98,8 +89,6 @@ CREATE TABLE `mnt_database` (
 
 /*Table structure for table `mnt_deploy` */
 
-DROP TABLE IF EXISTS `mnt_deploy`;
-
 CREATE TABLE `mnt_deploy` (
   `id` bigint(20) NOT NULL COMMENT 'ID',
   `app_id` bigint(20) DEFAULT NULL COMMENT '应用编号',
@@ -113,8 +102,6 @@ CREATE TABLE `mnt_deploy` (
 
 /*Table structure for table `mnt_deploy_history` */
 
-DROP TABLE IF EXISTS `mnt_deploy_history`;
-
 CREATE TABLE `mnt_deploy_history` (
   `id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'ID',
   `app_name` varchar(255) NOT NULL COMMENT '应用名称',
@@ -127,8 +114,6 @@ CREATE TABLE `mnt_deploy_history` (
 
 /*Table structure for table `mnt_deploy_server` */
 
-DROP TABLE IF EXISTS `mnt_deploy_server`;
-
 CREATE TABLE `mnt_deploy_server` (
   `deploy_id` bigint(20) NOT NULL COMMENT '部署ID',
   `server_id` bigint(20) NOT NULL COMMENT '服务ID',
@@ -137,8 +122,6 @@ CREATE TABLE `mnt_deploy_server` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=COMPACT COMMENT='应用与服务器关联';
 
 /*Table structure for table `mnt_server` */
-
-DROP TABLE IF EXISTS `mnt_server`;
 
 CREATE TABLE `mnt_server` (
   `id` bigint(20) NOT NULL COMMENT 'ID',
@@ -156,8 +139,6 @@ CREATE TABLE `mnt_server` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=COMPACT COMMENT='服务器管理';
 
 /*Table structure for table `sys_dept` */
-
-DROP TABLE IF EXISTS `sys_dept`;
 
 CREATE TABLE `sys_dept` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
@@ -184,8 +165,6 @@ CREATE TABLE `sys_dept` (
 
 /*Table structure for table `sys_dict` */
 
-DROP TABLE IF EXISTS `sys_dict`;
-
 CREATE TABLE `sys_dict` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `name` varchar(255) NOT NULL COMMENT '字典名称',
@@ -195,11 +174,9 @@ CREATE TABLE `sys_dict` (
   `create_time` datetime DEFAULT NULL COMMENT '创建日期',
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=COMPACT COMMENT='数据字典';
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=COMPACT COMMENT='数据字典';
 
 /*Table structure for table `sys_dict_detail` */
-
-DROP TABLE IF EXISTS `sys_dict_detail`;
 
 CREATE TABLE `sys_dict_detail` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
@@ -213,11 +190,9 @@ CREATE TABLE `sys_dict_detail` (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `FK5tpkputc6d9nboxojdbgnpmyb` (`dict_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=COMPACT COMMENT='数据字典详情';
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=COMPACT COMMENT='数据字典详情';
 
 /*Table structure for table `sys_job` */
-
-DROP TABLE IF EXISTS `sys_job`;
 
 CREATE TABLE `sys_job` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
@@ -231,11 +206,9 @@ CREATE TABLE `sys_job` (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `uniq_name` (`name`),
   KEY `inx_enabled` (`enabled`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=COMPACT COMMENT='岗位';
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=COMPACT COMMENT='岗位';
 
 /*Table structure for table `sys_log` */
-
-DROP TABLE IF EXISTS `sys_log`;
 
 CREATE TABLE `sys_log` (
   `id` bigint(20) NOT NULL COMMENT 'ID',
@@ -256,8 +229,6 @@ CREATE TABLE `sys_log` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=COMPACT COMMENT='系统日志';
 
 /*Table structure for table `sys_menu` */
-
-DROP TABLE IF EXISTS `sys_menu`;
 
 CREATE TABLE `sys_menu` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
@@ -283,17 +254,15 @@ CREATE TABLE `sys_menu` (
   UNIQUE KEY `uniq_title` (`title`),
   UNIQUE KEY `uniq_name` (`component_name`),
   KEY `inx_pid` (`pid`)
-) ENGINE=InnoDB AUTO_INCREMENT=165 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=COMPACT COMMENT='系统菜单';
+) ENGINE=InnoDB AUTO_INCREMENT=170 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=COMPACT COMMENT='系统菜单';
 
 /*Table structure for table `sys_quartz_job` */
-
-DROP TABLE IF EXISTS `sys_quartz_job`;
 
 CREATE TABLE `sys_quartz_job` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `bean_name` varchar(255) DEFAULT NULL COMMENT 'Spring Bean名称',
   `cron_expression` varchar(255) DEFAULT NULL COMMENT 'cron 表达式',
-  `is_pause` bit(1) DEFAULT NULL COMMENT '状态：1暂停、0启用',
+  `is_pause` bit(1) DEFAULT NULL COMMENT '状态：true暂停、false启用',
   `job_name` varchar(255) DEFAULT NULL COMMENT '任务名称',
   `method_name` varchar(255) DEFAULT NULL COMMENT '方法名称',
   `params` varchar(255) DEFAULT NULL COMMENT '参数',
@@ -312,8 +281,6 @@ CREATE TABLE `sys_quartz_job` (
 
 /*Table structure for table `sys_quartz_log` */
 
-DROP TABLE IF EXISTS `sys_quartz_log`;
-
 CREATE TABLE `sys_quartz_log` (
   `id` bigint(20) NOT NULL COMMENT 'ID',
   `bean_name` varchar(255) DEFAULT NULL,
@@ -329,8 +296,6 @@ CREATE TABLE `sys_quartz_log` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=COMPACT COMMENT='定时任务日志';
 
 /*Table structure for table `sys_role` */
-
-DROP TABLE IF EXISTS `sys_role`;
 
 CREATE TABLE `sys_role` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
@@ -350,8 +315,6 @@ CREATE TABLE `sys_role` (
 
 /*Table structure for table `sys_roles_depts` */
 
-DROP TABLE IF EXISTS `sys_roles_depts`;
-
 CREATE TABLE `sys_roles_depts` (
   `role_id` bigint(20) NOT NULL,
   `dept_id` bigint(20) NOT NULL,
@@ -361,8 +324,6 @@ CREATE TABLE `sys_roles_depts` (
 
 /*Table structure for table `sys_roles_menus` */
 
-DROP TABLE IF EXISTS `sys_roles_menus`;
-
 CREATE TABLE `sys_roles_menus` (
   `menu_id` bigint(20) NOT NULL COMMENT '菜单ID',
   `role_id` bigint(20) NOT NULL COMMENT '角色ID',
@@ -371,8 +332,6 @@ CREATE TABLE `sys_roles_menus` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=COMPACT COMMENT='角色菜单关联';
 
 /*Table structure for table `sys_user` */
-
-DROP TABLE IF EXISTS `sys_user`;
 
 CREATE TABLE `sys_user` (
   `id` bigint(20) NOT NULL COMMENT 'ID',
@@ -386,7 +345,7 @@ CREATE TABLE `sys_user` (
   `avatar_path` varchar(255) DEFAULT NULL COMMENT '头像真实路径',
   `password` varchar(255) DEFAULT NULL COMMENT '密码',
   `is_admin` bit(1) DEFAULT b'0' COMMENT '是否为admin账号',
-  `enabled` bigint(20) NOT NULL COMMENT '状态：1启用、0禁用',
+  `enabled` bit(1) NOT NULL COMMENT '状态：true启用、false禁用',
   `create_by` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '创建者',
   `update_by` varchar(255) DEFAULT NULL COMMENT '更新着',
   `pwd_reset_time` datetime DEFAULT NULL COMMENT '修改密码的时间',
@@ -401,8 +360,6 @@ CREATE TABLE `sys_user` (
 
 /*Table structure for table `sys_users_depts` */
 
-DROP TABLE IF EXISTS `sys_users_depts`;
-
 CREATE TABLE `sys_users_depts` (
   `user_id` bigint(20) NOT NULL,
   `dept_id` bigint(20) NOT NULL,
@@ -411,8 +368,6 @@ CREATE TABLE `sys_users_depts` (
 
 /*Table structure for table `sys_users_jobs` */
 
-DROP TABLE IF EXISTS `sys_users_jobs`;
-
 CREATE TABLE `sys_users_jobs` (
   `user_id` bigint(20) NOT NULL COMMENT '用户ID',
   `job_id` bigint(20) NOT NULL COMMENT '岗位ID',
@@ -420,8 +375,6 @@ CREATE TABLE `sys_users_jobs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Table structure for table `sys_users_roles` */
-
-DROP TABLE IF EXISTS `sys_users_roles`;
 
 CREATE TABLE `sys_users_roles` (
   `user_id` bigint(20) NOT NULL COMMENT '用户ID',
@@ -432,13 +385,12 @@ CREATE TABLE `sys_users_roles` (
 
 /*Table structure for table `test_person` */
 
-DROP TABLE IF EXISTS `test_person`;
-
 CREATE TABLE `test_person` (
   `id` bigint(20) NOT NULL,
   `name` varchar(200) NOT NULL COMMENT '姓名',
   `gender` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '性别（男、女、未知）',
   `birthday` date DEFAULT NULL COMMENT '出生日期',
+  `mysql_engine` tinyint(4) DEFAULT NULL COMMENT '测试enum',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `create_by` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '创建人',
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
@@ -448,8 +400,6 @@ CREATE TABLE `test_person` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='测试表';
 
 /*Table structure for table `tool_alipay_config` */
-
-DROP TABLE IF EXISTS `tool_alipay_config`;
 
 CREATE TABLE `tool_alipay_config` (
   `id` bigint(20) NOT NULL COMMENT 'ID',
@@ -468,8 +418,6 @@ CREATE TABLE `tool_alipay_config` (
 
 /*Table structure for table `tool_email_config` */
 
-DROP TABLE IF EXISTS `tool_email_config`;
-
 CREATE TABLE `tool_email_config` (
   `id` bigint(20) NOT NULL COMMENT 'ID',
   `from_user` varchar(255) DEFAULT NULL COMMENT '收件人',
@@ -481,8 +429,6 @@ CREATE TABLE `tool_email_config` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=COMPACT COMMENT='邮箱配置';
 
 /*Table structure for table `tool_local_storage` */
-
-DROP TABLE IF EXISTS `tool_local_storage`;
 
 CREATE TABLE `tool_local_storage` (
   `id` bigint(20) NOT NULL COMMENT 'ID',
@@ -501,8 +447,6 @@ CREATE TABLE `tool_local_storage` (
 
 /*Table structure for table `tool_qiniu_config` */
 
-DROP TABLE IF EXISTS `tool_qiniu_config`;
-
 CREATE TABLE `tool_qiniu_config` (
   `id` bigint(20) NOT NULL COMMENT 'ID',
   `access_key` text COMMENT 'accessKey',
@@ -515,8 +459,6 @@ CREATE TABLE `tool_qiniu_config` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=COMPACT COMMENT='七牛云配置';
 
 /*Table structure for table `tool_qiniu_content` */
-
-DROP TABLE IF EXISTS `tool_qiniu_content`;
 
 CREATE TABLE `tool_qiniu_content` (
   `id` bigint(20) NOT NULL COMMENT 'ID',

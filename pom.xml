@@ -12,13 +12,12 @@
     <modules>
         <module>coadmin-common</module>
         <module>coadmin-logging</module>
-        <module>coadmin-core</module>
+        <module>coadmin-api</module>
         <module>coadmin-tools</module>
         <module>coadmin-generator</module>
         <module>weixin-common</module>
-        <module>app-demo</module>
-        <module>app-demo-dao-share</module>
-        <module>app-dao-share</module>
+        <module>app-demo-api</module>
+        <module>app-demo-core</module>
     </modules>
 
     <name>CoAdmin 后台管理</name>

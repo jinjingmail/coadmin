@@ -9,7 +9,7 @@
         <version>2.6</version>
     </parent>
 
-    <artifactId>app-demo</artifactId>
+    <artifactId>app-demo-api</artifactId>
     <name>独立APP的demo</name>
 
     <dependencies>
@@ -21,13 +21,7 @@
 
         <dependency>
             <groupId>com.gitee.coadmin</groupId>
-            <artifactId>app-dao-share</artifactId>
-            <version>2.6</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.gitee.coadmin</groupId>
-            <artifactId>app-demo-dao-share</artifactId>
+            <artifactId>app-demo-core</artifactId>
             <version>2.6</version>
         </dependency>
 

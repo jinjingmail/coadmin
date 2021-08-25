@@ -9,7 +9,7 @@
         <version>2.6</version>
     </parent>
 
-    <artifactId>app-dao-share</artifactId>
+    <artifactId>app-demo-core</artifactId>
     <name>APP数据访问层全局共享部分</name>
 
     <dependencies>

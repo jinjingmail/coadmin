@@ -39,6 +39,12 @@
             <version>2.6</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.gitee.coadmin</groupId>
+            <artifactId>app-demo-core</artifactId>
+            <version>2.6</version>
+        </dependency>
+
         <!-- Spring boot websocket -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
