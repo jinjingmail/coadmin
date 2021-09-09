@@ -17,7 +17,7 @@ package com.gitee.coadmin.modules.system.rest;
 
 import com.gitee.coadmin.annotation.UnifiedAPI;
 import com.gitee.coadmin.base.PageInfo;
-import com.gitee.coadmin.modules.tools.utils.SecurityUtils;
+import com.gitee.coadmin.utils.SecurityUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;

@@ -17,7 +17,7 @@ package com.gitee.coadmin.modules.log.aspect;
 
 import com.gitee.coadmin.modules.logging.domain.Log;
 import com.gitee.coadmin.modules.logging.service.LogService;
-import com.gitee.coadmin.modules.tools.utils.SecurityUtils;
+import com.gitee.coadmin.utils.SecurityUtils;
 import com.gitee.coadmin.utils.RequestHolder;
 import com.gitee.coadmin.utils.StringUtils;
 import com.gitee.coadmin.utils.ThrowableUtil;

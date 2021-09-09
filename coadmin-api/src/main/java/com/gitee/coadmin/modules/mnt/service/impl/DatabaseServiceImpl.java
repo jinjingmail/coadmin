@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.gitee.coadmin.base.PageInfo;
-import com.gitee.coadmin.modules.tools.utils.QueryHelpMybatisPlus;
+import com.gitee.coadmin.utils.QueryHelpMybatisPlus;
 import com.gitee.coadmin.base.impl.BaseServiceImpl;
 import com.gitee.coadmin.modules.mnt.util.SqlUtils;
 import com.gitee.coadmin.utils.ConvertUtil;

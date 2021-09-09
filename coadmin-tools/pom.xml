@@ -19,12 +19,6 @@
     </properties>
 
     <dependencies>
-        <!--Spring boot 安全框架-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-
         <!-- 同时需要common模块和logging模块只需要引入logging模块即可 -->
         <dependency>
             <groupId>com.gitee.coadmin</groupId>

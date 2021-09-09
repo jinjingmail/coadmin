@@ -33,7 +33,7 @@ import com.qiniu.storage.model.FileInfo;
 import com.qiniu.util.Auth;
 import lombok.RequiredArgsConstructor;
 import com.gitee.coadmin.base.PageInfo;
-import com.gitee.coadmin.modules.tools.utils.QueryHelpMybatisPlus;
+import com.gitee.coadmin.utils.QueryHelpMybatisPlus;
 import com.gitee.coadmin.base.impl.BaseServiceImpl;
 import com.gitee.coadmin.modules.tools.domain.QiniuContent;
 import com.gitee.coadmin.modules.tools.service.mapper.QiniuConfigMapper;

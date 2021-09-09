@@ -26,7 +26,7 @@ import com.gitee.coadmin.utils.FileUtil;
 import com.gitee.coadmin.utils.PageUtil;
 import com.gitee.coadmin.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
-import com.gitee.coadmin.modules.tools.utils.QueryHelpMybatisPlus;
+import com.gitee.coadmin.utils.QueryHelpMybatisPlus;
 import com.gitee.coadmin.base.impl.BaseServiceImpl;
 import com.gitee.coadmin.config.FileProperties;
 import com.gitee.coadmin.exception.BadRequestException;

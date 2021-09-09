@@ -11,7 +11,7 @@ import com.gitee.coadmin.exception.EntityExistException;
     </#list>
 </#if>
 import lombok.AllArgsConstructor;
-import com.gitee.coadmin.modules.tools.utils.QueryHelpMybatisPlus;
+import com.gitee.coadmin.utils.QueryHelpMybatisPlus;
 import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.utils.PageUtil;
 import ${package}.domain.${className};

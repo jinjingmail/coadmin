@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.gitee.coadmin.modules.tools.utils;
+package com.gitee.coadmin.utils;
 
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;

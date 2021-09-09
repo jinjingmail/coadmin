@@ -18,6 +18,7 @@
         <module>weixin-common</module>
         <module>app-demo-api</module>
         <module>app-demo-core</module>
+        <module>coadmin-sys-dict</module>
     </modules>
 
     <name>CoAdmin 后台管理</name>
@@ -98,56 +99,12 @@
             <version>${log4jdbc.version}</version>
         </dependency>
 
-        <!-- Swagger UI 相关 -->
-        <!--
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-boot-starter</artifactId>
-            <version>${swagger.version}</version>
-            <scope>compile</scope>
-        </dependency>-->
+        <!-- DOC UI 相关 -->
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-spring-boot-starter</artifactId>
             <version>${knife4j.version}</version>
         </dependency>
-
-        <!--
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>${swagger.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>org.mapstruct</artifactId>
-                    <groupId>mapstruct</groupId>
-                </exclusion>
-                <exclusion>
-                    <groupId>io.swagger</groupId>
-                    <artifactId>swagger-annotations</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>io.swagger</groupId>
-                    <artifactId>swagger-models</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>${swagger.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-annotations</artifactId>
-            <version>1.5.21</version>
-        </dependency>
-        <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-models</artifactId>
-            <version>1.5.21</version>
-        </dependency>
-        -->
 
         <!--mapStruct依赖-->
         <dependency>

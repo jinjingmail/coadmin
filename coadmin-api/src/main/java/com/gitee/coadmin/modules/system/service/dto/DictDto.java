@@ -17,12 +17,7 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 public class DictDto extends DataDto implements Serializable {
-
     private Long id;
-
-    //     private List<DictDetailDto> dictDetails;
-
     private String name;
-
     private String description;
 }

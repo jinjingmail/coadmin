@@ -18,17 +18,15 @@ package com.gitee.coadmin.modules.system.rest;
 import cn.hutool.core.util.StrUtil;
 import com.gitee.coadmin.annotation.UnifiedAPI;
 import com.gitee.coadmin.base.PageInfo;
+import com.gitee.coadmin.modules.logging.annotation.type.LogActionType;
 import com.gitee.coadmin.modules.system.service.DictService;
-import com.gitee.coadmin.modules.system.service.dto.DictDto;
-import com.gitee.coadmin.modules.system.service.dto.DictQueryParam;
+import com.gitee.coadmin.modules.system.service.dto.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import com.gitee.coadmin.modules.logging.annotation.Log;
 import com.gitee.coadmin.exception.BadRequestException;
 import com.gitee.coadmin.modules.system.service.DictDetailService;
-import com.gitee.coadmin.modules.system.service.dto.DictDetailDto;
-import com.gitee.coadmin.modules.system.service.dto.DictDetailQueryParam;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -76,9 +74,9 @@ public class DictDetailController {
     @Log("查询多个字典详情")
     @ApiOperation("查询多个字典详情")
     @GetMapping(value = "/map")
-    public Map<String, List<DictDetailDto>> getDictDetailMaps(@RequestParam String dictNames){
+    public Map<String, List<DictDetailSmallDto>> getDictDetailMaps(@RequestParam String dictNames){
         String[] names = dictNames.split("[,，]");
-        Map<String, List<DictDetailDto>> dictMap = new HashMap<>(5);
+        Map<String, List<DictDetailSmallDto>> dictMap = new HashMap<>(5);
         for (String name : names) {
             dictMap.put(name, dictDetailService.getDictByName(name));
         }
@@ -88,8 +86,8 @@ public class DictDetailController {
     @Log("查询所有字典详情")
     @ApiOperation("查询所有字典详情")
     @GetMapping(value = "/map/all")
-    public Map<String, List<DictDetailDto>> getDictDetailMapsAll(){
-        Map<String, List<DictDetailDto>> dictMap = new HashMap<>(5);
+    public Map<String, List<DictDetailSmallDto>> getDictDetailMapsAll(){
+        Map<String, List<DictDetailSmallDto>> dictMap = new HashMap<>(5);
         List<DictDto> dictAll = dictService.queryAll(new DictQueryParam());
         for (DictDto dict : dictAll) {
             dictMap.put(dict.getName(), dictDetailService.getDictByName(dict.getName()));
@@ -97,7 +95,7 @@ public class DictDetailController {
         return dictMap;
     }
 
-    @Log("新增字典详情")
+    @Log(value = "新增字典详情", type = LogActionType.ADD)
     @ApiOperation("新增字典详情")
     @PostMapping
     @PreAuthorize("@el.check('dict:add')")
@@ -111,7 +109,7 @@ public class DictDetailController {
         return dictDetailService.save(resources)?1:0;
     }
 
-    @Log("修改字典详情")
+    @Log(value = "修改字典详情", type = LogActionType.UPDATE)
     @ApiOperation("修改字典详情")
     @PutMapping
     @PreAuthorize("@el.check('dict:edit')")
@@ -119,7 +117,7 @@ public class DictDetailController {
         return dictDetailService.updateById(resources)?1:0;
     }
 
-    @Log("删除字典详情")
+    @Log(value = "删除字典详情", type = LogActionType.DELETE)
     @ApiOperation("删除字典详情")
     @DeleteMapping
     @PreAuthorize("@el.check('dict:del')")

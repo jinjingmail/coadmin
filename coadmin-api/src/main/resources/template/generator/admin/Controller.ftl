@@ -3,6 +3,7 @@ package ${package}.rest;
 import com.gitee.coadmin.annotation.UnifiedAPI;
 import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.modules.logging.annotation.Log;
+import com.gitee.coadmin.modules.logging.annotation.type.LogActionType;
 import ${package}.service.${className}Service;
 import ${package}.service.dto.${className}DTO;
 import ${package}.service.dto.${className}QueryParam;
@@ -64,7 +65,7 @@ public class ${className}Controller {
     }
 
     @PostMapping
-    @Log("新增${apiAlias}")
+    @Log(value = "新增${apiAlias}", type = LogActionType.ADD)
     @ApiOperation("新增${apiAlias}")
     @PreAuthorize("@el.check('${changeClassName}:add')")
     public Integer create(@Validated @RequestBody ${className}DTO resources){
@@ -72,7 +73,7 @@ public class ${className}Controller {
     }
 
     @PutMapping
-    @Log("修改${apiAlias}")
+    @Log(value = "修改${apiAlias}", type = LogActionType.UPDATE)
     @ApiOperation("修改${apiAlias}")
     @PreAuthorize("@el.check('${changeClassName}:edit')")
     public Integer update(@Validated @RequestBody ${className}DTO resources){
@@ -80,7 +81,7 @@ public class ${className}Controller {
     }
 
     @DeleteMapping
-    @Log("删除${apiAlias}")
+    @Log(value = "删除${apiAlias}", type = LogActionType.DELETE)
     @ApiOperation("删除${apiAlias}")
     @PreAuthorize("@el.check('${changeClassName}:del')")
     public Integer delete(@RequestBody Set<${pkColumnType}> ids) {

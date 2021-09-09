@@ -12,7 +12,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.modules.system.service.dto.*;
 import lombok.AllArgsConstructor;
-import com.gitee.coadmin.modules.tools.utils.QueryHelpMybatisPlus;
+import com.gitee.coadmin.utils.QueryHelpMybatisPlus;
 import com.gitee.coadmin.base.impl.BaseServiceImpl;
 import com.gitee.coadmin.exception.BadRequestException;
 import com.gitee.coadmin.exception.EntityExistException;

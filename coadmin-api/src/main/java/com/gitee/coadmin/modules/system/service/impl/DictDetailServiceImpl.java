@@ -3,9 +3,10 @@ package com.gitee.coadmin.modules.system.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.gitee.coadmin.modules.system.service.dto.DictDetailSmallDto;
 import lombok.AllArgsConstructor;
 import com.gitee.coadmin.base.PageInfo;
-import com.gitee.coadmin.modules.tools.utils.QueryHelpMybatisPlus;
+import com.gitee.coadmin.utils.QueryHelpMybatisPlus;
 import com.gitee.coadmin.base.impl.BaseServiceImpl;
 import com.gitee.coadmin.modules.system.domain.Dict;
 import com.gitee.coadmin.modules.system.service.mapper.DictMapper;
@@ -59,11 +60,12 @@ public class DictDetailServiceImpl extends BaseServiceImpl<DictDetail> implement
     }
 
     @Override
-    public List<DictDetailDto> getDictByName(String dictName) {
+    public List<DictDetailSmallDto> getDictByName(String dictName) {
         QueryWrapper<Dict> wrapper = new QueryWrapper<>();
         wrapper.lambda().eq(Dict::getName, dictName);
         Dict dict = dictMapper.selectOne(wrapper);
-        List<DictDetailDto> ret = dictDetailMapper.getDictDetailsByDictName(dictName);
+        List<DictDetailSmallDto> ret = ConvertUtil.convertList(dictDetailMapper.getDictDetailsByDictName(dictName),
+                DictDetailSmallDto.class);
         redisUtils.set("dictDetail::dictId:"+dict.getId(), ret);
         return ret;
     }

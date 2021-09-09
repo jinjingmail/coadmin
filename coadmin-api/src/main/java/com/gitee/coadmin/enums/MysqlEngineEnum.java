@@ -6,6 +6,9 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * 演示enum作为 mybatis-plus 和 springmvc 字段
+ */
 @Getter
 @AllArgsConstructor
 public enum MysqlEngineEnum {
@@ -18,12 +21,12 @@ public enum MysqlEngineEnum {
     private final Integer code;
 
     @JsonCreator
-    public static MysqlEngineEnum create(Integer code) {
+    public static MysqlEngineEnum create(Integer value) {
         for (MysqlEngineEnum v: values()) {
-            if (v.code.equals(code)) {
+            if (v.code.equals(value)) {
                 return v;
             }
         }
-        return null;
+        throw new IllegalArgumentException("MysqlEngineEnum No element matches "+value);
     }
 }

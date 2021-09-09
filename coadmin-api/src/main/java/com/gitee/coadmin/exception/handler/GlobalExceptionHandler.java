@@ -16,6 +16,7 @@
 package com.gitee.coadmin.exception.handler;
 
 import com.gitee.coadmin.base.API;
+import com.gitee.coadmin.utils.CoUtil;
 import lombok.extern.slf4j.Slf4j;
 import com.gitee.coadmin.exception.BadRequestException;
 import com.gitee.coadmin.exception.EntityExistException;
@@ -26,6 +27,8 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
 /**
@@ -55,10 +58,10 @@ public class GlobalExceptionHandler {
      * BadCredentialsException
      */
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<?> badCredentialsException(BadCredentialsException e){
+    public ResponseEntity<?> badCredentialsException(Exception e, HttpServletRequest request){
         // 打印堆栈信息
         String message = "坏的凭证".equals(e.getMessage()) ? "用户名或密码不正确" : e.getMessage();
-        log.error(message);
+        log.error("badCredentialsException:{} path={}", message, CoUtil.getPath(request));
         return API.badRequest(message).responseEntity();
     }
 
@@ -66,7 +69,8 @@ public class GlobalExceptionHandler {
      * 处理自定义异常
      */
 	@ExceptionHandler(value = BadRequestException.class)
-	public ResponseEntity<?> badRequestException(BadRequestException e) {
+	public ResponseEntity<?> badRequestException(BadRequestException e, HttpServletRequest request) {
+        log.error("badRequestException:{} path={}", e.getMessage(), CoUtil.getPath(request));
         // 打印堆栈信息
         log.error(ThrowableUtil.getStackTrace(e));
         return API.response(e.getStatus(),e.getMessage(), null).responseEntity();
@@ -76,7 +80,8 @@ public class GlobalExceptionHandler {
      * 处理 EntityExist
      */
     @ExceptionHandler(value = EntityExistException.class)
-    public ResponseEntity<?> entityExistException(EntityExistException e) {
+    public ResponseEntity<?> entityExistException(EntityExistException e, HttpServletRequest request) {
+        log.error("entityExistException:{} path={}", e.getMessage(), CoUtil.getPath(request));
         // 打印堆栈信息
         log.error(ThrowableUtil.getStackTrace(e));
         return API.badRequest(e.getMessage()).responseEntity();
@@ -86,7 +91,8 @@ public class GlobalExceptionHandler {
      * 处理 EntityNotFound
      */
     @ExceptionHandler(value = EntityNotFoundException.class)
-    public ResponseEntity<?> entityNotFoundException(EntityNotFoundException e) {
+    public ResponseEntity<?> entityNotFoundException(EntityNotFoundException e, HttpServletRequest request) {
+        log.error("entityNotFoundException:{} path={}", e.getMessage(), CoUtil.getPath(request));
         // 打印堆栈信息
         log.error(ThrowableUtil.getStackTrace(e));
         return API.notFound(e.getMessage()).responseEntity();
@@ -96,13 +102,12 @@ public class GlobalExceptionHandler {
      * 处理所有接口数据验证异常
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
+    public ResponseEntity<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletRequest request){
         // 打印堆栈信息
-        log.error(ThrowableUtil.getStackTrace(e));
+        log.error("handleMethodArgumentNotValidException:{} path={}", e.getMessage(), CoUtil.getPath(request));
         String[] str = Objects.requireNonNull(e.getBindingResult().getAllErrors().get(0).getCodes())[1].split("\\.");
         String message = e.getBindingResult().getAllErrors().get(0).getDefaultMessage();
-        String msg = "不能为空";
-        if(msg.equals(message)){
+        if("不能为空".equals(message) || "不能为null".equals(message)){
             message = str[1] + ":" + message;
         }
         return API.badRequest(message).responseEntity();

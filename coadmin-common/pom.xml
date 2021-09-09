@@ -16,6 +16,12 @@
     <name>公共模块</name>
 
     <dependencies>
+        <!--Spring boot 安全框架-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
         <!--工具包-->
         <dependency>
             <groupId>cn.hutool</groupId>

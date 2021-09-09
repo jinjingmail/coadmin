@@ -1,8 +1,8 @@
-package com.gitee.coadmin.modules.tools.config;
+package com.gitee.coadmin.config;
 
 import java.util.Date;
 
-import com.gitee.coadmin.modules.tools.utils.SecurityUtils;
+import com.gitee.coadmin.utils.SecurityUtils;
 import com.gitee.coadmin.utils.PinyinUtil;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.context.annotation.Configuration;

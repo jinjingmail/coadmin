@@ -5,6 +5,7 @@ import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.modules.system.domain.DictDetail;
 import com.gitee.coadmin.modules.system.service.dto.DictDetailDto;
 import com.gitee.coadmin.modules.system.service.dto.DictDetailQueryParam;
+import com.gitee.coadmin.modules.system.service.dto.DictDetailSmallDto;
 import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Set;
@@ -35,7 +36,7 @@ public interface DictDetailService  extends BaseService<DictDetail> {
      * @param name 字典名称
      * @return /
      */
-    List<DictDetailDto> getDictByName(String name);
+    List<DictDetailSmallDto> getDictByName(String name);
 
     PageInfo<DictDetailDto> getDictByName(String dictName, Pageable pageable);
 

@@ -1,16 +1,13 @@
-package com.gitee.coadmin.modules.tools.utils;
+package com.gitee.coadmin.utils;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.gitee.coadmin.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import com.gitee.coadmin.annotation.DataPermission;
 import com.gitee.coadmin.annotation.Query;
-import org.springframework.security.core.GrantedAuthority;
 
 import java.lang.reflect.Field;
 import java.util.*;
