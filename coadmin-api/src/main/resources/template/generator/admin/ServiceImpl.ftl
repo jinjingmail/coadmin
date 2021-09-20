@@ -53,7 +53,7 @@ public class ${className}ServiceImpl implements ${className}Service {
 
     @Override
     public List<${className}DTO> queryAll(${className}QueryParam query){
-        return testPersonConverter.toDto(${changeClassName}Mapper.selectList(QueryHelpMybatisPlus.getPredicate(query)));
+        return ${changeClassName}Converter.toDto(${changeClassName}Mapper.selectList(QueryHelpMybatisPlus.getPredicate(query)));
     }
 
     @Override
@@ -64,20 +64,20 @@ public class ${className}ServiceImpl implements ${className}Service {
     @Override
     // @Cacheable(key = "'id:' + #p0")
     public ${className}DTO getById(${pkColumnType} id) {
-        return testPersonConverter.toDto(getEntityById(id));
+        return ${changeClassName}Converter.toDto(getEntityById(id));
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int insert(${className}DTO resources) {
-        ${className} entity = testPersonConverter.toEntity(resources);
+        ${className} entity = ${changeClassName}Converter.toEntity(resources);
         return ${changeClassName}Mapper.insert(entity);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int updateById(${className}DTO resources){
-        ${className} entity = testPersonConverter.toEntity(resources);
+        ${className} entity = ${changeClassName}Converter.toEntity(resources);
         int ret = ${changeClassName}Mapper.updateById(entity);
         // delCaches(resources.id);
         return ret;
