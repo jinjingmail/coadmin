@@ -237,10 +237,10 @@
 <script>
 <#if hasDict>
 import { mapGetters } from 'vuex'
-import { required, integer, between } from '@/utils/vuelidate'
 import { getDictLabel } from '@/utils/store'
 </#if>
 <#if hasDate>import { formatTime } from '@/utils/index'</#if>
+import { required, integer, between } from '@/utils/vuelidate'
 import CRUD, { presenter, header, form, crud } from '@crud/crud'
 import CrudOperation from '@crud/crud-operation'
 import CrudPagination from '@crud/crud-pagination'

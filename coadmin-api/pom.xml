@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>coadmin-core</artifactId>
-    <name>核心模块</name>
+    <name>管理系统对外API</name>
 
     <properties>
         <jjwt.version>0.11.1</jjwt.version>
@@ -36,6 +36,18 @@
         <dependency>
             <groupId>com.gitee.coadmin</groupId>
             <artifactId>app-demo-core</artifactId>
+            <version>2.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.gitee.coadmin</groupId>
+            <artifactId>coadmin-sys-dict</artifactId>
+            <version>2.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.gitee.coadmin</groupId>
+            <artifactId>coadmin-sys-setting</artifactId>
             <version>2.6</version>
         </dependency>
 

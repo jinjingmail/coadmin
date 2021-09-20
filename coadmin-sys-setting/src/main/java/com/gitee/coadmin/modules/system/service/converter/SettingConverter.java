@@ -1,53 +1,53 @@
-package ${package}.service.converter;
+package com.gitee.coadmin.modules.system.service.converter;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.gitee.coadmin.base.PageInfo;
-import ${package}.domain.${className};
-import ${package}.service.dto.${className}DTO;
+import com.gitee.coadmin.modules.system.domain.Setting;
+import com.gitee.coadmin.modules.system.service.dto.SettingDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
 /**
- * @author ${author}
- * @since ${date}
+ * @author jinjin
+ * @since 2021-09-19
  */
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface ${className}Converter {
+public interface SettingConverter {
     /**
      * DTO转Entity
      * @param dto /
      * @return /
      */
-    ${className} toEntity(${className}DTO dto);
+    Setting toEntity(SettingDTO dto);
 
     /**
      * Entity转DTO
      * @param entity /
      * @return /
      */
-    ${className}DTO toDto(${className} entity);
+    SettingDTO toDto(Setting entity);
 
     /**
      * DTO集合转Entity集合
      * @param dtoList /
      * @return /
      */
-    List<${className}> toEntity(List<${className}DTO> dtoList);
+    List<Setting> toEntity(List<SettingDTO> dtoList);
 
     /**
      * Entity集合转DTO集合
      * @param entityList /
      * @return /
      */
-    List <${className}DTO> toDto(List<${className}> entityList);
+    List <SettingDTO> toDto(List<Setting> entityList);
 
-    default PageInfo<${className}DTO> convertPage(IPage<${className}> page) {
+    default PageInfo<SettingDTO> convertPage(IPage<Setting> page) {
         if (page == null) {
             return null;
         }
-        PageInfo<${className}DTO> pageInfo = new PageInfo<>();
+        PageInfo<SettingDTO> pageInfo = new PageInfo<>();
         pageInfo.setTotalElements(page.getTotal());
         pageInfo.setContent(toDto(page.getRecords()));
         return pageInfo;

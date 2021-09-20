@@ -10,10 +10,19 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>coadmin-sys-dict</artifactId>
+    <description>系统字典，独立出来方便其他子系统引用</description>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.gitee.coadmin</groupId>
+            <artifactId>coadmin-common</artifactId>
+            <version>2.6</version>
+        </dependency>
+    </dependencies>
 
 </project>

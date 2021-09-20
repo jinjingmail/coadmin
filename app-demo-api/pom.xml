@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>app-demo-api</artifactId>
-    <name>独立APP的demo</name>
+    <name>独立APP的对外API</name>
 
     <dependencies>
         <dependency>

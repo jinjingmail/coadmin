@@ -23,7 +23,7 @@ SELECT @lastId:=LAST_INSERT_ID();
 INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, i_frame, `cache`, hidden, permission)
     VALUES (@lastId, 0, 2, '查看${apiAlias}', 10, 0, 0, 0, '${changeClassName}:list');
 INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, i_frame, `cache`, hidden, permission)
-    VALUES (@lastId, 0, 2, '新增${apiAlias}', 2, 0, 0, 0, '${changeClassName}:add');
+    VALUES (@lastId, 0, 2, '新增${apiAlias}', 20, 0, 0, 0, '${changeClassName}:add');
 INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, i_frame, `cache`, hidden, permission)
     VALUES (@lastId, 0, 2, '修改${apiAlias}', 30, 0, 0, 0, '${changeClassName}:edit');
 INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, i_frame, `cache`, hidden, permission)
