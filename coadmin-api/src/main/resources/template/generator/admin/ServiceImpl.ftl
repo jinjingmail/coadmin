@@ -35,7 +35,7 @@ import java.util.*;
  * @since ${date}
  */
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 // @CacheConfig(cacheNames = ${className}Service.CACHE_KEY)
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class ${className}ServiceImpl implements ${className}Service {

@@ -17,8 +17,9 @@
         <module>coadmin-sys-dict</module>
         <module>coadmin-sys-setting</module>
         <module>coadmin-api</module>
-        <module>app-demo-core</module>
-        <module>app-demo-api</module>
+        <module>app-core</module>
+        <module>app-api</module>
+        <module>app-rest</module>
     </modules>
 
     <name>CoAdmin 后台管理</name>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.gitee.coadmin</groupId>
+        <artifactId>coadmin</artifactId>
+        <version>2.6</version>
+    </parent>
+
+    <artifactId>app-api</artifactId>
+    <name>独立APP的对外API</name>
+    <description></description>
+
+    <properties>
+        <satoken.version>1.26.0</satoken.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.gitee.coadmin</groupId>
+            <artifactId>coadmin-sys-dict</artifactId>
+            <version>2.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.gitee.coadmin</groupId>
+            <artifactId>app-core</artifactId>
+            <version>2.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-spring-boot-starter</artifactId>
+            <version>${satoken.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-dao-redis-jackson</artifactId>
+            <version>${satoken.version}</version>
+        </dependency>
+
+    </dependencies>
+
+</project>

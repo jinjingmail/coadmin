@@ -60,7 +60,7 @@ rsa:
 mybatis-plus:
   check-config-location: true
   # 支持统配符 * 或者 ; 分割
-  typeEnumsPackage: com.gitee.coadmin.enums
+  typeEnumsPackage: com.gitee.coadmin.enums;com.gitee.app.enums
   configuration:
     map-underscore-to-camel-case: true
   global-config:

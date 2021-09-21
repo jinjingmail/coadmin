@@ -1,4 +1,4 @@
-package com.gitee.coadmin.config;
+package com.gitee.app.config;
 
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
  * Created by jinjin on 2020-09-21.
  */
 @Configuration
-@MapperScan(basePackages ={"com.gitee.coadmin.**.service.mapper", "com.gitee.app.**.service.mapper"})
+@MapperScan(basePackages ={"com.gitee.app.**.service.mapper", "com.gitee.coadmin.**.service.mapper"})
 public class MybatisPlusConfig {
     @Bean
     public MybatisPlusInterceptor paginationInterceptor() {
@@ -32,7 +32,7 @@ public class MybatisPlusConfig {
     @Bean
     public GlobalConfig globalConfig() {
         GlobalConfig globalConfig = new GlobalConfig();
-        globalConfig.setMetaObjectHandler(new MybatisPlusFillHandler());
+        // globalConfig.setMetaObjectHandler(new MybatisPlusFillHandler());
         return globalConfig;
     }
 }

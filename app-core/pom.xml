@@ -2,20 +2,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>coadmin</artifactId>
         <groupId>com.gitee.coadmin</groupId>
+        <artifactId>coadmin</artifactId>
         <version>2.6</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>coadmin-logging</artifactId>
-    <name>日志模块</name>
+    <artifactId>app-core</artifactId>
+    <name>独立APP数据访问模块</name>
 
     <dependencies>
+
         <dependency>
             <groupId>com.gitee.coadmin</groupId>
-            <artifactId>coadmin-common</artifactId>
+            <artifactId>coadmin-logging</artifactId>
             <version>2.6</version>
             <exclusions>
                 <exclusion>
@@ -24,5 +25,13 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <dependency>
+            <groupId>com.gitee.coadmin</groupId>
+            <artifactId>coadmin-sys-setting</artifactId>
+            <version>2.6</version>
+        </dependency>
+
     </dependencies>
+
 </project>

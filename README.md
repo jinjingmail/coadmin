@@ -29,7 +29,7 @@
 mvn clean install
 
 # 开发机运行
-直接运行coadmin-core 下的 AppRun
+直接运行coadmin-api 下的 AppRun
 
 # 测试账号
 demo/123456
