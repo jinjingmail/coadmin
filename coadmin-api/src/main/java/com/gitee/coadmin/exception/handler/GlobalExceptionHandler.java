@@ -16,6 +16,7 @@
 package com.gitee.coadmin.exception.handler;
 
 import com.gitee.coadmin.base.API;
+import com.gitee.coadmin.exception.CoException;
 import com.gitee.coadmin.utils.CoUtil;
 import lombok.extern.slf4j.Slf4j;
 import com.gitee.coadmin.exception.BadRequestException;
@@ -48,9 +49,19 @@ public class GlobalExceptionHandler {
      * 处理所有不可知的异常
      */
     @ExceptionHandler(Throwable.class)
-    public ResponseEntity<?> handleException(Throwable e){
+    public ResponseEntity<?> handleException(Throwable e, HttpServletRequest request){
+        log.error("handleException:{} path={}", e.getMessage(), CoUtil.getPath(request));
         // 打印堆栈信息
         log.error(ThrowableUtil.getStackTrace(e));
+        return API.badRequest(e.getMessage()).responseEntity();
+    }
+
+    /**
+     * 处理所有不可知的异常
+     */
+    @ExceptionHandler(CoException.class)
+    public ResponseEntity<?> coException(CoException e, HttpServletRequest request){
+        log.error("CoException:{} path={}", e.getMessage(), CoUtil.getPath(request));
         return API.badRequest(e.getMessage()).responseEntity();
     }
 

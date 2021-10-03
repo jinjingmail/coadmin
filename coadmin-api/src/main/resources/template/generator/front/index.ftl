@@ -86,14 +86,14 @@
             :disable="!!crud.status.view"
            <#if column.istNotNull>:rules="[ val => required(val) || '必填' ]"</#if> />
       <#elseif column.formType = 'Toggle'>
-      <co-field label="${formLabel}" :value="form.${column.changeColumnName}" borderless
+      <co-field class="col-12" form-label="${formLabel}" :value="form.${column.changeColumnName}" borderless :disable="!!crud.status.view"
           <#if column.istNotNull>:rules="[ val => required(val) || '必填' ]"</#if>>
         <template v-slot:control>
           <co-toggle v-model="form.${column.changeColumnName}" :disable="!!crud.status.view"/>
         </template>
       </co-field>
       <#else>
-        <co-field class="col-12" form-label="${formLabel}" :value="<#if column.columnType = 'Date'>parseTime(form.${column.changeColumnName}, '{y}-{m}-{d} {h}:{i}:{s}')<#else>form.${column.changeColumnName}</#if>" readonly borderless v-show="form.${column.changeColumnName}"/>
+        <co-field class="col-12" form-label="${formLabel}" :value="<#if column.columnType = 'Date'>parseTime(form.${column.changeColumnName}, '{y}-{m}-{d} {h}:{i}:{s}')<#else>form.${column.changeColumnName}</#if>" readonly borderless/>
       </#if>
     </#if>
   </#list>

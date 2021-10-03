@@ -58,28 +58,36 @@ public class ${className}ServiceImpl implements ${className}Service {
 
     @Override
     public ${className} getEntityById(${pkColumnType} id) {
+        if (id == null) {
+            return null;
+        }
         return ${changeClassName}Mapper.selectById(id);
     }
 
     @Override
     // @Cacheable(key = "'id:' + #p0")
     public ${className}DTO getById(${pkColumnType} id) {
+        if (id == null) {
+            return null;
+        }
         return ${changeClassName}Converter.toDto(getEntityById(id));
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int insert(${className}DTO resources) {
-        ${className} entity = ${changeClassName}Converter.toEntity(resources);
-        return ${changeClassName}Mapper.insert(entity);
+    public int insert(${className}DTO res) {
+        ${className} entity = ${changeClassName}Converter.toEntity(res);
+        int ret = ${changeClassName}Mapper.insert(entity);
+        res.setId(entity.getId());
+        return ret;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int updateById(${className}DTO resources){
-        ${className} entity = ${changeClassName}Converter.toEntity(resources);
+    public int updateById(${className}DTO res){
+        ${className} entity = ${changeClassName}Converter.toEntity(res);
         int ret = ${changeClassName}Mapper.updateById(entity);
-        // delCaches(resources.id);
+        // delCaches(res.id);
         return ret;
     }
 

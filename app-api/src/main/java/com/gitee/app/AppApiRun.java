@@ -15,7 +15,6 @@
  */
 package com.gitee.app;
 
-import com.gitee.coadmin.annotation.rest.AnonymousGetMapping;
 import com.gitee.coadmin.utils.SpringContextHolder;
 import io.swagger.annotations.Api;
 import org.springframework.boot.SpringApplication;

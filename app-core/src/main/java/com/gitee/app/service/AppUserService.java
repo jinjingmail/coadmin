@@ -42,4 +42,6 @@ public interface AppUserService {
     int updateById(AppUserDTO resources);
     int removeById(Long id);
     int removeByIds(Set<Long> ids);
+
+    AppUserDTO getByOpenid(String openid);
 }

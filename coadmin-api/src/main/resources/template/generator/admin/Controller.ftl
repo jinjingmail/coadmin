@@ -68,16 +68,16 @@ public class ${className}Controller {
     @Log(value = "新增${apiAlias}", type = LogActionType.ADD)
     @ApiOperation("新增${apiAlias}")
     @PreAuthorize("@el.check('${changeClassName}:add')")
-    public Integer create(@Validated @RequestBody ${className}DTO resources){
-        return ${changeClassName}Service.insert(resources);
+    public Integer create(@Validated @RequestBody ${className}DTO res){
+        return ${changeClassName}Service.insert(res);
     }
 
     @PutMapping
     @Log(value = "修改${apiAlias}", type = LogActionType.UPDATE)
     @ApiOperation("修改${apiAlias}")
     @PreAuthorize("@el.check('${changeClassName}:edit')")
-    public Integer update(@Validated @RequestBody ${className}DTO resources){
-        return ${changeClassName}Service.updateById(resources);
+    public Integer update(@Validated @RequestBody ${className}DTO res){
+        return ${changeClassName}Service.updateById(res);
     }
 
     @DeleteMapping

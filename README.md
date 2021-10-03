@@ -1,7 +1,5 @@
 # coadmin
-在 eladmin-mybatisplus-dao 2.6的基础上，增加和修改一些东西。
-
-管理系统的功能，跟eladmin几乎一样：
+管理系统的功能，跟eladmin几乎一样，并增加了一些其他功能：
 - 用户管理：提供用户的相关配置，新增用户后，默认密码为123456
 - 角色管理：对权限与菜单进行分配，可根据部门设置角色的数据权限
 - 菜单管理：已实现菜单动态路由，后端可配置化，支持多级菜单
@@ -17,6 +15,8 @@
 - 支付宝支付：整合了支付宝支付
 - 服务监控：监控服务器的负载情况
 
+- 增加微信公众号和微信小程序的支持，并提供两个独立的演示app
+
 ## 代码仓库
 [Github](https://github.com/jinjingmail/coadmin)
 [Gitee](https://gitee.com/jinjinge/coadmin)
@@ -24,6 +24,12 @@
 ## 对应前端 coadmin-web-quasar
 [Github](https://github.com/jinjingmail/coadmin-web-quasar)
 [Gitee](https://gitee.com/jinjinge/coadmin-web-quasar)
+
+## 演示独立APP
+
+[H5和微信公众号版本 https://gitee.com/jinjinge/app-h5](https://gitee.com/jinjinge/app-h5)
+
+[微信小程序版本 https://gitee.com/jinjinge/app-wxma](https://gitee.com/jinjinge/app-wxma)
 
 # 编译
 mvn clean install

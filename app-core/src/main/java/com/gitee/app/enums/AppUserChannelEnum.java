@@ -9,8 +9,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum AppUserChannelEnum {
-    WXMP(1),
-    WXLITEAPP(2);
+    WXMP(1), // 微信公众号
+    WXMA(2); // 微信小程序 weixin mini-application
 
     @EnumValue
     @JsonValue    //标记响应json值

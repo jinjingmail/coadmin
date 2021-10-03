@@ -72,3 +72,28 @@ xss:
   # 匹配链接
   urlPatterns:
 
+wx:
+  mp:
+    useRedis: false
+    redisConfig:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+    configs:
+      - appId: wxeb99498a302ac0f5 # 第一个公众号的appid
+        secret: b278ffaa7a2c76121f900625ff6bb50a # 公众号的appsecret
+        token: # 接口配置里的Token值
+        aesKey:  # 接口配置里的EncodingAESKey值
+      - appId: # 第二个公众号的appid，以下同上
+        secret:
+        token:
+        aesKey:
+  liteapp:
+    useRedis: false
+    redisConfig:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+    configs:
+      - appId: wx432d37972042d2f7 # 第一个小程序的appid
+        secret: 36af3dac52242057626d378337a96ffa
+        token:
+        aesKey:

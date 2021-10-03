@@ -13,9 +13,9 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
  * Created by jinjin on 2020-09-21.
  */
 @Configuration
-public class MybatisPlusFillHandler implements MetaObjectHandler{
+public class AdminMybatisPlusFillHandler implements MetaObjectHandler{
 
-    private final String[] pinyinFields = new String[] {"name", "label", "description", "treeNames", "title"};
+    private final String[] pinyinFields = new String[] {"name", "nickname", "label", "description", "treeNames", "title"};
 
     @Override
     public void insertFill(MetaObject metaObject) {

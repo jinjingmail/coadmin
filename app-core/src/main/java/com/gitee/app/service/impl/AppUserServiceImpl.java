@@ -1,5 +1,7 @@
 package com.gitee.app.service.impl;
 
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.AllArgsConstructor;
 import com.gitee.coadmin.utils.QueryHelpMybatisPlus;
@@ -12,6 +14,7 @@ import com.gitee.app.service.dto.AppUserQueryParam;
 import com.gitee.app.service.mapper.AppUserMapper;
 import com.gitee.app.service.converter.AppUserConverter;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,18 +63,30 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public int insert(AppUserDTO resources) {
-        AppUser entity = appUserConverter.toEntity(resources);
-        return appUserMapper.insert(entity);
+    public AppUserDTO getByOpenid(String openid) {
+        if (StrUtil.isBlank(openid)) {
+            return null;
+        }
+        QueryWrapper<AppUser> wrapper = new QueryWrapper<>();
+        wrapper.lambda().eq(AppUser::getOpenid, openid);
+        return appUserConverter.toDto(appUserMapper.selectOne(wrapper));
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int updateById(AppUserDTO resources){
-        AppUser entity = appUserConverter.toEntity(resources);
+    public int insert(AppUserDTO res) {
+        AppUser entity = appUserConverter.toEntity(res);
+        int ret = appUserMapper.insert(entity);
+        res.setId(entity.getId());
+        return ret;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int updateById(AppUserDTO res){
+        AppUser entity = appUserConverter.toEntity(res);
         int ret = appUserMapper.updateById(entity);
-        // delCaches(resources.id);
+        // delCaches(res.id);
         return ret;
     }
 
