@@ -35,7 +35,8 @@ public class AppMybatisPlusFillHandler implements MetaObjectHandler{
             if (metaObject.hasSetter(field + "Letter")) {
                 Object o = metaObject.getValue(field);
                 if (o != null) {
-                    setFieldValByName(field + "Letter", PinyinUtil.getAllFirstPinyin(o.toString()), metaObject);
+                    setFieldValByName(field + "Letter",
+                            PinyinUtil.getAllFirstPinyin(o.toString()), metaObject);
                 }
             }
         }

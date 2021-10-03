@@ -16,19 +16,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * wechat liteapp configuration
+ * wechat mini-application configuration
  *
  * @author jinjin
  */
 @AllArgsConstructor
 @Configuration
-@EnableConfigurationProperties(WxLiteappProperties.class)
-public class WxLiteappConfiguration {
-    private final WxLiteappProperties properties;
+@EnableConfigurationProperties(WxMaProperties.class)
+public class WxMaConfiguration {
+    private final WxMaProperties properties;
 
     @Bean
     public WxMaService wxMaService() {
-        final List<WxLiteappProperties.LiteappConfig> configs = this.properties.getConfigs();
+        final List<WxMaProperties.LiteappConfig> configs = this.properties.getConfigs();
         if (configs == null) {
             throw new RuntimeException("大哥，拜托先看下项目首页的说明（readme文件），添加下相关配置，注意别配错了！");
         }
@@ -39,7 +39,7 @@ public class WxLiteappConfiguration {
 
                     WxMaDefaultConfigImpl configStorage;
                     if (this.properties.isUseRedis()) {
-                        final WxLiteappProperties.RedisConfig redisConfig = this.properties.getRedisConfig();
+                        final WxMaProperties.RedisConfig redisConfig = this.properties.getRedisConfig();
                         JedisPoolConfig poolConfig = new JedisPoolConfig();
                         JedisPool jedisPool = new JedisPool(poolConfig, redisConfig.getHost(), redisConfig.getPort(),
                                 -1, redisConfig.getPassword());

@@ -87,7 +87,7 @@ wx:
         secret:
         token:
         aesKey:
-  liteapp:
+  ma:
     useRedis: false
     redisConfig:
       host: ${REDIS_HOST:127.0.0.1}

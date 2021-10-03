@@ -12,8 +12,8 @@ import java.util.List;
  * @author Binary Wang(https://github.com/binarywang)
  */
 @Data
-@ConfigurationProperties(prefix = "wx.liteapp")
-public class WxLiteappProperties {
+@ConfigurationProperties(prefix = "wx.ma")
+public class WxMaProperties {
     /**
      * 是否使用redis存储access token
      */
