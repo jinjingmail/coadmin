@@ -53,6 +53,7 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
     private final UserMapper userMapper;
     private final RolesMenusService rolesMenusService;
     private final RolesDeptsService rolesDeptsService;
+    private final UsersRolesService usersRolesService;
     private final RolesDeptsMapper rolesDeptsMapper;
     private final RolesMenusMapper rolesMenusMapper;
 
@@ -194,6 +195,7 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
             delCaches(id);
             rolesMenusService.removeByRoleId(id);
             rolesDeptsService.removeByRoleId(id);
+            usersRolesService.removeByRoleId(id);
         }
         return ret > 0;
     }

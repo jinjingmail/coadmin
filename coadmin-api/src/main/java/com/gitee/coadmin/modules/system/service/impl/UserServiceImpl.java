@@ -290,8 +290,9 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
         user.setNickName(resources.getNickName());
         user.setGender(resources.getGender());
 
+        boolean ret = userMapper.updateById(user) > 0;
         delCaches(user.getId(), user.getUsername());
-        return userMapper.updateById(user) > 0;
+        return ret;
     }
 
     @Override
