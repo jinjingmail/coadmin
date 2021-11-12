@@ -221,11 +221,11 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean updateById(UserDto resources){
-        User user = getById(resources.getId());
-        User user1 = getByUsername(user.getUsername());
-        User user2 = getByEmail(user.getEmail());
-        User user3 = getByPhone(user.getPhone());
+    public boolean updateById(UserDto res){
+        User user = getById(res.getId());
+        User user1 = getByUsername(res.getUsername());
+        User user2 = getByEmail(res.getEmail());
+        User user3 = getByPhone(res.getPhone());
         if (user1 != null && !user.getId().equals(user1.getId())) {
             throw new EntityExistException(User.class, "username", user.getUsername());
         }
@@ -236,59 +236,59 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
             throw new EntityExistException(User.class, "phone", user.getPhone());
         }
 
-        //usersRolesService.getUsersRoleList(resources.getId());
+        //usersRolesService.getUsersRoleList(res.getId());
         // 如果用户的角色改变
-        //if (!resources.getRoles().equals(xxxx.getRoles())) {
-            redisUtils.del(com.gitee.coadmin.utils.CacheKey.DATE_USER + resources.getId());
-            redisUtils.del(com.gitee.coadmin.utils.CacheKey.MENU_USER + resources.getId());
-            redisUtils.del(com.gitee.coadmin.utils.CacheKey.ROLE_AUTH + resources.getId());
+        //if (!res.getRoles().equals(xxxx.getRoles())) {
+            redisUtils.del(com.gitee.coadmin.utils.CacheKey.DATE_USER + res.getId());
+            redisUtils.del(com.gitee.coadmin.utils.CacheKey.MENU_USER + res.getId());
+            redisUtils.del(com.gitee.coadmin.utils.CacheKey.ROLE_AUTH + res.getId());
         //}
 
         // 如果用户名称修改
-        if(!resources.getUsername().equals(user.getUsername())){
+        if(!res.getUsername().equals(user.getUsername())){
             throw new BadRequestException("不能修改用户名");
         }
         // 如果用户被禁用，则清除用户登录信息
-        if(!resources.getEnabled()){
-            onlineUserService.kickOutForUsername(resources.getUsername());
+        if(!res.getEnabled()){
+            onlineUserService.kickOutForUsername(res.getUsername());
         }
-        if (CollectionUtils.isNotEmpty(resources.getRoles())) {
-            usersRolesService.removeByUserId(resources.getId());
-            resources.getRoles().forEach(roleId -> {
+        if (CollectionUtils.isNotEmpty(res.getRoles())) {
+            usersRolesService.removeByUserId(res.getId());
+            res.getRoles().forEach(roleId -> {
                 UsersRoles ur = new UsersRoles();
-                ur.setUserId(resources.getId());
+                ur.setUserId(res.getId());
                 ur.setRoleId(roleId);
                 usersRolesMapper.insert(ur);
             });
         }
 
-        if (CollectionUtils.isNotEmpty(resources.getJobs())) {
-            usersJobsService.removeByUserId(resources.getId());
-            resources.getJobs().forEach(jobId -> {
+        if (CollectionUtils.isNotEmpty(res.getJobs())) {
+            usersJobsService.removeByUserId(res.getId());
+            res.getJobs().forEach(jobId -> {
                 UsersJobs uj = new UsersJobs();
-                uj.setUserId(resources.getId());
+                uj.setUserId(res.getId());
                 uj.setJobId(jobId);
                 usersJobsMapper.insert(uj);
             });
         }
 
-        if (CollectionUtils.isNotEmpty(resources.getDepts())) {
-            usersDeptsService.removeByUserId(resources.getId());
-            resources.getDepts().forEach(deptId -> {
+        if (CollectionUtils.isNotEmpty(res.getDepts())) {
+            usersDeptsService.removeByUserId(res.getId());
+            res.getDepts().forEach(deptId -> {
                 UsersDepts ud = new UsersDepts();
-                ud.setUserId(resources.getId());
+                ud.setUserId(res.getId());
                 ud.setDeptId(deptId);
                 usersDeptsMapper.insert(ud);
             });
         }
 
-        user.setUsername(resources.getUsername());
-        user.setEmail(resources.getEmail());
-        user.setEnabled(resources.getEnabled());
+        user.setUsername(res.getUsername());
+        user.setEmail(res.getEmail());
+        user.setEnabled(res.getEnabled());
 
-        user.setPhone(resources.getPhone());
-        user.setNickName(resources.getNickName());
-        user.setGender(resources.getGender());
+        user.setPhone(res.getPhone());
+        user.setNickName(res.getNickName());
+        user.setGender(res.getGender());
 
         boolean ret = userMapper.updateById(user) > 0;
         delCaches(user.getId(), user.getUsername());
@@ -355,7 +355,6 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
         userUpdate.setGender(resources.getGender());
         userUpdate.setNickName(resources.getNickName());
         userMapper.update(userUpdate, updater);
-        redisUtils.del("user::username:" + resources.getUsername());
         delCaches(resources.getId(), resources.getUsername());
     }
 
@@ -364,10 +363,10 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
     public boolean removeByIds(Set<Long> ids){
         for (Long id: ids) {
             User user = getById(id);
-            delCaches(user.getId(), user.getUsername());
             usersRolesService.removeByUserId(id);
             usersJobsService.removeByUserId(id);
             usersDeptsService.removeByUserId(id);
+            delCaches(user.getId(), user.getUsername());
         }
         return userMapper.deleteBatchIds(ids) > 0;
     }

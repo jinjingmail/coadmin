@@ -351,7 +351,6 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
                 }
             }
         }
-        log.info("pid:{} getChildren={}", pid, JSONUtil.toJsonStr(dtos));
         return dtos;
     }
 

@@ -65,7 +65,7 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
         IPage<Role> pageList = roleMapper.selectPage(page, QueryHelpMybatisPlus.getPredicate(query));
         List<RoleDto> roleDtos = com.gitee.coadmin.utils.ConvertUtil.convertList(pageList.getRecords(), RoleDto.class);
         roleDtos.forEach(role -> {
-            role.setMenus(com.gitee.coadmin.utils.ConvertUtil.convertSet(menuMapper.selectLink(role.getId()), MenuDto.class));
+            role.setMenus(menuMapper.selectLink(role.getId()));
             // role.setDepts(deptService.findByRoleId(role.getId())); // 20201009 暂时取消角色跟机构的关联
             role.setDepts(new HashSet<>(0));
         });
@@ -99,7 +99,7 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
     @Cacheable(key = "'id:' + #p0")
     public RoleDto findById(Long id) {
         RoleDto role = com.gitee.coadmin.utils.ConvertUtil.convert(getById(id), RoleDto.class);
-        role.setMenus(com.gitee.coadmin.utils.ConvertUtil.convertSet(menuMapper.selectLink(role.getId()), MenuDto.class));
+        role.setMenus(menuMapper.selectLink(role.getId()));
         //role.setDepts(deptService.findByRoleId(role.getId()));
         return role;
     }
@@ -157,20 +157,20 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
     }
 
     @Override
-    public void updateMenu(RoleDto resources) {
+    public void updateMenu(RoleDto res) {
         // 清理缓存
-        List<User> users = userMapper.findByRoleId(resources.getId());
+        List<User> users = userMapper.findByRoleId(res.getId());
         Set<Long> userIds = users.stream().map(User::getId).collect(Collectors.toSet());
         redisUtils.delByKeys("menu::user:", userIds);
-        redisUtils.del("role::id:" + resources.getId());
-        delCaches(resources.getId());
+        redisUtils.del("role::id:" + res.getId());
+        delCaches(res.getId());
 
-        //this.saveOrUpdate(resources);
+        //this.saveOrUpdate(res);
         QueryWrapper<RolesMenus> query = new QueryWrapper<RolesMenus>();
-        query.lambda().eq(RolesMenus::getRoleId, resources.getId());
+        query.lambda().eq(RolesMenus::getRoleId, res.getId());
         RolesMenus rm = new RolesMenus();
-        List<Long> oldMenuIds = rolesMenusService.queryMenuIdByRoleId(resources.getId());
-        List<Long> menuIds = resources.getMenus().stream().map(MenuDto::getId).collect(Collectors.toList());
+        List<Long> oldMenuIds = rolesMenusService.queryMenuIdByRoleId(res.getId());
+        List<Long> menuIds = new ArrayList<>(res.getMenus());
         List<Long> deleteList = oldMenuIds.stream().filter(item -> !menuIds.contains(item))
                 .collect(Collectors.toList());
         List<Long> addList = menuIds.stream().filter(item -> !oldMenuIds.contains(item)).collect(Collectors.toList());
@@ -181,7 +181,7 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
 
         addList.forEach(item -> {
             rm.setMenuId(item);
-            rm.setRoleId(resources.getId());
+            rm.setRoleId(res.getId());
             rolesMenusMapper.insert(rm);
         });
     }
@@ -192,10 +192,10 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
         int ret = roleMapper.deleteBatchIds(ids);
         for (Long id : ids) {
             // 更新相关缓存
-            delCaches(id);
             rolesMenusService.removeByRoleId(id);
             rolesDeptsService.removeByRoleId(id);
             usersRolesService.removeByRoleId(id);
+            delCaches(id);
         }
         return ret > 0;
     }
