@@ -33,6 +33,8 @@ abstract class QHMP {
                 if (q != null) {
                     String propName = q.propName();
                     String blurry = q.blurry();
+                    String blurryEq = q.blurryEq();
+                    String blurryLikeRight = q.blurryLikeRight();
                     String attributeName = StrUtil.isBlank(propName) ? field.getName() : propName;
                     attributeName = humpToUnderline(attributeName);
                     Class<?> fieldType = field.getType();
@@ -52,19 +54,44 @@ abstract class QHMP {
                         });
                         continue;
                     }
+                    if (ObjectUtil.isNotEmpty(blurryEq)) {
+                        String[] blurrys = blurryEq.split(",");
+                        queryWrapper.and(wrapper -> {
+                            for (String blurry1 : blurrys) {
+                                String column = humpToUnderline(blurry1);
+                                wrapper.or();
+                                wrapper.eq(column, val.toString());
+                            }
+                        });
+                        continue;
+                    }
+                    if (ObjectUtil.isNotEmpty(blurryLikeRight)) {
+                        String[] blurrys = blurryLikeRight.split(",");
+                        queryWrapper.and(wrapper -> {
+                            for (String blurry1 : blurrys) {
+                                String column = humpToUnderline(blurry1);
+                                wrapper.or();
+                                wrapper.likeRight(column, val.toString());
+                            }
+                        });
+                        continue;
+                    }
                     String finalAttributeName = attributeName;
                     switch (q.type()) {
                         case EQUAL:
                             queryWrapper.eq(attributeName, val);
                             break;
                         case GREATER_THAN:
+                            queryWrapper.gt(finalAttributeName, val);
+                            break;
+                        case GREATER_THAN_EQ:
                             queryWrapper.ge(finalAttributeName, val);
                             break;
                         case LESS_THAN:
-                            queryWrapper.le(finalAttributeName, val);
-                            break;
-                        case LESS_THAN_NQ:
                             queryWrapper.lt(finalAttributeName, val);
+                            break;
+                        case LESS_THAN_EQ:
+                            queryWrapper.le(finalAttributeName, val);
                             break;
                         case INNER_LIKE:
                             queryWrapper.like(finalAttributeName, val);

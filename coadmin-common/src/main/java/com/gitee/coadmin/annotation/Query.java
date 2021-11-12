@@ -44,9 +44,19 @@ public @interface Query {
     Join join() default Join.LEFT;
 
     /**
-     * 多字段模糊搜索，仅支持String类型字段，多个用逗号隔开, 如@Query(blurry = "email,username")
+     * 多字段模糊搜索（"%content%"），仅支持String类型字段，多个用逗号隔开, 如@Query(blurry = "email,username")
      */
     String blurry() default "";
+
+    /**
+     * 多字段等于查询，仅支持String类型字段，多个用逗号隔开, 如@Query(blurryEq = "email,username")
+     */
+    String blurryEq() default "";
+
+    /**
+     * 多字段右模糊查询（"content%"），仅支持String类型字段，多个用逗号隔开, 如@Query(blurryLikeRight = "email,username")
+     */
+    String blurryLikeRight() default "";
 
     String sql() default "";
 
@@ -55,8 +65,10 @@ public @interface Query {
         EQUAL
         // Dong ZhaoYang 2017/8/7 大于等于
         , GREATER_THAN
+        , GREATER_THAN_EQ
         // Dong ZhaoYang 2017/8/7 小于等于
         , LESS_THAN
+        , LESS_THAN_EQ
         // Dong ZhaoYang 2017/8/7 中模糊查询
         , INNER_LIKE
         // Dong ZhaoYang 2017/8/7 左模糊查询
@@ -64,7 +76,6 @@ public @interface Query {
         // Dong ZhaoYang 2017/8/7 右模糊查询
         , RIGHT_LIKE
         // Dong ZhaoYang 2017/8/7 小于
-        , LESS_THAN_NQ
         // jie 2019/6/4 包含
         , IN
         , IN_SQL
