@@ -15,7 +15,7 @@ import java.util.Set;
  */
 public interface ${className}Service {
 
-    static final String CACHE_KEY = "${subModuleName}/${minusClassName}";
+    String CACHE_KEY = "${subModuleName}/${minusClassName}";
 
     /**
     * 查询数据分页
@@ -32,7 +32,6 @@ public interface ${className}Service {
     */
     List<${className}DTO> queryAll(${className}QueryParam query);
 
-    ${className} getEntityById(${pkColumnType} id);
     ${className}DTO getById(${pkColumnType} id);
 
     /**

@@ -57,20 +57,12 @@ public class ${className}ServiceImpl implements ${className}Service {
     }
 
     @Override
-    public ${className} getEntityById(${pkColumnType} id) {
-        if (id == null) {
-            return null;
-        }
-        return ${changeClassName}Mapper.selectById(id);
-    }
-
-    @Override
     // @Cacheable(key = "'id:' + #p0")
     public ${className}DTO getById(${pkColumnType} id) {
         if (id == null) {
             return null;
         }
-        return ${changeClassName}Converter.toDto(getEntityById(id));
+        return ${changeClassName}Converter.toDto(${changeClassName}Mapper.selectById(id));
     }
 
     @Override
