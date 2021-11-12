@@ -1,6 +1,6 @@
 <template>
   <div>
-    <co-dialog title="查找当前页" seamless no-max ref="search" @before-hide="filterTable=''">
+    <co-dialog title="查找当前表格" seamless no-max ref="search" @before-hide="filterTable=''">
       <co-input autofocus clearable style="width:180px" placeholder="" v-model="filterTable" class="q-mx-sm q-mt-none q-mb-sm" @keyup.escape.native="$refs.search.hide()"/>
     </co-dialog>
 
@@ -15,9 +15,9 @@
     >
       <co-form
         ref="form"
-        label-width="small"
+        :label-width="$q.screen.lt.sm?'xsmall':'medium'"
         label-align="right"
-        class="q-pa-md row q-col-gutter-x-md q-col-gutter-y-md">
+        class="q-px-lg q-my-none row q-col-gutter-x-md q-col-gutter-y-md">
 <#if columns??>
   <#list columns as column>
     <#if column.formShow>
@@ -99,7 +99,7 @@
   </#list>
 </#if>
       </co-form>
-      <q-card-actions class="q-pa-md" align="right">
+      <q-card-actions class="q-px-lg q-pt-lg q-pb-md" align="right">
         <co-btn label="取消" flat v-close-popup/>
         <co-btn label="保存" color="primary"
                 v-if="!crud.status.view"
@@ -119,8 +119,9 @@
         :loading="crud.loading"
         :filter="filterTable"
         :selected.sync="crud.selections"
-        selection="single"
+        selection="none"
         @row-click="(evt, row, index) => crud.selections = [row]"
+        @row-dblclick="(evt, row, index) => crud.toView(row)"
     >
       <template v-slot:top-left>
         <div class='row q-col-gutter-x-sm q-col-gutter-y-xs q-pa-xs full-width'>
@@ -188,9 +189,9 @@
           <template v-if="crud.props.queryMore">
           </template>
           <div>
-            <co-btn icon="search" color="primary" @click="crud.toQuery()" />
-            <co-btn label="重置" flat @click="crud.resetQuery()" />
             <co-btn :label="crud.props.queryMore?'«更少':'更多»'" flat @click="crud.props.queryMore = !crud.props.queryMore"/>
+            <co-btn label="重置" flat @click="crud.resetQuery()" />
+            <co-btn icon="search" color="primary" @click="crud.toQuery()" />
           </div>
           <q-space/>
 </#if>
