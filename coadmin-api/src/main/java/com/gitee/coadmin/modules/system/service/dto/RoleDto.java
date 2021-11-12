@@ -21,7 +21,8 @@ public class RoleDto extends DataDto implements Serializable {
 
     private Long id;
 
-    private Set<MenuDto> menus;
+    //private Set<MenuDto> menus;
+    private Set<Long> menus;
 
     private Set<DeptDto> depts;
 

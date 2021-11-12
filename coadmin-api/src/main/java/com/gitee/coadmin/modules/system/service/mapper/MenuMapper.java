@@ -16,8 +16,8 @@ import java.util.Set;
 @Repository
 public interface MenuMapper extends CommonMapper<Menu> {
 
-    @Select("SELECT m.* FROM sys_roles_menus rm INNER JOIN sys_menu m ON rm.menu_id=m.id WHERE rm.role_id=#{roleId}")
-    Set<Menu> selectLink(Long roleId);
+    @Select("SELECT distinct m.id FROM sys_roles_menus rm INNER JOIN sys_menu m ON rm.menu_id=m.id WHERE rm.role_id=#{roleId}")
+    Set<Long> selectLink(Long roleId);
 
     @Select({"<script>SELECT m.* FROM sys_roles_menus rm INNER JOIN sys_menu m ON rm.menu_id=m.id WHERE rm.role_id IN"
             + "<foreach item='item' index='index' collection='roleIds' open='(' separator=',' close=')'> #{item} </foreach>"
