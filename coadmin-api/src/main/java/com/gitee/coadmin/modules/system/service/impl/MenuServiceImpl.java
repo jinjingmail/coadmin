@@ -3,6 +3,7 @@ package com.gitee.coadmin.modules.system.service.impl;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -10,7 +11,9 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.gitee.coadmin.base.PageInfo;
+import com.gitee.coadmin.modules.system.domain.RolesMenus;
 import com.gitee.coadmin.modules.system.service.dto.*;
+import com.gitee.coadmin.modules.system.service.mapper.RolesMenusMapper;
 import lombok.AllArgsConstructor;
 import com.gitee.coadmin.utils.QueryHelpMybatisPlus;
 import com.gitee.coadmin.base.impl.BaseServiceImpl;
@@ -63,6 +66,7 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
     private final MenuMapper menuMapper;
     private final RedisUtils redisUtils;
     private final RolesMenusService rolesMenusService;
+    private final RolesMenusMapper rolesMenusMapper;
 
     @Override
     //@Cacheable
@@ -148,73 +152,97 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean updateById(Menu resources){
-        if (resources.getId().equals(resources.getPid())) {
+    public boolean updateById(Menu res){
+        if (res.getId().equals(res.getPid())) {
             throw new BadRequestException("上级不能为自己");
         }
-        Menu menu = Optional.ofNullable(this.getById(resources.getId())).orElseGet(Menu::new);
+        Menu menu = Optional.ofNullable(this.getById(res.getId())).orElseGet(Menu::new);
         // 记录旧的父节点ID
         Long pid = menu.getPid();
-        ValidationUtil.isNull(menu.getId(), "Permission", "id", resources.getId());
+        ValidationUtil.isNull(menu.getId(), "Permission", "id", res.getId());
 
-        if (resources.getIFrame() != null && resources.getIFrame()) {
+        if (res.getIFrame() != null && res.getIFrame()) {
             String http = "http://", https = "https://";
-            if (!(resources.getPath().toLowerCase().startsWith(http)
-                    || resources.getPath().toLowerCase().startsWith(https))) {
+            if (!(res.getPath().toLowerCase().startsWith(http)
+                    || res.getPath().toLowerCase().startsWith(https))) {
                 throw new BadRequestException("外链必须以http://或者https://开头");
             }
         }
-        QueryWrapper<Menu> query = new QueryWrapper<Menu>();
-        query.lambda().eq(Menu::getTitle, resources.getTitle());
+        QueryWrapper<Menu> query = new QueryWrapper<>();
+        query.lambda().eq(Menu::getTitle, res.getTitle());
         Menu menu1 = menuMapper.selectOne(query);
 
+        /*
+        20211112 菜单名称可以重复
         if (menu1 != null && !menu1.getId().equals(menu.getId())) {
-            throw new EntityExistException(Menu.class, "name", resources.getTitle());
+            throw new EntityExistException(Menu.class, "name", res.getTitle());
+        }*/
+
+        if (res.getPid() != null && res.getPid().equals(0L)) {
+            res.setPid(null);
         }
 
-        if (resources.getPid() != null && resources.getPid().equals(0L)) {
-            resources.setPid(null);
-        }
-
-        if (StringUtils.isNotBlank(resources.getComponentName())) {
+        if (StringUtils.isNotBlank(res.getComponentName())) {
             QueryWrapper<Menu> query2 = new QueryWrapper<Menu>();
-            query2.lambda().eq(Menu::getComponentName, resources.getComponentName());
+            query2.lambda().eq(Menu::getComponentName, res.getComponentName());
             menu1 = menuMapper.selectOne(query2);
             if (menu1 != null && !menu1.getId().equals(menu.getId())) {
-                throw new EntityExistException(Menu.class, "componentName", resources.getComponentName());
+                throw new EntityExistException(Menu.class, "componentName", res.getComponentName());
             }
         }
 
         // 记录的父节点ID
         Long oldPid = menu.getPid();
-        Long newPid = resources.getPid();
+        Long newPid = res.getPid();
 
         // 类型从菜单或按钮变更为目录，清空路径和权限
-        if (menu.getType() != MenuType.FOLDER.getValue() && resources.getType() == MenuType.FOLDER.getValue()) {
+        if (menu.getType() != MenuType.FOLDER.getValue() && res.getType() == MenuType.FOLDER.getValue()) {
             menu.setComponent(null);
             menu.setPermission(null);
             menu.setComponentName(null);
         } else {
-            menu.setComponent(resources.getComponent());
-            menu.setPermission(resources.getPermission());
-            menu.setComponentName(resources.getComponentName());
+            menu.setComponent(res.getComponent());
+            menu.setPermission(res.getPermission());
+            menu.setComponentName(res.getComponentName());
         }
-        menu.setTitle(resources.getTitle());
-        menu.setPath(resources.getPath());
-        menu.setIcon(resources.getIcon());
-        menu.setIFrame(resources.getIFrame());
-        menu.setPid(resources.getPid());
-        menu.setSort(resources.getSort());
-        menu.setCache(resources.getCache());
-        menu.setHidden(resources.getHidden());
-        menu.setType(resources.getType());
+        menu.setTitle(res.getTitle());
+        menu.setPath(res.getPath());
+        menu.setIcon(res.getIcon());
+        menu.setIFrame(res.getIFrame());
+        menu.setPid(res.getPid());
+        menu.setSort(res.getSort());
+        menu.setCache(res.getCache());
+        menu.setHidden(res.getHidden());
+        menu.setType(res.getType());
         int ret = menuMapper.updateById(menu);
+
+        /*
+         * 如果修改了菜单的父级，则将父级目录id添加到拥有当前菜单id的角色列表
+         */
+        if (res.getType() != MenuType.BUTTON.getValue()) {
+            if (newPid != null) {
+                if (ObjectUtil.notEqual(newPid, oldPid)) {
+                    List<Long> roleIds = rolesMenusService.queryRoleIdByMenuId(res.getId());
+                    UpdateWrapper<RolesMenus> wrapper = new UpdateWrapper<>();
+                    wrapper.lambda()
+                            .eq(RolesMenus::getMenuId, newPid)
+                            .in(RolesMenus::getRoleId, roleIds);
+                    rolesMenusMapper.delete(wrapper);
+                    for (Long roleId: roleIds) {
+                        RolesMenus entity = new RolesMenus();
+                        entity.setMenuId(newPid);
+                        entity.setRoleId(roleId);
+                        rolesMenusMapper.insert(entity);
+                    }
+                }
+            }
+        }
 
         // 计算父级菜单节点数目
         updateSubCnt(oldPid);
         updateSubCnt(newPid);
         // 清理缓存
-        delCaches(resources.getId(), pid);
+        delCaches(res.getId(), pid);
         return ret > 0;
     }
 
@@ -238,11 +266,11 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
     public boolean removeByIds(Set<Long> ids){
         for (Long id: ids) {
             Menu menu = getById(id);
-            delCaches(menu.getId(), menu.getPid());
             rolesMenusService.removeByMenuId(id);
             if (menu.getPid() != null) {
                 updateSubCnt(menu.getPid());
             }
+            delCaches(menu.getId(), menu.getPid());
         }
         return menuMapper.deleteBatchIds(ids) > 0;
     }

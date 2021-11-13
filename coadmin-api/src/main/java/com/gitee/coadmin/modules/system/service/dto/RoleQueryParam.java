@@ -12,9 +12,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 * @date 2020-09-25
 */
 @Data
-public class RoleQueryParam{
+public class RoleQueryParam {
 
-    @Query(blurry = "name,description")
+    @Query(blurry = "name,nameLetter,description")
     private String blurry;
 
     /** 精确 */
