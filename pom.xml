@@ -28,7 +28,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.5.3</version>
+        <version>2.5.6</version>
     </parent>
 
     <properties>
@@ -41,9 +41,9 @@
         <fastjson.version>1.2.76</fastjson.version>
         <druid.version>1.2.6</druid.version>
         <commons-pool2.version>2.10.0</commons-pool2.version>
-        <hutool.version>5.7.5</hutool.version>
+        <hutool.version>5.7.16</hutool.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
-        <mybatisplus.version>3.4.3.2</mybatisplus.version>
+        <mybatisplus.version>3.4.3.4</mybatisplus.version>
     </properties>
 
     <dependencies>
