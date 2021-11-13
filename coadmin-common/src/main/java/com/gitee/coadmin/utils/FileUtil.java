@@ -231,33 +231,6 @@ public class FileUtil extends cn.hutool.core.io.FileUtil {
         IoUtil.close(out);
     }
 
-    /**
-     * 自适应宽度(中文支持)
-     */
-    private static void sizeChineseColumn(SXSSFSheet sheet, BigExcelWriter writer) {
-        for (int columnNum = 0; columnNum < writer.getColumnCount(); columnNum++) {
-            int columnWidth = sheet.getColumnWidth(columnNum) / 256;
-            for (int rowNum = 0; rowNum < sheet.getLastRowNum(); rowNum++) {
-                SXSSFRow currentRow;
-                if (sheet.getRow(rowNum) == null) {
-                    currentRow = sheet.createRow(rowNum);
-                } else {
-                    currentRow = sheet.getRow(rowNum);
-                }
-                if (currentRow.getCell(columnNum) != null) {
-                    SXSSFCell currentCell = currentRow.getCell(columnNum);
-                    if (currentCell.getCellTypeEnum() == CellType.STRING) {
-                        int length = currentCell.getStringCellValue().getBytes().length;
-                        if (columnWidth < length) {
-                            columnWidth = length;
-                        }
-                    }
-                }
-            }
-            sheet.setColumnWidth(columnNum, columnWidth * 256);
-        }
-    }
-
     public static String getFileType(String type) {
         String documents = "txt doc pdf ppt pps xlsx xls docx";
         String music = "mp3 wav wma mpa ram ra aac aif m4a";

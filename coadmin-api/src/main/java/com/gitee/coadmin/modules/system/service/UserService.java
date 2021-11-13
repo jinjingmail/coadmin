@@ -80,12 +80,4 @@ public interface UserService  extends BaseService<User> {
      */
     void updateCenter(User resources);
 
-    /**
-    * 导出数据
-    * @param all 待导出的数据
-    * @param response /
-    * @throws IOException /
-    */
-    void download(List<UserDto> all, HttpServletResponse response) throws IOException;
-
 }

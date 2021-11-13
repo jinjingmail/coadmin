@@ -87,4 +87,21 @@ public class ${className}Controller {
     public Integer delete(@RequestBody Set<${pkColumnType}> ids) {
         return ${changeClassName}Service.removeByIds(ids);
     }
+
+    @Log("导出${apiAlias}")
+    @ApiOperation("导出${apiAlias}")
+    @UnifiedAPI(enable = false)
+    @GetMapping(value = "/download")
+    @PreAuthorize("@el.check('${changeClassName}:list')")
+    public void download(HttpServletResponse response, UserQueryParam criteria) throws IOException {
+        response.setContentType("application/vnd.ms-excel");
+        response.setCharacterEncoding("utf-8");
+        // 这里URLEncoder.encode可以防止中文乱码
+        String fileName = URLEncoder.encode("导出${apiAlias}", "UTF-8");
+        response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
+        EasyExcel.write(response.getOutputStream(), ${className}DTO.class)
+            .sheet("${apiAlias}")
+            .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
+            .doWrite(${className}Service.queryAll(criteria));
+    }
 }

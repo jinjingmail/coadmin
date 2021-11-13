@@ -98,8 +98,8 @@
             <artifactId>oshi-core</artifactId>
             <version>5.3.6</version>
         </dependency>
-    </dependencies>
 
+    </dependencies>
     <!-- 打包 -->
     <build>
         <plugins>

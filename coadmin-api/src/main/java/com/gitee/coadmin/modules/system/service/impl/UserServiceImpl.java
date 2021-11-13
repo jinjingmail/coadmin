@@ -9,11 +9,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.gitee.coadmin.modules.system.domain.UsersDepts;
 import com.gitee.coadmin.modules.system.service.mapper.UsersDeptsMapper;
-import com.gitee.coadmin.utils.SecurityUtils;
-import com.gitee.coadmin.utils.FileUtil;
+import com.gitee.coadmin.utils.*;
 import lombok.AllArgsConstructor;
 import com.gitee.coadmin.base.PageInfo;
-import com.gitee.coadmin.utils.QueryHelpMybatisPlus;
 import com.gitee.coadmin.base.impl.BaseServiceImpl;
 import com.gitee.coadmin.config.FileProperties;
 import com.gitee.coadmin.exception.BadRequestException;
@@ -54,7 +52,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl extends BaseServiceImpl<User> implements UserService {
 
     private final FileProperties properties;
-    private final com.gitee.coadmin.utils.RedisUtils redisUtils;
+    private final RedisUtils redisUtils;
     private final UserCacheClean userCacheClean;
     private final OnlineUserService onlineUserService;
 
@@ -71,9 +69,9 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
     @Override
     //@Cacheable
     public PageInfo<UserDto> queryAll(UserQueryParam query, Pageable pageable) {
-        IPage<User> page = com.gitee.coadmin.utils.PageUtil.toMybatisPage(pageable);
+        IPage<User> page = PageUtil.toMybatisPage(pageable);
         IPage<User> pageData = userMapper.selectPage(page, QueryHelpMybatisPlus.getPredicate(query));
-        List<UserDto> userDtos = com.gitee.coadmin.utils.ConvertUtil.convertList(pageData.getRecords(), UserDto.class);
+        List<UserDto> userDtos = ConvertUtil.convertList(pageData.getRecords(), UserDto.class);
         if (pageData.getTotal() > 0) {
             QueryWrapper<UsersDepts> userDeptWrapper = new QueryWrapper<>();
             userDeptWrapper.lambda().in(UsersDepts::getUserId, userDtos.stream().map(UserDto::getId).collect(Collectors.toSet()));
@@ -109,7 +107,7 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
     @Override
     //@Cacheable
     public List<UserDto> queryAll(UserQueryParam query){
-        return com.gitee.coadmin.utils.ConvertUtil.convertList(userMapper.selectList(QueryHelpMybatisPlus.getPredicate(query)), UserDto.class);
+        return ConvertUtil.convertList(userMapper.selectList(QueryHelpMybatisPlus.getPredicate(query)), UserDto.class);
     }
 
     @Override
@@ -120,7 +118,7 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
     @Override
     @Cacheable(key = "'id:' + #p0")
     public UserDto findById(Long id) {
-        return com.gitee.coadmin.utils.ConvertUtil.convert(getById(id), UserDto.class);
+        return ConvertUtil.convert(getById(id), UserDto.class);
     }
 
     @Override
@@ -140,7 +138,7 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
         if (StrUtil.isBlank(userName)) {
             return null;
         }
-        UserDto dto = com.gitee.coadmin.utils.ConvertUtil.convert(getByUsername(userName), UserDto.class);
+        UserDto dto = ConvertUtil.convert(getByUsername(userName), UserDto.class);
         //TODO dto.setDepts();
         //dto.setRoles();
         //dto.setJobs();
@@ -182,7 +180,7 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
             }
         }
 
-        user = com.gitee.coadmin.utils.ConvertUtil.convert(resources, User.class);
+        user = ConvertUtil.convert(resources, User.class);
 
         /*if (resources.getDept() != null) {
             user.setDeptId(resources.getDept().getId());
@@ -239,9 +237,9 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
         //usersRolesService.getUsersRoleList(res.getId());
         // 如果用户的角色改变
         //if (!res.getRoles().equals(xxxx.getRoles())) {
-            redisUtils.del(com.gitee.coadmin.utils.CacheKey.DATE_USER + res.getId());
-            redisUtils.del(com.gitee.coadmin.utils.CacheKey.MENU_USER + res.getId());
-            redisUtils.del(com.gitee.coadmin.utils.CacheKey.ROLE_AUTH + res.getId());
+            redisUtils.del(CacheKey.DATE_USER + res.getId());
+            redisUtils.del(CacheKey.MENU_USER + res.getId());
+            redisUtils.del(CacheKey.ROLE_AUTH + res.getId());
         //}
 
         // 如果用户名称修改
@@ -312,12 +310,12 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
     public Map<String, String> updateAvatar(MultipartFile multipartFile) {
         User user = getByUsername(SecurityUtils.getCurrentUsername());
         String oldPath = user.getAvatarPath();
-        File file = com.gitee.coadmin.utils.FileUtil.upload(multipartFile, properties.getPath().getAvatar());
+        File file = FileUtil.upload(multipartFile, properties.getPath().getAvatar());
         user.setAvatarName(file.getName());
         user.setAvatarPath(Objects.requireNonNull(file).getPath());
         userMapper.updateById(user);
         if (StrUtil.isNotBlank(oldPath)) {
-            com.gitee.coadmin.utils.FileUtil.del(oldPath);
+            FileUtil.del(oldPath);
         }
         delCaches(user.getId(), user.getUsername());
         return new HashMap<String, String>() {
@@ -379,39 +377,14 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
         return this.removeByIds(ids);
     }
 
-    @Override
-    public void download(List<UserDto> all, HttpServletResponse response) throws IOException {
-      List<Map<String, Object>> list = new ArrayList<>();
-      for (UserDto user : all) {
-        Map<String,Object> map = new LinkedHashMap<>();
-              map.put("用户名", user.getUsername());
-              map.put("昵称", user.getNickName());
-              map.put("性别", user.getGender());
-              map.put("手机号码", user.getPhone());
-              map.put("邮箱", user.getEmail());
-              map.put("头像地址", user.getAvatarName());
-              map.put("头像真实路径", user.getAvatarPath());
-              map.put("密码", user.getPassword());
-              map.put("是否为admin账号", user.getIsAdmin());
-              map.put("状态：1启用、0禁用", user.getEnabled());
-              map.put("创建者", user.getCreateBy());
-              map.put("更新着", user.getUpdateBy());
-              map.put("修改密码的时间", user.getPwdResetTime());
-              map.put("创建日期", user.getCreateTime());
-              map.put("更新时间", user.getUpdateTime());
-        list.add(map);
-      }
-      FileUtil.downloadExcel(list, response);
-    }
-
     /**
      * 清理缓存
      *
      * @param id /
      */
     public void delCaches(Long id, String username) {
-        redisUtils.del(com.gitee.coadmin.utils.CacheKey.USER_ID + id);
-        redisUtils.del(com.gitee.coadmin.utils.CacheKey.USER_NAME + username);
+        redisUtils.del(CacheKey.USER_ID + id);
+        redisUtils.del(CacheKey.USER_NAME + username);
         flushCache(username);
     }
 

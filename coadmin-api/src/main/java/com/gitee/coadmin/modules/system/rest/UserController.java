@@ -15,6 +15,8 @@
  */
 package com.gitee.coadmin.modules.system.rest;
 
+import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 import com.gitee.coadmin.annotation.UnifiedAPI;
 import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.utils.SecurityUtils;
@@ -23,11 +25,9 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import com.gitee.coadmin.modules.logging.annotation.Log;
 import com.gitee.coadmin.config.RsaProperties;
-import com.gitee.coadmin.modules.system.service.DataService;
 import com.gitee.coadmin.modules.system.domain.User;
 import com.gitee.coadmin.exception.BadRequestException;
 import com.gitee.coadmin.modules.system.domain.vo.UserPassVo;
-import com.gitee.coadmin.modules.system.service.DeptService;
 import com.gitee.coadmin.modules.system.service.RoleService;
 import com.gitee.coadmin.modules.system.service.dto.RoleSmallDto;
 import com.gitee.coadmin.modules.system.service.dto.UserDto;
@@ -44,6 +44,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -61,8 +62,6 @@ public class UserController {
 
     private final PasswordEncoder passwordEncoder;
     private final UserService userService;
-    private final DataService dataService;
-    private final DeptService deptService;
     private final RoleService roleService;
     private final VerifyService verificationCodeService;
 
@@ -72,7 +71,15 @@ public class UserController {
     @GetMapping(value = "/download")
     @PreAuthorize("@el.check('user:list')")
     public void download(HttpServletResponse response, UserQueryParam criteria) throws IOException {
-        userService.download(userService.queryAll(criteria), response);
+        response.setContentType("application/vnd.ms-excel");
+        response.setCharacterEncoding("utf-8");
+        // 这里URLEncoder.encode可以防止中文乱码
+        String fileName = URLEncoder.encode("导出用户数据", "UTF-8");
+        response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
+        EasyExcel.write(response.getOutputStream(), UserDto.class)
+                .sheet("用户数据")
+                .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
+                .doWrite(userService.queryAll(criteria));
     }
 
     @Log("查询用户")
