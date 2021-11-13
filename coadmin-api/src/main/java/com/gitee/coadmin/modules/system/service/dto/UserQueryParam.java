@@ -27,8 +27,11 @@ public class UserQueryParam{
             sql="SELECT DISTINCT user_id FROM sys_users_depts WHERE dept_id=? OR dept_id IN(SELECT id FROM sys_dept WHERE tree_pids LIKE '%/?/%')")
     private Long deptId;
 
-    @Query(blurry = "id,username,usernameLetter,phone,email")
+    @Query(blurryLikeRight = "id,username,usernameLetter,phone,email")
     private String blurry;
+
+    @Query(type = Query.Type.IN_SQL, sql = "select user_id from sys_users_roles where role_id = ?", propName = "id")
+    private Long inRoleId;
 
     /** 精确 */
     @Query
