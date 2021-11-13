@@ -39,7 +39,7 @@
         <swagger.version>3.0.0</swagger.version>
         <knife4j.version>2.0.9</knife4j.version>
         <fastjson.version>1.2.76</fastjson.version>
-        <druid.version>1.2.6</druid.version>
+        <druid.version>1.2.8</druid.version>
         <commons-pool2.version>2.10.0</commons-pool2.version>
         <hutool.version>5.7.16</hutool.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
