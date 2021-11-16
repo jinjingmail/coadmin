@@ -113,11 +113,6 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean save(Menu resources) {
-        QueryWrapper<Menu> query = new QueryWrapper<Menu>();
-        query.lambda().eq(Menu::getTitle, resources.getTitle());
-        if (menuMapper.selectOne(query) != null) {
-            throw new EntityExistException(Menu.class, "title", resources.getTitle());
-        }
         if (StringUtils.isNotBlank(resources.getComponentName())) {
             QueryWrapper<Menu> query2 = new QueryWrapper<Menu>();
             query2.lambda().eq(Menu::getComponentName, resources.getComponentName());
@@ -146,7 +141,7 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
         }
         redisUtils.del("menu::pid:" + (resources.getPid() == null ? 0 : resources.getPid()));
         List<String> keys = redisUtils.scan("menu::user:*");
-        keys.forEach(item -> redisUtils.del(item));
+        keys.forEach(redisUtils::del);
         return ret > 0;
     }
 
@@ -170,9 +165,9 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
         }
         QueryWrapper<Menu> query = new QueryWrapper<>();
         query.lambda().eq(Menu::getTitle, res.getTitle());
-        Menu menu1 = menuMapper.selectOne(query);
 
         /*
+        Menu menu1 = menuMapper.selectOne(query);
         20211112 菜单名称可以重复
         if (menu1 != null && !menu1.getId().equals(menu.getId())) {
             throw new EntityExistException(Menu.class, "name", res.getTitle());
@@ -185,7 +180,7 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
         if (StringUtils.isNotBlank(res.getComponentName())) {
             QueryWrapper<Menu> query2 = new QueryWrapper<Menu>();
             query2.lambda().eq(Menu::getComponentName, res.getComponentName());
-            menu1 = menuMapper.selectOne(query2);
+            Menu menu1 = menuMapper.selectOne(query2);
             if (menu1 != null && !menu1.getId().equals(menu.getId())) {
                 throw new EntityExistException(Menu.class, "componentName", res.getComponentName());
             }
