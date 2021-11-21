@@ -15,7 +15,7 @@ import java.util.Set;
  */
 public interface ${className}Service {
 
-    String CACHE_KEY = "${subModuleName}/${minusClassName}";
+    String CACHE_KEY = "${subModuleName}:${minusClassName}";
 
     /**
     * 查询数据分页

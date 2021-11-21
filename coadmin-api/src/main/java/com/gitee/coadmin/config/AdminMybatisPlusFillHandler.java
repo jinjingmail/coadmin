@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.gitee.coadmin.utils.SecurityUtils;
 import com.gitee.coadmin.utils.PinyinUtil;
+import com.gitee.coadmin.utils.StringUtils;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.context.annotation.Configuration;
 
@@ -36,7 +37,8 @@ public class AdminMybatisPlusFillHandler implements MetaObjectHandler{
             if (metaObject.hasSetter(field + "Letter")) {
                 Object o = metaObject.getValue(field);
                 if (o != null) {
-                    setFieldValByName(field + "Letter", PinyinUtil.getAllFirstPinyin(o.toString()), metaObject);
+                    setFieldValByName(field + "Letter",
+                            PinyinUtil.getAllFirstPinyin(StringUtils.removeAllUnused(o.toString())), metaObject);
                 }
             }
         }
@@ -55,7 +57,8 @@ public class AdminMybatisPlusFillHandler implements MetaObjectHandler{
             if (metaObject.hasSetter(field + "Letter")) {
                 Object o = metaObject.getValue(field);
                 if (o != null) {
-                    setFieldValByName(field + "Letter", PinyinUtil.getAllFirstPinyin(o.toString()), metaObject);
+                    setFieldValByName(field + "Letter",
+                            PinyinUtil.getAllFirstPinyin(StringUtils.removeAllUnused(o.toString())), metaObject);
                 }
             }
         }

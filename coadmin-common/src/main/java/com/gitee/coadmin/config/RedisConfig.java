@@ -27,6 +27,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.interceptor.CacheErrorHandler;
@@ -34,6 +35,7 @@ import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
+import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -56,19 +58,33 @@ import java.util.Map;
 @EnableConfigurationProperties(RedisProperties.class)
 public class RedisConfig extends CachingConfigurerSupport {
 
-    /**
-     *  设置 redis 数据默认过期时间，默认2小时
-     *  设置@cacheable 序列化方式
+    /*
+     * @Bean 在cacheManager中间接实例化
      */
-    @Bean
-    public RedisCacheConfiguration redisCacheConfiguration(){
+    private RedisCacheConfiguration redisCacheConfiguration(long seconds){
         FastJsonRedisSerializer<Object> fastJsonRedisSerializer = new FastJsonRedisSerializer<>(Object.class);
         RedisCacheConfiguration configuration = RedisCacheConfiguration.defaultCacheConfig();
-        configuration = configuration.serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(fastJsonRedisSerializer)).entryTtl(Duration.ofHours(2));
+        configuration = configuration
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(fastJsonRedisSerializer))
+                .entryTtl(Duration.ofSeconds(seconds));
         return configuration;
     }
 
-    @SuppressWarnings("all")
+    @Bean
+    public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
+        log.info("cacheManager(RedisConnectionFactory redisConnectionFactory):" + redisConnectionFactory);
+        return RedisCacheManager.RedisCacheManagerBuilder
+                // Redis 连接工厂
+                .fromConnectionFactory(redisConnectionFactory)
+                // 缓存配置
+                .cacheDefaults(redisCacheConfiguration(60*60))
+                // 指定特殊缓存过期时间
+                .withCacheConfiguration("user", redisCacheConfiguration(30*60))
+                // 配置同步修改或删除 put/evict
+                .transactionAware()
+                .build();
+    }
+
     @Bean(name = "redisTemplate")
     @ConditionalOnMissingBean(name = "redisTemplate")
     public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {

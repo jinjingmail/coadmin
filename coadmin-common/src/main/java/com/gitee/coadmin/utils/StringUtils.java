@@ -15,6 +15,7 @@
  */
 package com.gitee.coadmin.utils;
 
+import cn.hutool.extra.emoji.EmojiUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
@@ -66,6 +67,17 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
                 }
             }
         });
+    }
+
+    /**
+     * 包括 Emoji、标点符号、空格<br>
+     * https://blog.csdn.net/huanglu12138/article/details/105245802
+     */
+    public static String removeAllUnused(String str) {
+        if (str == null) {
+            return str;
+        }
+        return EmojiUtil.removeAllEmojis(str).replaceAll("[\\p{Punct}｀＄＾＋＝｜＜＞￥×【 】（　）《》；‘，。、：“”]", "");
     }
 
     /**

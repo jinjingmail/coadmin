@@ -18,6 +18,19 @@ public class StringUtilsTest {
     }
 
     @Test
+    public void testRemoveAllUnused() {
+        assertEquals("abcde", StringUtils.removeAllUnused(" a“”\uD83D\uDE02【b】!@#$%^&&*()[]{}cde"));
+    }
+    @Test
+    public void testRemoveAllUnusedAsNull() {
+        assertEquals(null, StringUtils.removeAllUnused(null));
+    }
+    @Test
+    public void testRemoveAllUnusedAsEmpty() {
+        assertEquals("", StringUtils.removeAllUnused(""));
+    }
+
+    @Test
     public void testToCapitalizeCamelCase() {
         assertNull(StringUtils.toCapitalizeCamelCase(null));
         assertEquals("HelloWorld", toCapitalizeCamelCase("hello_world"));
