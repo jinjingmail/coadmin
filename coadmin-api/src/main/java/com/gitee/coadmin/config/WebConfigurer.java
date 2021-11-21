@@ -34,15 +34,18 @@ import java.util.Collections;
  */
 @Configuration
 @EnableWebMvc
-public class ConfigurerAdapter implements WebMvcConfigurer {
+public class WebConfigurer implements WebMvcConfigurer {
 
     /** 文件配置 */
     private final com.gitee.coadmin.config.FileProperties properties;
 
-    public ConfigurerAdapter(com.gitee.coadmin.config.FileProperties properties) {
+    public WebConfigurer(com.gitee.coadmin.config.FileProperties properties) {
         this.properties = properties;
     }
 
+    /**
+     * 提示：如果使用nginx做代理网关，建议关闭spring里的跨域，在nginx里面配置跨域。
+     */
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
