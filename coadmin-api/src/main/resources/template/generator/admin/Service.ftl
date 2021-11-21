@@ -39,6 +39,5 @@ public interface ${className}Service {
      */
     int insert(${className}DTO res);
     int updateById(${className}DTO res);
-    int removeById(${pkColumnType} id);
     int removeByIds(Set<${pkColumnType}> ids);
 }

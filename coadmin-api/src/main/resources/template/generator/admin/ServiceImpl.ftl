@@ -10,7 +10,6 @@ import com.gitee.coadmin.exception.EntityExistException;
         </#if>
     </#list>
 </#if>
-import lombok.AllArgsConstructor;
 import com.gitee.coadmin.utils.QueryHelpMybatisPlus;
 import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.utils.PageUtil;
@@ -23,10 +22,6 @@ import ${package}.service.converter.${className}Converter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-// 默认不使用缓存
-//import org.springframework.cache.annotation.CacheConfig;
-//import org.springframework.cache.annotation.CacheEvict;
-//import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import java.util.*;
 
@@ -66,6 +61,7 @@ public class ${className}ServiceImpl implements ${className}Service {
     }
 
     @Override
+    // @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public int insert(${className}DTO res) {
         ${className} entity = ${changeClassName}Converter.toEntity(res);
@@ -75,6 +71,7 @@ public class ${className}ServiceImpl implements ${className}Service {
     }
 
     @Override
+    // @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public int updateById(${className}DTO res){
         ${className} entity = ${changeClassName}Converter.toEntity(res);
@@ -84,23 +81,16 @@ public class ${className}ServiceImpl implements ${className}Service {
     }
 
     @Override
+    // @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public int removeByIds(Set<${pkColumnType}> ids){
         // delCaches(ids);
         return ${changeClassName}Mapper.deleteBatchIds(ids);
     }
     
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public int removeById(${pkColumnType} id){
-        Set<${pkColumnType}> set = new HashSet<>(1);
-        set.add(id);
-        return this.removeByIds(set);
-    }
-
     /*
     private void delCaches(${pkColumnType} id) {
-        redisUtils.delByKey(CACHE_KEY + "::id:", id);
+        redisUtils.del(CACHE_KEY + "::id:" + id);
     }
 
     private void delCaches(Set<${pkColumnType}> ids) {

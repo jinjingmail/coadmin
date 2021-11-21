@@ -65,23 +65,6 @@ public class UserController {
     private final RoleService roleService;
     private final VerifyService verificationCodeService;
 
-    @Log("导出用户数据")
-    @ApiOperation("导出用户数据")
-    @UnifiedAPI(enable = false)
-    @GetMapping(value = "/download")
-    @PreAuthorize("@el.check('user:list')")
-    public void download(HttpServletResponse response, UserQueryParam criteria) throws IOException {
-        response.setContentType("application/vnd.ms-excel");
-        response.setCharacterEncoding("utf-8");
-        // 这里URLEncoder.encode可以防止中文乱码
-        String fileName = URLEncoder.encode("导出用户数据", "UTF-8");
-        response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
-        EasyExcel.write(response.getOutputStream(), UserDto.class)
-                .sheet("用户数据")
-                .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
-                .doWrite(userService.queryAll(criteria));
-    }
-
     @Log("查询用户")
     @ApiOperation("查询用户")
     @GetMapping
@@ -179,5 +162,22 @@ public class UserController {
         if (currentLevel > optLevel) {
             throw new BadRequestException("角色权限不足");
         }
+    }
+
+    @Log("导出用户数据")
+    @ApiOperation("导出用户数据")
+    @UnifiedAPI(enable = false)
+    @GetMapping(value = "/download")
+    @PreAuthorize("@el.check('user:list')")
+    public void download(HttpServletResponse response, UserQueryParam criteria) throws IOException {
+        response.setContentType("application/vnd.ms-excel");
+        response.setCharacterEncoding("utf-8");
+        // 这里URLEncoder.encode可以防止中文乱码
+        String fileName = URLEncoder.encode("导出用户数据", "UTF-8");
+        response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
+        EasyExcel.write(response.getOutputStream(), UserDto.class)
+                .sheet("用户数据")
+                .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
+                .doWrite(userService.queryAll(criteria));
     }
 }

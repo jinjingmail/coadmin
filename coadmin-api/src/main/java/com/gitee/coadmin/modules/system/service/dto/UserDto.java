@@ -1,10 +1,13 @@
 package com.gitee.coadmin.modules.system.service.dto;
 
 import com.alibaba.excel.annotation.ExcelIgnore;
+import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
+import com.alibaba.excel.annotation.format.DateTimeFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.gitee.coadmin.excel.EnableDisableConverter;
 import com.gitee.coadmin.excel.ExcelUserIdConverter;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,6 +24,7 @@ import java.util.Set;
 */
 @Getter
 @Setter
+@ExcelIgnoreUnannotated
 public class UserDto extends DataDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -31,26 +35,24 @@ public class UserDto extends DataDto implements Serializable {
     @JsonSerialize(using= ToStringSerializer.class) // 防止精度丢失
     private Long id;
 
-    @ExcelIgnore
     private Set<Long> roles;
 
-    @ExcelIgnore
     private Set<Long> jobs;
 
-    @ExcelIgnore
     private Set<Long> depts;
 
     //private DeptSmallDto dept;
 
     //private Long deptId;
 
+    /*
+     * 通过上面的 ExcelUserIdConverter.class 得到用户名
+     */
     @ExcelIgnore
     private String username;
 
-    @ExcelIgnore
     private String usernameLetter;
 
-    @ExcelIgnore
     private String nickName;
 
     @ExcelProperty("性别")
@@ -62,23 +64,21 @@ public class UserDto extends DataDto implements Serializable {
     @ExcelProperty("邮箱")
     private String email;
 
-    @ExcelIgnore
     private String avatarName;
 
-    @ExcelIgnore
     private String avatarPath;
 
-    @ExcelIgnore
     @JsonIgnore
     private String password;
 
-    @ExcelIgnore
     @JsonIgnore
     private Boolean isAdmin;
 
+    @ExcelProperty(value = "状态", converter = EnableDisableConverter.class)
     private Boolean enabled;
 
-    @ExcelIgnore
+    @DateTimeFormat("yyyy年MM月dd日")
+    @ExcelProperty("修改密码时间")
     private Date pwdResetTime;
 
     @Override

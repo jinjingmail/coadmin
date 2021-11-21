@@ -78,8 +78,8 @@ public class RedisConfig extends CachingConfigurerSupport {
                 .fromConnectionFactory(redisConnectionFactory)
                 // 缓存配置
                 .cacheDefaults(redisCacheConfiguration(60*60))
-                // 指定特殊缓存过期时间
-                .withCacheConfiguration("user", redisCacheConfiguration(30*60))
+                // 如果有需要，可指定特殊缓存过期时间
+                .withCacheConfiguration("app:app-user", redisCacheConfiguration(30*60))
                 // 配置同步修改或删除 put/evict
                 .transactionAware()
                 .build();

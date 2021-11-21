@@ -3,7 +3,6 @@ package com.gitee.app.service.impl;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import lombok.AllArgsConstructor;
 import com.gitee.coadmin.utils.QueryHelpMybatisPlus;
 import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.utils.PageUtil;
@@ -13,15 +12,16 @@ import com.gitee.app.service.dto.AppUserDTO;
 import com.gitee.app.service.dto.AppUserQueryParam;
 import com.gitee.app.service.mapper.AppUserMapper;
 import com.gitee.app.service.converter.AppUserConverter;
+import com.gitee.coadmin.utils.RedisUtils;
 import lombok.RequiredArgsConstructor;
-import org.apache.ibatis.annotations.Param;
+import org.apache.commons.compress.utils.Sets;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 // 默认不使用缓存
-//import org.springframework.cache.annotation.CacheConfig;
-//import org.springframework.cache.annotation.CacheEvict;
-//import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import java.util.*;
 
@@ -31,11 +31,11 @@ import java.util.*;
  */
 @Service
 @RequiredArgsConstructor
-// @CacheConfig(cacheNames = AppUserService.CACHE_KEY)
+@CacheConfig(cacheNames = AppUserService.CACHE_KEY)
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class AppUserServiceImpl implements AppUserService {
 
-    // private final RedisUtils redisUtils;
+    private final RedisUtils redisUtils;
     private final AppUserMapper appUserMapper;
     private final AppUserConverter appUserConverter;
 
@@ -52,17 +52,16 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    public AppUser getEntityById(Long id) {
-        return appUserMapper.selectById(id);
-    }
-
-    @Override
-    // @Cacheable(key = "'id:' + #p0")
+    @Cacheable(key = "'id:' + #p0")
     public AppUserDTO getById(Long id) {
-        return appUserConverter.toDto(getEntityById(id));
+        if (id == null) {
+            return null;
+        }
+        return appUserConverter.toDto(appUserMapper.selectById(id));
     }
 
     @Override
+    @Cacheable(key = "'openid:' + #p0")
     public AppUserDTO getByOpenid(String openid) {
         if (StrUtil.isBlank(openid)) {
             return null;
@@ -73,6 +72,7 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public int insert(AppUserDTO res) {
         AppUser entity = appUserConverter.toEntity(res);
@@ -82,6 +82,7 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public int updateById(AppUserDTO res){
         AppUser entity = appUserConverter.toEntity(res);
@@ -91,28 +92,19 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public int removeByIds(Set<Long> ids){
-        // delCaches(ids);
         return appUserMapper.deleteBatchIds(ids);
     }
     
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public int removeById(Long id){
-        Set<Long> set = new HashSet<>(1);
-        set.add(id);
-        return this.removeByIds(set);
-    }
-
-    /*
     private void delCaches(Long id) {
-        redisUtils.delByKey(CACHE_KEY + "::id:", id);
+        redisUtils.del(CACHE_KEY + "::id:" + id);
     }
 
     private void delCaches(Set<Long> ids) {
         for (Long id: ids) {
             delCaches(id);
         }
-    }*/
+    }
 }

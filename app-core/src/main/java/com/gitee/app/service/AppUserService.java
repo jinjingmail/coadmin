@@ -15,7 +15,7 @@ import java.util.Set;
  */
 public interface AppUserService {
 
-    static final String CACHE_KEY = "app/app-user";
+    String CACHE_KEY = "app:app-user";
 
     /**
     * 查询数据分页
@@ -32,7 +32,6 @@ public interface AppUserService {
     */
     List<AppUserDTO> queryAll(AppUserQueryParam query);
 
-    AppUser getEntityById(Long id);
     AppUserDTO getById(Long id);
 
     /**
@@ -40,7 +39,6 @@ public interface AppUserService {
      */
     int insert(AppUserDTO resources);
     int updateById(AppUserDTO resources);
-    int removeById(Long id);
     int removeByIds(Set<Long> ids);
 
     AppUserDTO getByOpenid(String openid);

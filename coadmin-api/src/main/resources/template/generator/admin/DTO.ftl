@@ -1,5 +1,7 @@
 package ${package}.service.dto;
 
+import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
+import com.alibaba.excel.annotation.ExcelProperty;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,6 +31,7 @@ import com.gitee.coadmin.base.BaseDto;
 @Getter
 @Setter
 @NoArgsConstructor
+@ExcelIgnoreUnannotated
 public class ${className}DTO extends BaseDto {
     private static final long serialVersionUID = 1L;
 <#if columns??>
@@ -36,6 +39,7 @@ public class ${className}DTO extends BaseDto {
 
     <#if column.remark != ''>
     @ApiModelProperty(value = "${column.remark}")
+    @ExcelProperty("${column.remark}")
     </#if>
     <#if column.istNotNull && column.columnKey != 'PRI'>
       <#if column.columnType = 'String'>
@@ -45,10 +49,10 @@ public class ${className}DTO extends BaseDto {
       </#if>
     </#if>
     <#if column.changeColumnName = 'remarks'>
-    @Size(max = 60, message = "备注长度大于60")
+    @Size(max = 60, message = "备注长度不能大于60")
     </#if>
     <#if column.columnType = 'Long' || column.columnType = 'BigDecimal'>
-    @JsonSerialize(using= ToStringSerializer.class) // 防止精度丢失
+    @JsonSerialize(using= ToStringSerializer.class)
     </#if>
     <#if column.changeColumnName != 'delFlag'>
     private ${column.columnType} ${column.changeColumnName};
