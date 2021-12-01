@@ -47,7 +47,6 @@ public class DictServiceImpl extends BaseServiceImpl<Dict> implements DictServic
     private final DictDetailService detailService;
 
     @Override
-    //@Cacheable
     public PageInfo<DictDto> queryAll(DictQueryParam query, Pageable pageable) {
         IPage<Dict> page = PageUtil.toMybatisPage(pageable);
         IPage<Dict> pageList = dictMapper.selectPage(page, QueryHelpMybatisPlus.getPredicate(query));
@@ -55,9 +54,14 @@ public class DictServiceImpl extends BaseServiceImpl<Dict> implements DictServic
     }
 
     @Override
-    //@Cacheable
     public List<DictDto> queryAll(DictQueryParam query){
         return ConvertUtil.convertList(dictMapper.selectList(QueryHelpMybatisPlus.getPredicate(query)), DictDto.class);
+    }
+
+    @Override
+    @Cacheable(key = "'all'")
+    public List<DictDto> queryAll(){
+        return ConvertUtil.convertList(dictMapper.selectList(QueryHelpMybatisPlus.getPredicate(new DictQueryParam())), DictDto.class);
     }
 
     @Override
@@ -78,8 +82,7 @@ public class DictServiceImpl extends BaseServiceImpl<Dict> implements DictServic
     }
 
     @Override
-    // @CacheEvict(allEntries = true)
-    @CacheEvict(key = "'id:' + #p0.id")
+    @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public boolean updateById(Dict resources){
         return dictMapper.updateById(resources) > 0;
@@ -98,13 +101,6 @@ public class DictServiceImpl extends BaseServiceImpl<Dict> implements DictServic
         return ret;
     }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public boolean removeById(Long id){
-        Set<Long> ids = new HashSet<>(1);
-        ids.add(id);
-        return removeByIds(ids);
-    }
     @Override
     public void download(List<DictDto> all, HttpServletResponse response) throws IOException {
       List<Map<String, Object>> list = new ArrayList<>();

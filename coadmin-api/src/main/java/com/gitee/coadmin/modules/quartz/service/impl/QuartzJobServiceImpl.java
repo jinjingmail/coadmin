@@ -75,7 +75,6 @@ public class QuartzJobServiceImpl extends BaseServiceImpl<QuartzJob> implements 
         return logMapper.selectList(QueryHelpMybatisPlus.getPredicate(criteria));
     }
 
-
     @Override
     // @Cacheable(key = "'id:' + #p0")
     public QuartzJob findById(Long id) {

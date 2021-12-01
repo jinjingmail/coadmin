@@ -35,7 +35,6 @@ import java.util.*;
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class AppUserServiceImpl implements AppUserService {
 
-    private final RedisUtils redisUtils;
     private final AppUserMapper appUserMapper;
     private final AppUserConverter appUserConverter;
 
@@ -66,9 +65,8 @@ public class AppUserServiceImpl implements AppUserService {
         if (StrUtil.isBlank(openid)) {
             return null;
         }
-        QueryWrapper<AppUser> wrapper = new QueryWrapper<>();
-        wrapper.lambda().eq(AppUser::getOpenid, openid);
-        return appUserConverter.toDto(appUserMapper.selectOne(wrapper));
+        return appUserConverter.toDto(appUserMapper.selectOne(new QueryWrapper<AppUser>()
+                .lambda().eq(AppUser::getOpenid, openid)));
     }
 
     @Override
@@ -87,7 +85,6 @@ public class AppUserServiceImpl implements AppUserService {
     public int updateById(AppUserDTO res){
         AppUser entity = appUserConverter.toEntity(res);
         int ret = appUserMapper.updateById(entity);
-        // delCaches(res.id);
         return ret;
     }
 
@@ -98,13 +95,4 @@ public class AppUserServiceImpl implements AppUserService {
         return appUserMapper.deleteBatchIds(ids);
     }
     
-    private void delCaches(Long id) {
-        redisUtils.del(CACHE_KEY + "::id:" + id);
-    }
-
-    private void delCaches(Set<Long> ids) {
-        for (Long id: ids) {
-            delCaches(id);
-        }
-    }
 }

@@ -63,7 +63,7 @@ public class DictController {
     @GetMapping(value = "all")
     @PreAuthorize("@el.check('dict:list')")
     public List<DictDto> queryAll(){
-        return dictService.queryAll(new DictQueryParam());
+        return dictService.queryAll();
     }
 
     @Log("查询字典")

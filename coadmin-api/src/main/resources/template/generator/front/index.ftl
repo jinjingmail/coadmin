@@ -62,6 +62,7 @@
             form-label="${formLabel}"
             :options='dict.<#if (column.dictName)?? && (column.dictName)!="">${column.dictName}<#else>未设置字典，请手动设置 Select</#if>'
             :disable="!!crud.status.view"
+            filter-key-like="labelLetter"
             value-to-string
             no-filter
             emit-value
@@ -136,10 +137,8 @@
               content-style="width:160px"
               value-to-string
               no-filter
-              use-input
-              fill-input
-              hide-selected
               :options='dict.<#if (column.dictName)?? && (column.dictName)!="">${column.dictName}<#else>未设置字典，请手动设置 Select</#if>'
+              filter-key-like="labelLetter"
               @input="crud.toQuery()"
               emit-value
               map-options

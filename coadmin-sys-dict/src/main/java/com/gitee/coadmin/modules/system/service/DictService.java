@@ -33,11 +33,12 @@ public interface DictService  extends BaseService<Dict> {
     */
     List<DictDto> queryAll(DictQueryParam query);
 
+    List<DictDto> queryAll();
+
     Dict getById(Long id);
     DictDto findById(Long id);
     boolean save(Dict resources);
     boolean updateById(Dict resources);
-    boolean removeById(Long id);
     boolean removeByIds(Set<Long> ids);
 
     /**

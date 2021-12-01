@@ -88,7 +88,7 @@ public class DictDetailController {
     @GetMapping(value = "/map/all")
     public Map<String, List<DictDetailSmallDto>> getDictDetailMapsAll(){
         Map<String, List<DictDetailSmallDto>> dictMap = new HashMap<>(5);
-        List<DictDto> dictAll = dictService.queryAll(new DictQueryParam());
+        List<DictDto> dictAll = dictService.queryAll();
         for (DictDto dict : dictAll) {
             dictMap.put(dict.getName(), dictDetailService.getDictByName(dict.getName()));
         }
