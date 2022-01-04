@@ -1,8 +1,6 @@
 package com.gitee.coadmin.base;
 
-import com.alibaba.excel.annotation.ExcelIgnore;
-import com.alibaba.excel.annotation.ExcelProperty;
-import com.alibaba.excel.annotation.write.style.ColumnWidth;
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,20 +17,16 @@ import java.util.Date;
 @Setter
 public abstract class DataDto extends BaseDto {
 
-    @ExcelProperty("创建人")
-    @ColumnWidth(20)
+    @Excel(name = "创建人")
     private String createBy;
 
-    @ExcelProperty("更新人")
-    @ColumnWidth(20)
+    @Excel(name = "更新人")
     private String updateBy;
 
-    @ExcelProperty("创建时间")
-    @ColumnWidth(20)
+    @Excel(name = "创建时间", format = "yyyy-MM-dd")
     private Date createTime;
 
-    @ExcelProperty("更新时间")
-    @ColumnWidth(20)
+    @Excel(name = "更新时间", format = "yyyy-MM-dd")
     private Date updateTime;
 
 }

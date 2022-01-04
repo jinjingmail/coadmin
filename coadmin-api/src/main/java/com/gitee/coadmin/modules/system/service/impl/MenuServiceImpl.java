@@ -110,6 +110,13 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
         return menus.stream().map(menu -> ConvertUtil.convert(menu, MenuDto.class)).collect(Collectors.toList());
     }
 
+    private List<MenuDto> findByUserAllType(Long currentUserId) {
+        List<RoleSmallDto> roles = roleService.findByUsersId(currentUserId);
+        Set<Long> roleIds = roles.stream().map(RoleSmallDto::getId).collect(Collectors.toSet());
+        LinkedHashSet<Menu> menus = menuMapper.selectLinkRole(roleIds, -1L);
+        return menus.stream().map(menu -> ConvertUtil.convert(menu, MenuDto.class)).collect(Collectors.toList());
+    }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean save(Menu resources) {
@@ -178,7 +185,7 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
         }
 
         if (StringUtils.isNotBlank(res.getComponentName())) {
-            QueryWrapper<Menu> query2 = new QueryWrapper<Menu>();
+            QueryWrapper<Menu> query2 = new QueryWrapper<>();
             query2.lambda().eq(Menu::getComponentName, res.getComponentName());
             Menu menu1 = menuMapper.selectOne(query2);
             if (menu1 != null && !menu1.getId().equals(menu.getId())) {
@@ -246,7 +253,7 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
         // 递归找出待删除的菜单
         for (Menu menu1 : menuList) {
             menuSet.add(menu1);
-            QueryWrapper<Menu> query = new QueryWrapper<Menu>();
+            QueryWrapper<Menu> query = new QueryWrapper<>();
             query.lambda().eq(Menu::getPid, menu1.getId());
             List<Menu> menus = menuMapper.selectList(query);
             if (menus != null && menus.size() != 0) {
@@ -333,7 +340,6 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
 
     @Override
     public PageInfo<MenuDto> buildTree(MenuQueryParam query) {
-
         List<MenuDto> tree = new ArrayList<>();
         if (query.getPid() == null) {
             QueryWrapper<Menu> wrapper1 = QueryHelpMybatisPlus.getPredicate(query);
@@ -356,10 +362,7 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
             wrapper.orderByAsc(Menu::getSort);
             tree = getChildren(wrapper, pid);
         }
-        //Map<String, Object> map = new HashMap<>(2);
-        //map.put("totalElements", tree.size());
-        //map.put("content", tree);
-        return new PageInfo<MenuDto>(tree.size(), tree);
+        return new PageInfo<>(tree.size(), tree);
     }
     private List<MenuDto> getChildren(final LambdaQueryWrapper<Menu> wrapperOrigin, Long pid) {
         LambdaQueryWrapper<Menu> wrapper = wrapperOrigin.clone();

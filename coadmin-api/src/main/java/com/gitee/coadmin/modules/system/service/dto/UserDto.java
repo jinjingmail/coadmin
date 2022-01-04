@@ -1,14 +1,9 @@
 package com.gitee.coadmin.modules.system.service.dto;
 
-import com.alibaba.excel.annotation.ExcelIgnore;
-import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
-import com.alibaba.excel.annotation.ExcelProperty;
-import com.alibaba.excel.annotation.format.DateTimeFormat;
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.gitee.coadmin.excel.EnableDisableConverter;
-import com.gitee.coadmin.excel.ExcelUserIdConverter;
 import lombok.Getter;
 import lombok.Setter;
 import com.gitee.coadmin.base.DataDto;
@@ -24,14 +19,9 @@ import java.util.Set;
 */
 @Getter
 @Setter
-@ExcelIgnoreUnannotated
 public class UserDto extends DataDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /*
-     * 演示converter的使用
-     */
-    @ExcelProperty(value = "用户名", converter = ExcelUserIdConverter.class)
     @JsonSerialize(using= ToStringSerializer.class) // 防止精度丢失
     private Long id;
 
@@ -45,23 +35,20 @@ public class UserDto extends DataDto implements Serializable {
 
     //private Long deptId;
 
-    /*
-     * 通过上面的 ExcelUserIdConverter.class 得到用户名
-     */
-    @ExcelIgnore
+    @Excel(name = "用户名")
     private String username;
 
     private String usernameLetter;
 
     private String nickName;
 
-    @ExcelProperty("性别")
+    @Excel(name = "性别")
     private String gender;
 
-    @ExcelProperty("手机")
+    @Excel(name = "手机")
     private String phone;
 
-    @ExcelProperty("邮箱")
+    @Excel(name = "邮箱")
     private String email;
 
     private String avatarName;
@@ -74,11 +61,10 @@ public class UserDto extends DataDto implements Serializable {
     @JsonIgnore
     private Boolean isAdmin;
 
-    @ExcelProperty(value = "状态", converter = EnableDisableConverter.class)
+    @Excel(name = "状态", replace = {"启用_true", "禁用_false"})
     private Boolean enabled;
 
-    @DateTimeFormat("yyyy年MM月dd日")
-    @ExcelProperty("修改密码时间")
+    @Excel(name = "修改密码时间", format = "yyyy年MM月dd日")
     private Date pwdResetTime;
 
     @Override

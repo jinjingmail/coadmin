@@ -32,6 +32,8 @@ public interface ${className}Service {
     */
     List<${className}DTO> queryAll(${className}QueryParam query);
 
+    long queryCount(${className}QueryParam query);
+
     ${className}DTO getById(${pkColumnType} id);
 
     /**

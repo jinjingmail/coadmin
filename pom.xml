@@ -20,6 +20,7 @@
         <module>app-core</module>
         <module>app-api</module>
         <module>app-rest</module>
+        <module>trace-core</module>
     </modules>
 
     <name>CoAdmin 后台管理</name>
@@ -44,10 +45,9 @@
         <hutool.version>5.7.16</hutool.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
         <mybatisplus.version>3.4.3.4</mybatisplus.version>
-        <poi.version>5.1.0</poi.version>
         <emoji-java.version>5.1.1</emoji-java.version>
         <jpinyin.version>1.1.8</jpinyin.version>
-        <easyexcel.version>3.0.5</easyexcel.version>
+        <easypoi.version>4.1.0</easypoi.version>
     </properties>
 
     <dependencies>

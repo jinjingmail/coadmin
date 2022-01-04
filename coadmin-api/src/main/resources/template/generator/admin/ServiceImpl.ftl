@@ -52,6 +52,11 @@ public class ${className}ServiceImpl implements ${className}Service {
     }
 
     @Override
+    public long queryCount(${className}QueryParam query) {
+        return ${changeClassName}Mapper.selectCount(QueryHelpMybatisPlus.getPredicate(query));
+    }
+
+    @Override
     // @Cacheable(key = "'id:' + #p0")
     public ${className}DTO getById(${pkColumnType} id) {
         if (id == null) {

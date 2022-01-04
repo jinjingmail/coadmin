@@ -15,10 +15,9 @@
  */
 package com.gitee.coadmin.modules.system.rest;
 
-import com.alibaba.excel.EasyExcel;
-import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 import com.gitee.coadmin.annotation.UnifiedAPI;
 import com.gitee.coadmin.base.PageInfo;
+import com.gitee.coadmin.utils.ExcelUtils;
 import com.gitee.coadmin.utils.SecurityUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,6 +35,7 @@ import com.gitee.coadmin.modules.system.service.dto.UserQueryParam;
 import com.gitee.coadmin.modules.system.service.UserService;
 import com.gitee.coadmin.utils.enums.CodeEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -164,6 +164,7 @@ public class UserController {
         }
     }
 
+    /*
     @Log("导出用户数据")
     @ApiOperation("导出用户数据")
     @UnifiedAPI(enable = false)
@@ -179,5 +180,14 @@ public class UserController {
                 .sheet("用户数据")
                 .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
                 .doWrite(userService.queryAll(criteria));
+    }*/
+    @Log("导出用户数据")
+    @ApiOperation("导出用户数据")
+    @UnifiedAPI(enable = false)
+    @GetMapping(value = "/download")
+    @PreAuthorize("@el.check('user:list')")
+    public void download(UserQueryParam criteria, HttpServletResponse response) throws IOException {
+        List<UserDto> aaa = userService.queryAll(criteria);
+        ExcelUtils.exportExcel(aaa, "导出用户数据title", "导出用户数据sheet", UserDto.class,"导出用户数据", response);
     }
 }
