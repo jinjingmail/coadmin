@@ -1,7 +1,5 @@
 package ${package}.rest;
 
-import com.alibaba.excel.EasyExcel;
-import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 import com.gitee.coadmin.annotation.UnifiedAPI;
 import com.gitee.coadmin.exception.CoException;
 import com.gitee.coadmin.utils.ExcelUtils;
@@ -19,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import io.swagger.annotations.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URLEncoder;
+import java.util.List;
 import java.util.Set;
 
 /*  添加菜单的 SQL
@@ -40,7 +38,7 @@ INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, i_frame, `cache`, hidd
 INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, i_frame, `cache`, hidden, permission)
     VALUES (@lastId, 0, 2, '删除${apiAlias}', 40, 0, 0, 0, '${changeClassName}:del');
 INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, i_frame, `cache`, hidden, permission)
-    VALUES (@lastId, 0, 2, '下载${apiAlias}', 40, 0, 0, 0, '${changeClassName}:down');
+    VALUES (@lastId, 0, 2, '导出${apiAlias}', 40, 0, 0, 0, '${changeClassName}:down');
 */
 
 /**
@@ -93,7 +91,7 @@ public class ${className}Controller {
     @UnifiedAPI(enable = false)
     @GetMapping(value = "/download")
     @PreAuthorize("@el.check('${changeClassName}:down')")
-    public void download(UserQueryParam criteria, HttpServletResponse response) {
+    public void download(${className}QueryParam criteria, HttpServletResponse response) {
         try {
             List<${className}DTO> dtos = ${changeClassName}Service.queryAll(criteria);
             ExcelUtils.exportExcel(dtos, null, "导出${apiAlias}", ${className}DTO.class, "", response);
