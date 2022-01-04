@@ -13,6 +13,7 @@ import com.gitee.coadmin.exception.EntityExistException;
 import com.gitee.coadmin.utils.QueryHelpMybatisPlus;
 import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.utils.PageUtil;
+import lombok.RequiredArgsConstructor;
 import ${package}.domain.${className};
 import ${package}.service.${className}Service;
 import ${package}.service.dto.${className}DTO;
