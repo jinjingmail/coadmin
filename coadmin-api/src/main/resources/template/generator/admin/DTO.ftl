@@ -1,7 +1,6 @@
 package ${package}.service.dto;
 
-import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
-import com.alibaba.excel.annotation.ExcelProperty;
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,7 +38,7 @@ public class ${className}DTO extends BaseDto {
 
     <#if column.remark != ''>
     @ApiModelProperty(value = "${column.remark}")
-    @ExcelProperty("${column.remark}")
+    @Excel(name = "${column.remark}")
     </#if>
     <#if column.istNotNull && column.columnKey != 'PRI'>
       <#if column.columnType = 'String'>

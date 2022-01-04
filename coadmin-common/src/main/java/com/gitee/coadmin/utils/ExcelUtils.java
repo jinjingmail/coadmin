@@ -85,8 +85,6 @@ public class ExcelUtils {
         defaultExport(list, pojoClass, fileName, response, new ExportParams(title, sheetName, ExcelType.XSSF));
     }
 
-
-
     /**
      * excel 导出
      *
