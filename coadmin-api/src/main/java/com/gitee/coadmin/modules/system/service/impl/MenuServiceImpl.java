@@ -225,16 +225,18 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
             if (newPid != null) {
                 if (ObjectUtil.notEqual(newPid, oldPid)) {
                     List<Long> roleIds = rolesMenusService.queryRoleIdByMenuId(res.getId());
-                    UpdateWrapper<RolesMenus> wrapper = new UpdateWrapper<>();
-                    wrapper.lambda()
-                            .eq(RolesMenus::getMenuId, newPid)
-                            .in(RolesMenus::getRoleId, roleIds);
-                    rolesMenusMapper.delete(wrapper);
-                    for (Long roleId: roleIds) {
-                        RolesMenus entity = new RolesMenus();
-                        entity.setMenuId(newPid);
-                        entity.setRoleId(roleId);
-                        rolesMenusMapper.insert(entity);
+                    if (!roleIds.isEmpty()) {
+                        UpdateWrapper<RolesMenus> wrapper = new UpdateWrapper<>();
+                        wrapper.lambda()
+                                .eq(RolesMenus::getMenuId, newPid)
+                                .in(RolesMenus::getRoleId, roleIds);
+                        rolesMenusMapper.delete(wrapper);
+                        for (Long roleId : roleIds) {
+                            RolesMenus entity = new RolesMenus();
+                            entity.setMenuId(newPid);
+                            entity.setRoleId(roleId);
+                            rolesMenusMapper.insert(entity);
+                        }
                     }
                 }
             }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gitee.coadmin.modules.trace.service.mapper.TraceCsMapper">
+
+  <!-- 通用查询结果列 -->
+  <!--
+  <sql id="Base_Column_List">
+      a.id, a.report_time, a.report_no, a.patient_no, a.patient_name, a.patient_gender, a.patient_age, a.department_name, a.doctor_advice, a.speciman_type, a.diagnosis, a.karyotype_result, a.first_pregency_report_time, a.first_pappmom, a.first_fhcgmom, a.first_t21_risk, a.first_t18_risk, a.second_pregency_report_time, a.second_afpmom, a.second_fhcgmom, a.second_e3mom, a.second_t21_risk, a.second_t18_risk, a.nipt_report_time, a.nipt_screening, a.nipt_replenish_report_time, a.nipt_screening_replenish, a.remarks, a.create_time, a.create_user, a.update_time, a.update_user, a.patient_name_letter
+  </sql>
+  -->
+</mapper>

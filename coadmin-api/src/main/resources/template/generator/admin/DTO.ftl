@@ -30,7 +30,6 @@ import com.gitee.coadmin.base.BaseDto;
 @Getter
 @Setter
 @NoArgsConstructor
-@ExcelIgnoreUnannotated
 public class ${className}DTO extends BaseDto {
     private static final long serialVersionUID = 1L;
 <#if columns??>

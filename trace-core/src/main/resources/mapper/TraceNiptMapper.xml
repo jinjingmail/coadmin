@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gitee.coadmin.modules.trace.service.mapper.TraceNiptMapper">
+
+  <!-- 通用查询结果列 -->
+  <!--
+  <sql id="Base_Column_List">
+      a.id, a.receipt_date, a.report_status, a.report_date, a.report_no, a.patient_name, a.patient_gender, a.patient_age, a.patient_no, a.patient_id_no, a.patient_health_no, a.case_no, a.speciman_no, a.speciman_type, a.contact_tel, a.department_name, a.diagnosis, a.doctor_advice, a.t13, a.t18, a.t21, a.report_details, a.addition1, a.addition1_remark, a.addition2, a.addition2_remark, a.t13_risk, a.t18_risk, a.t21_risk, a.report_evaluation, a.times_of_pregnancy, a.times_of_birth, a.patient_weight, a.patient_height, a.weight_index, a.last_menstruation, a.mcgw, a.bdgw, a.nature_conceived, a.ovulation_induction, a.iui, a.ivf, a.allogenetic_transfusion, a.family_diseases, a.screening_model, a.nt_gw, a.nt_mm, a.mssr, a.t21_syndrome, a.t18_syndrome, a.t13_syndrome, a.sign_consent, a.apply_doctor, a.apply_date, a.remarks, a.create_time, a.create_user, a.update_time, a.update_user, a.patient_name_letter
+  </sql>
+  -->
+</mapper>

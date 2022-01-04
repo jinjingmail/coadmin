@@ -21,6 +21,7 @@
         <module>app-api</module>
         <module>app-rest</module>
         <module>trace-core</module>
+        <module>trace-rest</module>
     </modules>
 
     <name>CoAdmin 后台管理</name>

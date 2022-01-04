@@ -16,7 +16,8 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 @Configuration
 public class AdminMybatisPlusFillHandler implements MetaObjectHandler{
 
-    private final String[] pinyinFields = new String[] {"name", "nickname", "label", "description", "treeNames", "title"};
+    private final String[] pinyinFields = new String[] {"name", "nickname", "label", "description",
+            "treeNames", "title", "patientName"};
 
     @Override
     public void insertFill(MetaObject metaObject) {
@@ -27,11 +28,17 @@ public class AdminMybatisPlusFillHandler implements MetaObjectHandler{
         if (metaObject.hasSetter("createBy")) {
             setFieldValByName("createBy", getUsername(), metaObject);
         }
+        if (metaObject.hasSetter("createUser")) {
+            setFieldValByName("createUser", getUserId(), metaObject);
+        }
         if (metaObject.hasSetter("updateTime")) {
             setFieldValByName("updateTime", currentTime, metaObject);
         }
         if (metaObject.hasSetter("updateBy")) {
             setFieldValByName("updateBy", getUsername(), metaObject);
+        }
+        if (metaObject.hasSetter("updateUser")) {
+            setFieldValByName("updateUser", getUserId(), metaObject);
         }
         for (String field: pinyinFields) {
             if (metaObject.hasSetter(field + "Letter")) {
@@ -53,6 +60,9 @@ public class AdminMybatisPlusFillHandler implements MetaObjectHandler{
         if (metaObject.hasSetter("updateBy")) {
             setFieldValByName("updateBy", getUsername(), metaObject);
         }
+        if (metaObject.hasSetter("updateUser")) {
+            setFieldValByName("updateUser", getUserId(), metaObject);
+        }
         for (String field: pinyinFields) {
             if (metaObject.hasSetter(field + "Letter")) {
                 Object o = metaObject.getValue(field);
@@ -61,6 +71,14 @@ public class AdminMybatisPlusFillHandler implements MetaObjectHandler{
                             PinyinUtil.getAllFirstPinyin(StringUtils.removeAllUnused(o.toString())), metaObject);
                 }
             }
+        }
+    }
+
+    private Long getUserId() {
+        try {
+            return SecurityUtils.getCurrentUserId();
+        } catch (Exception e) {
+            return null;
         }
     }
 

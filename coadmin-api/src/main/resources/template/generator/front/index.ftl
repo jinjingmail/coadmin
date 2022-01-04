@@ -274,7 +274,8 @@ export default {
         view: ['admin', '${changeClassName}:list'],
         add: ['admin', '${changeClassName}:add'],
         edit: ['admin', '${changeClassName}:edit'],
-        del: ['admin', '${changeClassName}:del']
+        del: ['admin', '${changeClassName}:del'],
+        down: ['admin', '${changeClassName}:down']
       },
       filterTable: ''
     }
