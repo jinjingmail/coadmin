@@ -3,6 +3,8 @@ package ${package}.rest;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 import com.gitee.coadmin.annotation.UnifiedAPI;
+import com.gitee.coadmin.exception.CoException;
+import com.gitee.coadmin.utils.ExcelUtils;
 import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.modules.logging.annotation.Log;
 import com.gitee.coadmin.modules.logging.annotation.type.LogActionType;
@@ -24,18 +26,10 @@ import java.util.Set;
 <#if hasMenuPid>
 INSERT INTO sys_menu(pid, sub_count, `type`, title, title_letter, component_name, `component`, sort, `path`, i_frame, `cache`, hidden, permission)
     VALUES (${menuPid}, 4, 1, '${apiAlias}', '${apiAliasLetter}', '${className}', '${subModuleName}/${minusClassName}/index', 10, '${minusClassName}', 0, 0, 0, '${changeClassName}:list');
-SELECT @lastId:=LAST_INSERT_ID();
-INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, i_frame, `cache`, hidden, permission)
-    VALUES (@lastId, 0, 2, '查看${apiAlias}', 10, 0, 0, 0, '${changeClassName}:list');
-INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, i_frame, `cache`, hidden, permission)
-    VALUES (@lastId, 0, 2, '新增${apiAlias}', 20, 0, 0, 0, '${changeClassName}:add');
-INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, i_frame, `cache`, hidden, permission)
-    VALUES (@lastId, 0, 2, '修改${apiAlias}', 30, 0, 0, 0, '${changeClassName}:edit');
-INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, i_frame, `cache`, hidden, permission)
-    VALUES (@lastId, 0, 2, '删除${apiAlias}', 40, 0, 0, 0, '${changeClassName}:del');
 <#else>
 INSERT INTO sys_menu(pid, sub_count, `type`, title, title_letter, component_name, `component`, sort, `path`, i_frame, `cache`, hidden, permission)
     VALUES (null, 4, 1, '${apiAlias}', '${apiAliasLetter}', '${className}', '${subModuleName}/${minusClassName}/index', 10, '${minusClassName}', 0, 0, 0, '${changeClassName}:list');
+</#if>
 SELECT @lastId:=LAST_INSERT_ID();
 INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, i_frame, `cache`, hidden, permission)
     VALUES (@lastId, 0, 2, '查看${apiAlias}', 10, 0, 0, 0, '${changeClassName}:list');
@@ -45,7 +39,8 @@ INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, i_frame, `cache`, hidd
     VALUES (@lastId, 0, 2, '修改${apiAlias}', 30, 0, 0, 0, '${changeClassName}:edit');
 INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, i_frame, `cache`, hidden, permission)
     VALUES (@lastId, 0, 2, '删除${apiAlias}', 40, 0, 0, 0, '${changeClassName}:del');
-</#if>
+INSERT INTO sys_menu(pid, sub_count, `type`, title, sort, i_frame, `cache`, hidden, permission)
+    VALUES (@lastId, 0, 2, '下载${apiAlias}', 40, 0, 0, 0, '${changeClassName}:down');
 */
 
 /**
@@ -97,17 +92,13 @@ public class ${className}Controller {
     @ApiOperation("导出${apiAlias}")
     @UnifiedAPI(enable = false)
     @GetMapping(value = "/download")
-    @PreAuthorize("@el.check('${changeClassName}:list')")
-    public void download(HttpServletResponse response, UserQueryParam criteria) throws IOException {
-        response.setContentType("application/vnd.ms-excel");
-        response.setCharacterEncoding("utf-8");
-        // 这里URLEncoder.encode可以防止中文乱码
-        String fileName = URLEncoder.encode("导出${apiAlias}", "UTF-8");
-        response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
-        EasyExcel.write(response.getOutputStream(), ${className}DTO.class)
-            .sheet("${apiAlias}")
-            .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
-            .doWrite(${className}Service.queryAll(criteria));
+    @PreAuthorize("@el.check('${changeClassName}:down')")
+    public void download(UserQueryParam criteria, HttpServletResponse response) {
+        try {
+            List<${className}DTO> dtos = ${changeClassName}Service.queryAll(criteria);
+            ExcelUtils.exportExcel(dtos, null, "导出${apiAlias}", ${className}DTO.class, "", response);
+        } catch (IOException e) {
+            throw new CoException("导出失败");
+        }
     }
-
 }

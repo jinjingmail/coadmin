@@ -17,6 +17,7 @@ package com.gitee.coadmin.modules.system.rest;
 
 import com.gitee.coadmin.annotation.UnifiedAPI;
 import com.gitee.coadmin.base.PageInfo;
+import com.gitee.coadmin.exception.CoException;
 import com.gitee.coadmin.utils.ExcelUtils;
 import com.gitee.coadmin.utils.SecurityUtils;
 import io.swagger.annotations.Api;
@@ -35,7 +36,6 @@ import com.gitee.coadmin.modules.system.service.dto.UserQueryParam;
 import com.gitee.coadmin.modules.system.service.UserService;
 import com.gitee.coadmin.utils.enums.CodeEnum;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -44,7 +44,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -164,30 +163,17 @@ public class UserController {
         }
     }
 
-    /*
     @Log("导出用户数据")
     @ApiOperation("导出用户数据")
     @UnifiedAPI(enable = false)
     @GetMapping(value = "/download")
-    @PreAuthorize("@el.check('user:list')")
-    public void download(HttpServletResponse response, UserQueryParam criteria) throws IOException {
-        response.setContentType("application/vnd.ms-excel");
-        response.setCharacterEncoding("utf-8");
-        // 这里URLEncoder.encode可以防止中文乱码
-        String fileName = URLEncoder.encode("导出用户数据", "UTF-8");
-        response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
-        EasyExcel.write(response.getOutputStream(), UserDto.class)
-                .sheet("用户数据")
-                .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
-                .doWrite(userService.queryAll(criteria));
-    }*/
-    @Log("导出用户数据")
-    @ApiOperation("导出用户数据")
-    @UnifiedAPI(enable = false)
-    @GetMapping(value = "/download")
-    @PreAuthorize("@el.check('user:list')")
-    public void download(UserQueryParam criteria, HttpServletResponse response) throws IOException {
-        List<UserDto> aaa = userService.queryAll(criteria);
-        ExcelUtils.exportExcel(aaa, "导出用户数据title", "导出用户数据sheet", UserDto.class,"导出用户数据", response);
+    @PreAuthorize("@el.check('user:down')")
+    public void download(UserQueryParam criteria, HttpServletResponse response) {
+        List<UserDto> dtos = userService.queryAll(criteria);
+        try {
+            ExcelUtils.exportExcel(dtos, null, "导出用户数据", UserDto.class,"", response);
+        } catch (IOException e) {
+            throw new CoException("导出失败");
+        }
     }
 }
