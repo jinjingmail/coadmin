@@ -65,6 +65,14 @@ public class TracePatientController {
         return tracePatientService.removeByIds(ids);
     }
 
+    @PostMapping("update-trace-viewed/{patientNo}")
+    @Log(value = "更新就诊人的报告为已读")
+    @ApiOperation("更新就诊人的报告为已读")
+    @PreAuthorize("@el.check('tracePatient:list')")
+    public void updateTraceViewed(@PathVariable String patientNo){
+        tracePatientService.updateTraceViewed(patientNo);
+    }
+
     @Log("导出就诊人")
     @ApiOperation("导出就诊人")
     @UnifiedAPI(enable = false)

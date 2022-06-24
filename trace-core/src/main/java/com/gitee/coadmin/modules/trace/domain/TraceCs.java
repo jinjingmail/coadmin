@@ -32,6 +32,9 @@ public class TraceCs extends BaseEntity {
     @TableId(type= IdType.ASSIGN_ID)
     private Long id;
 
+    @ApiModelProperty(value = "已查看")
+    private Boolean viewed;
+
     @ApiModelProperty(value = "报告时间")
     private Date reportTime;
 

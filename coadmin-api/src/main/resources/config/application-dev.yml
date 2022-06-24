@@ -52,12 +52,12 @@ login:
   single-login: true
   #  验证码
   login-code:
-    #  验证码类型配置 查看 LoginProperties 类
-    code-type: spec
+    #  验证码类型配置 查看 LoginProperties 类（arithmetic/gif/chinese/chinese_gif/spec）
+    code-type: gif
     #  登录图形验证码有效时间/分钟
     expiration: 2
     #  验证码高度
-    width: 111
+    width: 56
     #  验证码宽度
     heigth: 36
     # 内容长度

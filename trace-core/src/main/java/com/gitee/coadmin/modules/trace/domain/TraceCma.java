@@ -31,6 +31,9 @@ public class TraceCma extends BaseEntity {
     @TableId(type= IdType.ASSIGN_ID)
     private Long id;
 
+    @ApiModelProperty(value = "已查看")
+    private Boolean viewed;
+
     @ApiModelProperty(value = "核收日期")
     private Date receiptDate;
 

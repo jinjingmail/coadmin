@@ -2,7 +2,6 @@ package com.gitee.coadmin.modules.trace.rest;
 
 import com.gitee.coadmin.annotation.UnifiedAPI;
 import com.gitee.coadmin.exception.CoException;
-import com.gitee.coadmin.modules.trace.service.dto.TraceNiptDTO;
 import com.gitee.coadmin.utils.ExcelUtils;
 import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.modules.logging.annotation.Log;
@@ -79,7 +78,8 @@ public class TraceCsController {
     }
 
     private void parseUploadFile(MultipartFile file) throws IOException {
-        List<TraceCsDTO> dtos = ExcelUtils.importExcel(file, TraceCsDTO.class);
+        List<TraceCsDTO> dtos = ExcelUtils.importExcel(file, TraceCsDTO.class, 1,
+                new String[] {"标本类型", "诊断", "染色体核型结果", "早筛报告时间"});
         for (TraceCsDTO dto: dtos) {
             traceCsService.upload(dto);
         }

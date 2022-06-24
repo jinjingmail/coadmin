@@ -19,8 +19,10 @@ import java.util.*;
 @Slf4j
 public class QueryHelpMybatisPlus {
 
-    public static <R, Q> QueryWrapper<R> getPredicate(Q query) {
+    public static <R, Q> QueryWrapper<R> getPredicate(Q query, String orderBy, boolean isAsc) {
         QueryWrapper<R> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderBy(orderBy != null, isAsc, orderBy);
+
         if (query == null) {
             return queryWrapper;
         }
@@ -112,33 +114,33 @@ public class QueryHelpMybatisPlus {
                             queryWrapper.lt(finalAttributeName, val);
                             break;
                         case LESS_THAN_EQ:
-                           queryWrapper.le(finalAttributeName, val);
+                            queryWrapper.le(finalAttributeName, val);
                             break;
                         case INNER_LIKE:
-                           queryWrapper.like(finalAttributeName, val);
+                            queryWrapper.like(finalAttributeName, val);
                             break;
                         case LEFT_LIKE:
-                           queryWrapper.likeLeft(finalAttributeName, val);
+                            queryWrapper.likeLeft(finalAttributeName, val);
                             break;
                         case RIGHT_LIKE:
-                           queryWrapper.likeRight(finalAttributeName, val);
+                            queryWrapper.likeRight(finalAttributeName, val);
                             break;
                         case IN:
                             if (CollUtil.isNotEmpty((Collection<Long>) val)) {
-                               queryWrapper.in(finalAttributeName, (Collection<Long>) val);
+                                queryWrapper.in(finalAttributeName, (Collection<Long>) val);
                             } else {
                                 queryWrapper.in(finalAttributeName, 999999L);
                             }
                             break;
                         case IN_SQL:
-                            {
-                                String sql = q.sql();
-                                sql = StrUtil.replace(sql, "?", val.toString());
-                                queryWrapper.inSql(finalAttributeName, sql);
-                            }
-                            break;
+                        {
+                            String sql = q.sql();
+                            sql = StrUtil.replace(sql, "?", val.toString());
+                            queryWrapper.inSql(finalAttributeName, sql);
+                        }
+                        break;
                         case NOT_EQUAL:
-                           queryWrapper.ne(finalAttributeName, val);
+                            queryWrapper.ne(finalAttributeName, val);
                             break;
                         case NOT_NULL:
                             queryWrapper.isNotNull(finalAttributeName);
@@ -148,7 +150,7 @@ public class QueryHelpMybatisPlus {
                             break;
                         case BETWEEN:
                             List<Object> between = new ArrayList<>((List<Object>) val);
-                           queryWrapper.between(finalAttributeName, between.get(0), between.get(1));
+                            queryWrapper.between(finalAttributeName, between.get(0), between.get(1));
                             break;
                         default:
                             break;
@@ -161,6 +163,10 @@ public class QueryHelpMybatisPlus {
         }
 
         return queryWrapper;
+    }
+
+    public static <R, Q> QueryWrapper<R> getPredicate(Q query) {
+        return getPredicate(query, null, false);
     }
 
     public static List<Field> getAllFields(Class clazz, List<Field> fields) {

@@ -2,7 +2,6 @@ package com.gitee.coadmin.modules.trace.rest;
 
 import com.gitee.coadmin.annotation.UnifiedAPI;
 import com.gitee.coadmin.exception.CoException;
-import com.gitee.coadmin.modules.trace.service.dto.TraceCsDTO;
 import com.gitee.coadmin.utils.ExcelUtils;
 import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.modules.logging.annotation.Log;
@@ -20,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.List;
 import java.util.Set;
 
@@ -80,7 +78,8 @@ public class TraceCmaController {
     }
 
     private void parseUploadFile(MultipartFile file) throws IOException {
-        List<TraceCmaDTO> dtos = ExcelUtils.importExcel(file, TraceCmaDTO.class);
+        List<TraceCmaDTO> dtos = ExcelUtils.importExcel(file, TraceCmaDTO.class, 3,
+                new String[] {"标本类型", "诊断", "芯片ID", "染色体区域"});
         for (TraceCmaDTO dto: dtos) {
             traceCmaService.upload(dto);
         }

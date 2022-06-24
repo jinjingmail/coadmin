@@ -227,7 +227,7 @@
       </template>
 
       <template v-slot:pagination>
-        <crud-pagination />
+        <crud-pagination input/>
       </template>
 
     </co-table>

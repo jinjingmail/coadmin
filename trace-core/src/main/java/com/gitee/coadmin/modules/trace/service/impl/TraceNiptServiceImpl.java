@@ -2,11 +2,9 @@ package com.gitee.coadmin.modules.trace.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.gitee.coadmin.modules.trace.domain.TracePatient;
 import com.gitee.coadmin.modules.trace.service.TracePatientService;
-import com.gitee.coadmin.modules.trace.service.dto.TracePatientDTO;
-import com.gitee.coadmin.modules.trace.service.mapper.TracePatientMapper;
 import com.gitee.coadmin.utils.QueryHelpMybatisPlus;
 import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.utils.PageUtil;
@@ -47,7 +45,7 @@ public class TraceNiptServiceImpl implements TraceNiptService {
 
     @Override
     public List<TraceNiptDTO> queryAll(TraceNiptQueryParam query){
-        return traceNiptConverter.toDto(traceNiptMapper.selectList(QueryHelpMybatisPlus.getPredicate(query)));
+        return traceNiptConverter.toDto(traceNiptMapper.selectList(QueryHelpMybatisPlus.getPredicate(query, "id", false)));
     }
 
     @Override
@@ -83,6 +81,16 @@ public class TraceNiptServiceImpl implements TraceNiptService {
             insert(dto);
             patient(dto);
         }
+    }
+
+    @Override
+    @Transactional
+    public void updateTraceViewed(String patientNo) {
+        UpdateWrapper<TraceNipt> update = new UpdateWrapper<>();
+        update.lambda().eq(TraceNipt::getPatientNo, patientNo)
+                .eq(TraceNipt::getViewed, false)
+                .set(TraceNipt::getViewed, true);
+        traceNiptMapper.update(null, update);
     }
 
     private void patient(TraceNiptDTO dto) {

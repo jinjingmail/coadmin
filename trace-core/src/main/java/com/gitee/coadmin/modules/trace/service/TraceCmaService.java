@@ -44,4 +44,6 @@ public interface TraceCmaService {
     int insert(TraceCmaDTO res);
     int updateById(TraceCmaDTO res);
     int removeByIds(Set<Long> ids);
+
+    void updateTraceViewed(String patientNo);
 }

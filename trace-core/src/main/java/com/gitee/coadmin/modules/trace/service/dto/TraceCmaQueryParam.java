@@ -32,6 +32,9 @@ public class TraceCmaQueryParam{
     @Query
     private String reportNo;
 
+    @Query
+    private Boolean viewed;
+
     /** 模糊 */
     @Query(type = Query.Type.INNER_LIKE, blurry = "patientName, patientNameLetter")
     private String patientName;

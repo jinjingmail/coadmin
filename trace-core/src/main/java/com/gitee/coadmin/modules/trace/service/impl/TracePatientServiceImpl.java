@@ -1,11 +1,14 @@
 package com.gitee.coadmin.modules.trace.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.gitee.coadmin.modules.trace.service.TraceCmaService;
+import com.gitee.coadmin.modules.trace.service.TraceCsService;
+import com.gitee.coadmin.modules.trace.service.TraceNiptService;
 import com.gitee.coadmin.utils.QueryHelpMybatisPlus;
 import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.utils.PageUtil;
@@ -15,6 +18,7 @@ import com.gitee.coadmin.modules.trace.service.dto.TracePatientDTO;
 import com.gitee.coadmin.modules.trace.service.dto.TracePatientQueryParam;
 import com.gitee.coadmin.modules.trace.service.mapper.TracePatientMapper;
 import com.gitee.coadmin.modules.trace.service.converter.TracePatientConverter;
+import com.gitee.coadmin.utils.SpringContextHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -45,7 +49,7 @@ public class TracePatientServiceImpl implements TracePatientService {
 
     @Override
     public List<TracePatientDTO> queryAll(TracePatientQueryParam query){
-        return tracePatientConverter.toDto(tracePatientMapper.selectList(QueryHelpMybatisPlus.getPredicate(query)));
+        return tracePatientConverter.toDto(tracePatientMapper.selectList(QueryHelpMybatisPlus.getPredicate(query, "id", false)));
     }
 
     @Override
@@ -66,6 +70,18 @@ public class TracePatientServiceImpl implements TracePatientService {
         QueryWrapper<TracePatient> wrapper = new QueryWrapper<>();
         wrapper.lambda().eq(TracePatient::getNo, no);
         return tracePatientConverter.toDto(tracePatientMapper.selectOne(wrapper));
+    }
+
+    @Override
+    @Transactional
+    public void updateTraceViewed(String patientNo) {
+        TraceCmaService traceCmaService = SpringContextHolder.getBean(TraceCmaService.class);
+        TraceCsService traceCsService = SpringContextHolder.getBean(TraceCsService.class);
+        TraceNiptService traceNiptService = SpringContextHolder.getBean(TraceNiptService.class);
+
+        traceCmaService.updateTraceViewed(patientNo);
+        traceCsService.updateTraceViewed(patientNo);
+        traceNiptService.updateTraceViewed(patientNo);
     }
 
     @Override
@@ -124,7 +140,7 @@ public class TracePatientServiceImpl implements TracePatientService {
             return null;
         }
         Integer age = NumberUtil.parseInt(ageStr);
-        return DateUtil.beginOfYear(DateUtil.offsetDay(new Date(), -age));
+        return DateUtil.beginOfYear(DateUtil.offset(new Date(), DateField.YEAR, -age));
     }
 
     @Override

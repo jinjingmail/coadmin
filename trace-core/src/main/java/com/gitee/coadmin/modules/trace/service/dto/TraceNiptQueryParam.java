@@ -20,6 +20,8 @@ public class TraceNiptQueryParam{
     @Query
     private Long id;
 
+    @Query
+    private Boolean viewed;
 
     /** 精确 */
     

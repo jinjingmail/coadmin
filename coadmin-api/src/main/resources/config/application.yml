@@ -1,6 +1,9 @@
 server:
   port: 8000
   shutdown: graceful
+  compression:
+    enabled: true
+    mime-types: application/javascript,text/css,application/json,application/xml,text/html,text/xml,text/plain
 
 spring:
   lifecycle:

@@ -2,9 +2,9 @@ package com.gitee.coadmin.modules.trace.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.gitee.coadmin.modules.trace.service.TracePatientService;
-import com.gitee.coadmin.modules.trace.service.dto.TraceNiptDTO;
 import com.gitee.coadmin.utils.QueryHelpMybatisPlus;
 import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.utils.PageUtil;
@@ -45,7 +45,7 @@ public class TraceCsServiceImpl implements TraceCsService {
 
     @Override
     public List<TraceCsDTO> queryAll(TraceCsQueryParam query){
-        return traceCsConverter.toDto(traceCsMapper.selectList(QueryHelpMybatisPlus.getPredicate(query)));
+        return traceCsConverter.toDto(traceCsMapper.selectList(QueryHelpMybatisPlus.getPredicate(query, "id", false)));
     }
 
     @Override
@@ -116,7 +116,17 @@ public class TraceCsServiceImpl implements TraceCsService {
         // delCaches(ids);
         return traceCsMapper.deleteBatchIds(ids);
     }
-    
+
+    @Override
+    @Transactional
+    public void updateTraceViewed(String patientNo) {
+        UpdateWrapper<TraceCs> update = new UpdateWrapper<>();
+        update.lambda().eq(TraceCs::getPatientNo, patientNo)
+                .eq(TraceCs::getViewed, false)
+                .set(TraceCs::getViewed, true);
+        traceCsMapper.update(null, update);
+    }
+
     /*
     private void delCaches(Long id) {
         redisUtils.del(CACHE_KEY + "::id:" + id);

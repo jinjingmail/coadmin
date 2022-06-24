@@ -49,7 +49,7 @@ public class ${className}ServiceImpl implements ${className}Service {
 
     @Override
     public List<${className}DTO> queryAll(${className}QueryParam query){
-        return ${changeClassName}Converter.toDto(${changeClassName}Mapper.selectList(QueryHelpMybatisPlus.getPredicate(query)));
+        return ${changeClassName}Converter.toDto(${changeClassName}Mapper.selectList(QueryHelpMybatisPlus.getPredicate(query, "id", false)));
     }
 
     @Override

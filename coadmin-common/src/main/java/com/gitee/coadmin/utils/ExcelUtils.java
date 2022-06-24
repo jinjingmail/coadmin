@@ -53,7 +53,7 @@ public class ExcelUtils {
      */
     private static void defaultExport(List<Map<String, Object>> list, String fileName, HttpServletResponse response) throws IOException {
         //把数据添加到excel表格中
-        Workbook workbook = ExcelExportUtil.exportExcel(list, ExcelType.HSSF);
+        Workbook workbook = ExcelExportUtil.exportExcel(list, ExcelType.XSSF);
         downLoadExcel(fileName, response, workbook);
     }
 
@@ -141,7 +141,8 @@ public class ExcelUtils {
     private static void downLoadExcel(String fileName, HttpServletResponse response, Workbook workbook) throws IOException {
         try {
             response.setCharacterEncoding("UTF-8");
-            response.setHeader("content-Type", "application/vnd.ms-excel");
+            //response.setHeader("content-Type", "application/vnd.ms-excel");
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8");
             response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName + ".xlsx", "UTF-8"));
             workbook.write(response.getOutputStream());
         } catch (Exception e) {
@@ -173,11 +174,13 @@ public class ExcelUtils {
      *
      * @param file      excel文件
      * @param pojoClass pojo类型
+     * @param keyIndex  主键设置,如何这个cell没有值,就跳过 或者认为这个是list的下面的值,这一列必须有值
+     * @param headerNeededFields excel文件表头必须包含的头部，不包含就认为是无效excel
      * @param <T>
      * @return
      */
-    public static <T> List<T> importExcel(MultipartFile file, Class<T> pojoClass) throws IOException {
-        return importExcel(file, 1, 1, pojoClass);
+    public static <T> List<T> importExcel(MultipartFile file, Class<T> pojoClass, Integer keyIndex, String[] headerNeededFields) throws IOException {
+        return importExcel(file, 1, 1, pojoClass, keyIndex, headerNeededFields);
     }
 
     /**
@@ -186,11 +189,14 @@ public class ExcelUtils {
      * @param filePath   excel文件路径
      * @param titleRows  表格内数据标题行
      * @param headerRows 表头行
+     * @param keyIndex  主键设置,如何这个cell没有值,就跳过 或者认为这个是list的下面的值,这一列必须有值
+     * @param headerNeededFields excel文件表头必须包含的头部，不包含就认为是无效excel
      * @param pojoClass  pojo类型
      * @param <T>
      * @return
      */
-    public static <T> List<T> importExcel(String filePath, Integer titleRows, Integer headerRows, Class<T> pojoClass) throws IOException {
+    public static <T> List<T> importExcel(String filePath, Integer titleRows, Integer headerRows, Class<T> pojoClass,
+                                          Integer keyIndex, String[] headerNeededFields) throws IOException {
         if (StringUtils.isBlank(filePath)) {
             return null;
         }
@@ -199,6 +205,8 @@ public class ExcelUtils {
         params.setHeadRows(headerRows);
         params.setNeedSave(true);
         params.setSaveUrl("/excel/");
+        params.setKeyIndex(keyIndex);
+        params.setImportFields(headerNeededFields);
         try {
             return ExcelImportUtil.importExcel(new File(filePath), pojoClass, params);
         } catch (NoSuchElementException e) {
@@ -216,15 +224,18 @@ public class ExcelUtils {
      * @param titleRows  表格内数据标题行
      * @param headerRows 表头行
      * @param pojoClass  pojo类型
+     * @param keyIndex  主键设置,如何这个cell没有值,就跳过 或者认为这个是list的下面的值,这一列必须有值
+     * @param headerNeededFields excel文件表头必须包含的头部，不包含就认为是无效excel
      * @param <T>
      * @return
      */
-    public static <T> List<T> importExcel(MultipartFile file, Integer titleRows, Integer headerRows, Class<T> pojoClass) throws IOException {
+    public static <T> List<T> importExcel(MultipartFile file, Integer titleRows, Integer headerRows, Class<T> pojoClass,
+                                          Integer keyIndex, String[] headerNeededFields) throws IOException {
         if (file == null) {
             return null;
         }
         try {
-            return importExcel(file.getInputStream(), titleRows, headerRows, pojoClass);
+            return importExcel(file.getInputStream(), titleRows, headerRows, pojoClass, keyIndex, headerNeededFields);
         } catch (Exception e) {
             throw new IOException(e.getMessage());
         }
@@ -237,10 +248,13 @@ public class ExcelUtils {
      * @param titleRows   表格内数据标题行
      * @param headerRows  表头行
      * @param pojoClass   pojo类型
+     * @param keyIndex  主键设置,如何这个cell没有值,就跳过 或者认为这个是list的下面的值,这一列必须有值
+     * @param headerNeededFields excel文件表头必须包含的头部，不包含就认为是无效excel
      * @param <T>
      * @return
      */
-    public static <T> List<T> importExcel(InputStream inputStream, Integer titleRows, Integer headerRows, Class<T> pojoClass) throws IOException {
+    public static <T> List<T> importExcel(InputStream inputStream, Integer titleRows, Integer headerRows, Class<T> pojoClass,
+                                          Integer keyIndex, String[] headerNeededFields) throws IOException {
         if (inputStream == null) {
             return null;
         }
@@ -249,6 +263,8 @@ public class ExcelUtils {
         params.setHeadRows(headerRows);
         params.setSaveUrl("/excel/");
         params.setNeedSave(true);
+        params.setKeyIndex(keyIndex);
+        params.setImportFields(headerNeededFields);
         try {
             return ExcelImportUtil.importExcel(inputStream, pojoClass, params);
         } catch (NoSuchElementException e) {

@@ -2,9 +2,9 @@ package com.gitee.coadmin.modules.trace.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.gitee.coadmin.modules.trace.service.TracePatientService;
-import com.gitee.coadmin.modules.trace.service.dto.TraceCsDTO;
 import com.gitee.coadmin.utils.QueryHelpMybatisPlus;
 import com.gitee.coadmin.base.PageInfo;
 import com.gitee.coadmin.utils.PageUtil;
@@ -45,7 +45,7 @@ public class TraceCmaServiceImpl implements TraceCmaService {
 
     @Override
     public List<TraceCmaDTO> queryAll(TraceCmaQueryParam query){
-        return traceCmaConverter.toDto(traceCmaMapper.selectList(QueryHelpMybatisPlus.getPredicate(query)));
+        return traceCmaConverter.toDto(traceCmaMapper.selectList(QueryHelpMybatisPlus.getPredicate(query, "id", false)));
     }
 
     @Override
@@ -116,7 +116,16 @@ public class TraceCmaServiceImpl implements TraceCmaService {
         // delCaches(ids);
         return traceCmaMapper.deleteBatchIds(ids);
     }
-    
+
+    @Override
+    @Transactional
+    public void updateTraceViewed(String patientNo) {
+        UpdateWrapper<TraceCma> update = new UpdateWrapper<>();
+        update.lambda().eq(TraceCma::getPatientNo, patientNo)
+                .eq(TraceCma::getViewed, false)
+                .set(TraceCma::getViewed, true);
+        traceCmaMapper.update(null, update);
+    }
     /*
     private void delCaches(Long id) {
         redisUtils.del(CACHE_KEY + "::id:" + id);

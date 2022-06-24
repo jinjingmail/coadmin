@@ -28,6 +28,10 @@ public class TraceCsDTO extends BaseDto {
     @JsonSerialize(using= ToStringSerializer.class)
     private Long id;
 
+    @ApiModelProperty(value = "已查看")
+    @Excel(name = "已查看")
+    private Boolean viewed;
+
     @ApiModelProperty(value = "报告时间")
     @Excel(name = "报告时间", format = "yyyy-MM-dd HH:mm")
     private Date reportTime;

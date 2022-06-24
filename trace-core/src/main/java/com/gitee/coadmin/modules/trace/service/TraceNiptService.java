@@ -44,4 +44,6 @@ public interface TraceNiptService {
     int removeByIds(Set<Long> ids);
 
     void upload(TraceNiptDTO dto);
+
+    void updateTraceViewed(String patientNo);
 }

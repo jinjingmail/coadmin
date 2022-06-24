@@ -43,4 +43,6 @@ public interface TraceCsService {
     int insert(TraceCsDTO res);
     int updateById(TraceCsDTO res);
     int removeByIds(Set<Long> ids);
+
+    void updateTraceViewed(String patientNo);
 }

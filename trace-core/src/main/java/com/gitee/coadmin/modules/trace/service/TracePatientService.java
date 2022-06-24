@@ -45,4 +45,6 @@ public interface TracePatientService {
 
     void insertOrUpdate(String patientNo, String patientName, String patientGender, String patientAge,
                         String patientIdNo, String patientHealthNo, String contactTel);
+
+    void updateTraceViewed(String patientNo);
 }

@@ -106,9 +106,16 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(
                         HttpMethod.GET,
                         "/*.html",
+                        "/static/*.html",
+                        "/static/**",
                         "/**/*.html",
                         "/**/*.css",
                         "/**/*.js",
+                        "/**/*.jpg",
+                        "/**/*.png",
+                        "/**/*.ico",
+                        "/**/*.woff",
+                        "/**/*.woff2",
                         "/webSocket/**"
                 ).permitAll()
                 // swagger 文档

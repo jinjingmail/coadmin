@@ -27,6 +27,10 @@ public class TraceCmaDTO extends BaseDto {
     @JsonSerialize(using= ToStringSerializer.class)
     private Long id;
 
+    @ApiModelProperty(value = "已查看")
+    @Excel(name = "已查看")
+    private Boolean viewed;
+
     @ApiModelProperty(value = "核收日期")
     @Excel(name = "核收日期", format = "yyyy-MM-dd")
     private Date receiptDate;

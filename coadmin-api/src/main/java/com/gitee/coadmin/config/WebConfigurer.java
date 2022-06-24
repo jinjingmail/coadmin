@@ -17,6 +17,7 @@ package com.gitee.coadmin.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.CacheControl;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -33,7 +34,7 @@ import java.util.Collections;
  * @date 2018-11-30
  */
 @Configuration
-@EnableWebMvc
+//@EnableWebMvc
 public class WebConfigurer implements WebMvcConfigurer {
 
     /** 文件配置 */
@@ -74,5 +75,11 @@ public class WebConfigurer implements WebMvcConfigurer {
         registry.addResourceHandler("/avatar/**").addResourceLocations(avatarUtl).setCachePeriod(0);
         registry.addResourceHandler("/file/**").addResourceLocations(pathUtl).setCachePeriod(0);
         registry.addResourceHandler("/**").addResourceLocations("classpath:/META-INF/resources/").setCachePeriod(0);
+
+        /*
+         * 第一个方法设置访问路径前缀，第二个方法设置资源路径
+         * 将vue编译得到的文件，放到 resources/static 目录中，使用springboot的tomcat运行vue
+         */
+        registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
     }
 }
