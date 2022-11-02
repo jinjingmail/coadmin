@@ -20,8 +20,10 @@ public class TracePatientQueryParam{
     @Query
     private Long id;
 
+    @Query
+    private Boolean viewed;
+
     /** 精确 */
-    
     @Query
     private String no;
 

@@ -78,7 +78,7 @@ public class TraceCsController {
     }
 
     private void parseUploadFile(MultipartFile file) throws IOException {
-        List<TraceCsDTO> dtos = ExcelUtils.importExcel(file, TraceCsDTO.class, 1,
+        List<TraceCsDTO> dtos = ExcelUtils.importExcel(file, 0, 1, TraceCsDTO.class, 1,
                 new String[] {"标本类型", "诊断", "染色体核型结果", "早筛报告时间"});
         for (TraceCsDTO dto: dtos) {
             traceCsService.upload(dto);

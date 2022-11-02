@@ -8,4 +8,7 @@
       a.id, a.no, a.name, a.name_letter, a.gender, a.birthday, a.id_no, a.health_no, a.contact_no, a.remarks, a.create_time, a.create_user, a.update_time, a.update_user
   </sql>
   -->
+    <update id="updateViewed">
+      update
+    </update>
 </mapper>

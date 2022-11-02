@@ -36,6 +36,8 @@ public interface TraceCsService {
 
     TraceCsDTO getById(Long id);
 
+    Long numByPatientNo(String no);
+
     void upload(TraceCsDTO dto);
     /**
      * 插入一条新数据。

@@ -63,6 +63,13 @@ public class TraceCmaServiceImpl implements TraceCmaService {
     }
 
     @Override
+    public Long numByPatientNo(String no) {
+        QueryWrapper<TraceCma> wrapper = new QueryWrapper<>();
+        wrapper.lambda().eq(TraceCma::getPatientNo, no);
+        return traceCmaMapper.selectCount(wrapper);
+    }
+
+    @Override
     @Transactional
     public void upload(TraceCmaDTO dto) {
         TraceCmaDTO old = getByReportNo(dto.getReportNo());

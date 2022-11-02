@@ -36,6 +36,8 @@ public interface TraceCmaService {
 
     TraceCmaDTO getById(Long id);
 
+    Long numByPatientNo(String no);
+
     void upload(TraceCmaDTO dto);
 
     /**
@@ -46,4 +48,5 @@ public interface TraceCmaService {
     int removeByIds(Set<Long> ids);
 
     void updateTraceViewed(String patientNo);
+
 }

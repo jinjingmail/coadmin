@@ -297,11 +297,10 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
     @Transactional(rollbackFor = Exception.class)
     public void updatePass(String username, String encryptPassword) {
         UpdateWrapper<User> updater = new UpdateWrapper<>();
-        updater.lambda().eq(User::getUsername, username);
-        User user = new User();
-        user.setPassword(encryptPassword);
-        user.setPwdResetTime(new Date());
-        userMapper.update(user, updater);
+        updater.lambda().eq(User::getUsername, username)
+                .set(User::getPassword, encryptPassword)
+                .set(User::getPwdResetTime, new Date());
+        userMapper.update(null, updater);
         redisUtils.del("user::username:" + username);
         flushCache(username);
     }
@@ -333,10 +332,9 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
             throw new EntityExistException(User.class, "email", email);
         }
         UpdateWrapper<User> updater = new UpdateWrapper<>();
-        updater.lambda().eq(User::getUsername, username);
-        User userUpdate = new User();
-        userUpdate.setEmail(email);
-        userMapper.update(userUpdate, updater);
+        updater.lambda().eq(User::getUsername, username)
+                .set(User::getEmail, email);
+        userMapper.update(null, updater);
         delCaches(user.getId(), user.getUsername());
     }
 
@@ -347,12 +345,11 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
             throw new EntityExistException(User.class, "phone", resources.getPhone());
         }
         UpdateWrapper<User> updater = new UpdateWrapper<>();
-        updater.lambda().eq(User::getId, resources.getId());
-        User userUpdate = new User();
-        userUpdate.setPhone(resources.getPhone());
-        userUpdate.setGender(resources.getGender());
-        userUpdate.setNickName(resources.getNickName());
-        userMapper.update(userUpdate, updater);
+        updater.lambda().eq(User::getId, resources.getId())
+                .set(User::getPhone, resources.getPhone())
+                .set(User::getGender, resources.getGender())
+                .set(User::getNickName, resources.getNickName());
+        userMapper.update(null, updater);
         delCaches(resources.getId(), resources.getUsername());
     }
 

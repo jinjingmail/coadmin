@@ -31,6 +31,9 @@ public class TracePatient extends BaseEntity {
     @TableId(type= IdType.ASSIGN_ID)
     private Long id;
 
+    @ApiModelProperty(value = "true=已阅")
+    private Boolean viewed;
+
     @ApiModelProperty(value = "登记号")
     private String no;
 

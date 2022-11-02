@@ -69,6 +69,13 @@ public class TraceNiptServiceImpl implements TraceNiptService {
     }
 
     @Override
+    public Long numByPatientNo(String no) {
+        QueryWrapper<TraceNipt> wrapper = new QueryWrapper<>();
+        wrapper.lambda().eq(TraceNipt::getPatientNo, no);
+        return traceNiptMapper.selectCount(wrapper);
+    }
+
+    @Override
     @Transactional
     public void upload(TraceNiptDTO dto) {
         TraceNiptDTO old = getByReportNo(dto.getReportNo());

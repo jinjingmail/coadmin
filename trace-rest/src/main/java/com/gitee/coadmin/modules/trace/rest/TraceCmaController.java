@@ -78,7 +78,7 @@ public class TraceCmaController {
     }
 
     private void parseUploadFile(MultipartFile file) throws IOException {
-        List<TraceCmaDTO> dtos = ExcelUtils.importExcel(file, TraceCmaDTO.class, 3,
+        List<TraceCmaDTO> dtos = ExcelUtils.importExcel(file, 0, 1, TraceCmaDTO.class, 3,
                 new String[] {"标本类型", "诊断", "芯片ID", "染色体区域"});
         for (TraceCmaDTO dto: dtos) {
             traceCmaService.upload(dto);

@@ -28,6 +28,16 @@ public class TracePatientDTO extends BaseDto {
     @JsonSerialize(using= ToStringSerializer.class)
     private Long id;
 
+    @ApiModelProperty(value = "true=已阅")
+    @Excel(name = "已阅")
+    private Boolean viewed;
+
+    /*** 单独统计 begin */
+    private Long numCma;
+    private Long numCs;
+    private Long numNipt;
+    /** end */
+
     @ApiModelProperty(value = "登记号")
     @Excel(name = "登记号")
     @NotBlank

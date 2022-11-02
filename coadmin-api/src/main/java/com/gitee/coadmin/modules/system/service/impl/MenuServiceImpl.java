@@ -221,7 +221,7 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
         /*
          * 如果修改了菜单的父级，则将父级目录id添加到拥有当前菜单id的角色列表
          */
-        if (res.getType() != MenuType.BUTTON.getValue()) {
+        /*if (res.getType() != MenuType.BUTTON.getValue()) {
             if (newPid != null) {
                 if (ObjectUtil.notEqual(newPid, oldPid)) {
                     List<Long> roleIds = rolesMenusService.queryRoleIdByMenuId(res.getId());
@@ -240,11 +240,28 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
                     }
                 }
             }
-        }
+        }*/
 
         // 计算父级菜单节点数目
         updateSubCnt(oldPid);
         updateSubCnt(newPid);
+
+        if (ObjectUtil.notEqual(oldPid, newPid)) {
+            // 添加新的父节点到RoleMenu表
+            List<Long> menuRoleIds = rolesMenusService.queryRoleIdByMenuId(res.getId());
+            for (Long roleId: menuRoleIds) {
+                QueryWrapper<RolesMenus> query2 = new QueryWrapper<>();
+                query2.lambda().eq(RolesMenus::getRoleId, roleId)
+                        .eq(RolesMenus::getMenuId, newPid);
+                if (rolesMenusMapper.selectCount(query2) <= 0) {
+                    RolesMenus roleMenu = new RolesMenus();
+                    roleMenu.setRoleId(roleId);
+                    roleMenu.setMenuId(newPid);
+                    rolesMenusMapper.insert(roleMenu);
+                }
+            }
+        }
+
         // 清理缓存
         delCaches(res.getId(), pid);
         return ret > 0;
@@ -466,10 +483,9 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
         Long count = menuMapper.selectCount(query);
 
         UpdateWrapper<Menu> update = new UpdateWrapper<Menu>();
-        update.lambda().eq(Menu::getId, menuId);
-        Menu menu = new Menu();
-        menu.setSubCount(count.intValue());
-        menuMapper.update(menu, update);
+        update.lambda().eq(Menu::getId, menuId)
+                .set(Menu::getSubCount, count.intValue());
+        menuMapper.update(null, update);
     }
 
     /**

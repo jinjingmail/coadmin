@@ -79,7 +79,7 @@ public class TraceNiptController {
     }
 
     private void parseUploadFile(MultipartFile file) throws IOException {
-        List<TraceNiptDTO> dtos = ExcelUtils.importExcel(file, TraceNiptDTO.class, 3,
+        List<TraceNiptDTO> dtos = ExcelUtils.importExcel(file, 0, 1, TraceNiptDTO.class, 3,
                 new String[] {"13-三体", "18-三体", "21-三体", "结果描述", "T13风险"});
         for (TraceNiptDTO dto: dtos) {
             traceNiptService.upload(dto);

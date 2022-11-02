@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.gitee.coadmin.modules.trace.service.TraceCmaService;
 import com.gitee.coadmin.modules.trace.service.TraceCsService;
@@ -44,7 +45,21 @@ public class TracePatientServiceImpl implements TracePatientService {
     public PageInfo<TracePatientDTO> queryAll(TracePatientQueryParam query, Pageable pageable) {
         IPage<TracePatient> queryPage = PageUtil.toMybatisPage(pageable);
         IPage<TracePatient> page = tracePatientMapper.selectPage(queryPage, QueryHelpMybatisPlus.getPredicate(query));
-        return tracePatientConverter.convertPage(page);
+        PageInfo<TracePatientDTO> dtos = tracePatientConverter.convertPage(page);
+
+        TraceNiptService niptService = SpringContextHolder.getBean(TraceNiptService.class);
+        TraceCsService csService = SpringContextHolder.getBean(TraceCsService.class);
+        TraceCmaService cmaService = SpringContextHolder.getBean(TraceCmaService.class);
+
+        for (TracePatientDTO dto: dtos.getContent()) {
+            if (StrUtil.isBlank(dto.getNo())) {
+                continue;
+            }
+            dto.setNumCma(cmaService.numByPatientNo(dto.getNo()));
+            dto.setNumCs(csService.numByPatientNo(dto.getNo()));
+            dto.setNumNipt(niptService.numByPatientNo(dto.getNo()));
+        }
+        return dtos;
     }
 
     @Override
@@ -82,6 +97,15 @@ public class TracePatientServiceImpl implements TracePatientService {
         traceCmaService.updateTraceViewed(patientNo);
         traceCsService.updateTraceViewed(patientNo);
         traceNiptService.updateTraceViewed(patientNo);
+        updateViewed(patientNo);
+    }
+
+    private void updateViewed(String patientNo) {
+        UpdateWrapper<TracePatient> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.lambda().eq(TracePatient::getNo, patientNo)
+                .eq(TracePatient::getViewed, false)
+                .set(TracePatient::getViewed, true);
+        tracePatientMapper.update(null, updateWrapper);
     }
 
     @Override

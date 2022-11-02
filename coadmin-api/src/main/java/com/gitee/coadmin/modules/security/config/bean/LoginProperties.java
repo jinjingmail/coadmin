@@ -78,7 +78,7 @@ public class LoginProperties {
         synchronized (this) {
             switch (loginCode.getCodeType()) {
                 case arithmetic:
-                    // 算术类型 https://gitee.com/whvse/EasyCaptcha
+                    // 算术类型 https://gitee.com/whvse/EasyCaptcha https://gitee.com/ele-admin/EasyCaptcha
                     captcha = new ArithmeticCaptcha(loginCode.getWidth(), loginCode.getHeight());
                     // 几位数运算，默认是两位
                     captcha.setLen(loginCode.getLength());

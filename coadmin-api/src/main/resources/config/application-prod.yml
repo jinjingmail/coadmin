@@ -3,10 +3,10 @@ spring:
   datasource:
     druid:
       db-type: com.alibaba.druid.pool.DruidDataSource
-      driverClassName: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
-      url: jdbc:log4jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:coadmin}?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useSSL=false&autoReconnect=true
-      username: ${DB_USER:root}
-      password: ${DB_PWD:123456}
+      driverClassName: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:trace_prod}?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useSSL=false&autoReconnect=true
+      username: ${DB_USER:traceapi}
+      password: ${DB_PWD:02kfS45#1U}
       # 初始连接数
       initial-size: 5
       # 最小连接数
@@ -34,7 +34,7 @@ spring:
         url-pattern: /druid/*
         reset-enable: false
         login-username: admin
-        login-password: 123456
+        login-password: Fdskx!5afd
       filter:
         stat:
           enabled: true
@@ -54,16 +54,16 @@ login:
   single-login: true
   #  验证码
   login-code:
-    #  验证码类型配置 查看 LoginProperties 类
-    code-type: arithmetic
+    #  验证码类型配置 查看 LoginProperties 类（arithmetic/gif/chinese/chinese_gif/spec）
+    code-type: gif
     #  登录图形验证码有效时间/分钟
     expiration: 2
     #  验证码高度
-    width: 111
+    width: 56
     #  验证码宽度
     heigth: 36
     # 内容长度
-    length: 2
+    length: 4
     # 字体名称，为空则使用默认字体，如遇到线上乱码，设置其他字体即可
     font-name:
     # 字体大小

@@ -63,6 +63,13 @@ public class TraceCsServiceImpl implements TraceCsService {
     }
 
     @Override
+    public Long numByPatientNo(String no) {
+        QueryWrapper<TraceCs> wrapper = new QueryWrapper<>();
+        wrapper.lambda().eq(TraceCs::getPatientNo, no);
+        return traceCsMapper.selectCount(wrapper);
+    }
+
+    @Override
     @Transactional
     public void upload(TraceCsDTO dto) {
         TraceCsDTO old = getByReportNo(dto.getReportNo());

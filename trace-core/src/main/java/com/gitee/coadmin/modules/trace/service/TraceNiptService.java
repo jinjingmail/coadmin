@@ -36,6 +36,7 @@ public interface TraceNiptService {
 
     TraceNiptDTO getById(Long id);
 
+    Long numByPatientNo(String no);
     /**
      * 插入一条新数据。
      */
