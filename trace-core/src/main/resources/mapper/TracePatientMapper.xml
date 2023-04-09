@@ -8,7 +8,21 @@
       a.id, a.no, a.name, a.name_letter, a.gender, a.birthday, a.id_no, a.health_no, a.contact_no, a.remarks, a.create_time, a.create_user, a.update_time, a.update_user
   </sql>
   -->
-    <update id="updateViewed">
-      update
-    </update>
+    <select id="queryList" resultType="com.gitee.coadmin.modules.trace.service.dto.TracePatientDTO">
+      SELECT p.*, cma.cma_quantity, cs.cs_quantity, nipt.nipt_quantity
+        FROM trace_patient p
+        LEFT JOIN (SELECT patient_no, COUNT(*) cma_quantity FROM trace_cma  GROUP BY patient_no) cma ON p.no = cma.patient_no
+        LEFT JOIN (SELECT patient_no, COUNT(*) cs_quantity FROM trace_cs  GROUP BY patient_no) cs ON p.no = cs.patient_no
+        LEFT JOIN (SELECT patient_no, COUNT(*) nipt_quantity FROM trace_nipt  GROUP BY patient_no) nipt ON p.no = nipt.patient_no
+      ${ew.customSqlSegment}
+    </select>
+
+    <select id="queryCount" resultType="long">
+      SELECT count(*)
+        FROM trace_patient p
+        LEFT JOIN (SELECT patient_no, COUNT(*) cma_quantity FROM trace_cma  GROUP BY patient_no) cma ON p.no = cma.patient_no
+        LEFT JOIN (SELECT patient_no, COUNT(*) cs_quantity FROM trace_cs  GROUP BY patient_no) cs ON p.no = cs.patient_no
+        LEFT JOIN (SELECT patient_no, COUNT(*) nipt_quantity FROM trace_nipt  GROUP BY patient_no) nipt ON p.no = nipt.patient_no
+      ${ew.customSqlSegment}
+    </select>
 </mapper>

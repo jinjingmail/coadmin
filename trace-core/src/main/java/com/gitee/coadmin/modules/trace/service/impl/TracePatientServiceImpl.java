@@ -4,9 +4,11 @@ import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.gitee.coadmin.modules.trace.service.TraceCmaService;
 import com.gitee.coadmin.modules.trace.service.TraceCsService;
 import com.gitee.coadmin.modules.trace.service.TraceNiptService;
@@ -21,6 +23,8 @@ import com.gitee.coadmin.modules.trace.service.mapper.TracePatientMapper;
 import com.gitee.coadmin.modules.trace.service.converter.TracePatientConverter;
 import com.gitee.coadmin.utils.SpringContextHolder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,8 +35,9 @@ import java.util.*;
  * @author jinjin
  * @since 2022-01-04
  */
+@Slf4j
 @Service
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor_ = @Lazy)
 // @CacheConfig(cacheNames = TracePatientService.CACHE_KEY)
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class TracePatientServiceImpl implements TracePatientService {
@@ -41,27 +46,33 @@ public class TracePatientServiceImpl implements TracePatientService {
     private final TracePatientMapper tracePatientMapper;
     private final TracePatientConverter tracePatientConverter;
 
+    @Lazy
+    private final TraceNiptService niptService;
+    @Lazy
+    private final TraceCsService csService;
+    @Lazy
+    private final TraceCmaService cmaService;
+
     @Override
     public PageInfo<TracePatientDTO> queryAll(TracePatientQueryParam query, Pageable pageable) {
-        IPage<TracePatient> queryPage = PageUtil.toMybatisPage(pageable);
-        IPage<TracePatient> page = tracePatientMapper.selectPage(queryPage, QueryHelpMybatisPlus.getPredicate(query));
-        PageInfo<TracePatientDTO> dtos = tracePatientConverter.convertPage(page);
 
-        TraceNiptService niptService = SpringContextHolder.getBean(TraceNiptService.class);
-        TraceCsService csService = SpringContextHolder.getBean(TraceCsService.class);
-        TraceCmaService cmaService = SpringContextHolder.getBean(TraceCmaService.class);
+        QueryWrapper<TracePatient> wrapper = QueryHelpMybatisPlus.getPredicate(query);
 
-        for (TracePatientDTO dto: dtos.getContent()) {
-            if (StrUtil.isBlank(dto.getNo())) {
-                continue;
-            }
-            dto.setNumCma(cmaService.numByPatientNo(dto.getNo()));
-            dto.setNumCs(csService.numByPatientNo(dto.getNo()));
-            dto.setNumNipt(niptService.numByPatientNo(dto.getNo()));
-        }
+        long countAll = tracePatientMapper.queryCount(wrapper);
+        log.info("countALl={}", countAll);
+
+        wrapper.lambda()
+                .orderByDesc(TracePatient::getId)
+                .last(StrUtil.format("limit {}, {}",
+                        pageable.getPageNumber()*pageable.getPageSize(), pageable.getPageSize()));
+
+        List<TracePatientDTO> patientDTOList = tracePatientMapper.queryList(wrapper);
+
+        PageInfo<TracePatientDTO> dtos = new PageInfo<>();
+        dtos.setContent(patientDTOList);
+        dtos.setTotalElements(countAll);
         return dtos;
     }
-
     @Override
     public List<TracePatientDTO> queryAll(TracePatientQueryParam query){
         return tracePatientConverter.toDto(tracePatientMapper.selectList(QueryHelpMybatisPlus.getPredicate(query, "id", false)));
