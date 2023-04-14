@@ -37,6 +37,7 @@ public interface TraceCsService {
     TraceCsDTO getById(Long id);
 
     Long numByPatientNo(String no);
+    String calcSummary(String patientNo);
 
     void upload(TraceCsDTO dto);
     /**
@@ -47,4 +48,5 @@ public interface TraceCsService {
     int removeByIds(Set<Long> ids);
 
     void updateTraceViewed(String patientNo);
+
 }

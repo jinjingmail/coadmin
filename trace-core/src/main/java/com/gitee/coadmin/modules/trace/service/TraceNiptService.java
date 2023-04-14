@@ -47,4 +47,6 @@ public interface TraceNiptService {
     void upload(TraceNiptDTO dto);
 
     void updateTraceViewed(String patientNo);
+
+    String calcSummary(String patientNo);
 }

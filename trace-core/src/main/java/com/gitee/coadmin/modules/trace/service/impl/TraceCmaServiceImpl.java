@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.gitee.coadmin.modules.trace.domain.TraceCs;
 import com.gitee.coadmin.modules.trace.service.TracePatientService;
 import com.gitee.coadmin.utils.QueryHelpMybatisPlus;
 import com.gitee.coadmin.base.PageInfo;
@@ -67,6 +68,21 @@ public class TraceCmaServiceImpl implements TraceCmaService {
         QueryWrapper<TraceCma> wrapper = new QueryWrapper<>();
         wrapper.lambda().eq(TraceCma::getPatientNo, no);
         return traceCmaMapper.selectCount(wrapper);
+    }
+
+    @Override
+    public String calcSummary(String patientNo) {
+        QueryWrapper<TraceCma> wrapper = new QueryWrapper<>();
+        wrapper.lambda()
+                .eq(TraceCma::getPatientNo, patientNo)
+                .orderByDesc(TraceCma::getInspectionTime)
+                .last("limit 1");
+        TraceCma result = traceCmaMapper.selectOne(wrapper);
+        if (result != null) {
+            return result.getChromosomeRegion();
+        } else {
+            return "";
+        }
     }
 
     @Override

@@ -49,4 +49,5 @@ public interface TraceCmaService {
 
     void updateTraceViewed(String patientNo);
 
+    String calcSummary(String patientNo);
 }

@@ -70,6 +70,21 @@ public class TraceCsServiceImpl implements TraceCsService {
     }
 
     @Override
+    public String calcSummary(String patientNo) {
+        QueryWrapper<TraceCs> wrapper = new QueryWrapper<>();
+        wrapper.lambda()
+                .eq(TraceCs::getPatientNo, patientNo)
+                .orderByDesc(TraceCs::getReportTime)
+                .last("limit 1");
+        TraceCs result = traceCsMapper.selectOne(wrapper);
+        if (result != null) {
+            return result.getKaryotypeResult();
+        } else {
+            return "";
+        }
+    }
+
+    @Override
     @Transactional
     public void upload(TraceCsDTO dto) {
         TraceCsDTO old = getByReportNo(dto.getReportNo());

@@ -68,6 +68,12 @@ public class TracePatientServiceImpl implements TracePatientService {
 
         List<TracePatientDTO> patientDTOList = tracePatientMapper.queryList(wrapper);
 
+        patientDTOList.forEach( item -> {
+            item.setCsSummary(csService.calcSummary(item.getNo()));
+            item.setCmaSummary(cmaService.calcSummary(item.getNo()));
+            item.setNiptSummary(niptService.calcSummary(item.getNo()));
+        });
+
         PageInfo<TracePatientDTO> dtos = new PageInfo<>();
         dtos.setContent(patientDTOList);
         dtos.setTotalElements(countAll);

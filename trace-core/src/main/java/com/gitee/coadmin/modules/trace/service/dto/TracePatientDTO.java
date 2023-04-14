@@ -32,14 +32,14 @@ public class TracePatientDTO extends BaseDto {
     @Excel(name = "已阅")
     private Boolean viewed;
 
-    private Integer cmaQuantity;
     private Integer csQuantity;
+    private Integer cmaQuantity;
     private Integer niptQuantity;
 
     /*** 单独统计 begin */
-    private Long numCma;
-    private Long numCs;
-    private Long numNipt;
+    private String csSummary;
+    private String cmaSummary;
+    private String niptSummary;
     /** end */
 
     @ApiModelProperty(value = "登记号")
