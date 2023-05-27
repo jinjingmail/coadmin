@@ -81,7 +81,20 @@ public class TracePatientServiceImpl implements TracePatientService {
     }
     @Override
     public List<TracePatientDTO> queryAll(TracePatientQueryParam query){
-        return tracePatientConverter.toDto(tracePatientMapper.selectList(QueryHelpMybatisPlus.getPredicate(query, "id", false)));
+        QueryWrapper<TracePatient> wrapper = QueryHelpMybatisPlus.getPredicate(query);
+
+        wrapper.lambda()
+                .orderByDesc(TracePatient::getId);
+
+        List<TracePatientDTO> patientDTOList = tracePatientMapper.queryList(wrapper);
+
+        patientDTOList.forEach( item -> {
+            item.setCsSummary(csService.calcSummary(item.getNo()));
+            item.setCmaSummary(cmaService.calcSummary(item.getNo()));
+            item.setNiptSummary(niptService.calcSummary(item.getNo()));
+        });
+
+        return patientDTOList;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.gitee.coadmin.modules.trace.service.dto;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,23 +25,13 @@ public class TracePatientDTO extends BaseDto {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "ID")
-    @Excel(name = "ID")
+    //@Excel(name = "ID")
     @JsonSerialize(using= ToStringSerializer.class)
     private Long id;
 
     @ApiModelProperty(value = "true=已阅")
-    @Excel(name = "已阅")
+    //@Excel(name = "已阅")
     private Boolean viewed;
-
-    private Integer csQuantity;
-    private Integer cmaQuantity;
-    private Integer niptQuantity;
-
-    /*** 单独统计 begin */
-    private String csSummary;
-    private String cmaSummary;
-    private String niptSummary;
-    /** end */
 
     @ApiModelProperty(value = "登记号")
     @Excel(name = "登记号")
@@ -51,6 +42,32 @@ public class TracePatientDTO extends BaseDto {
     @Excel(name = "姓名")
     @NotBlank
     private String name;
+
+    @Excel(name = "CMA数量")
+    private Integer cmaQuantity;
+    @Excel(name = "CS数量")
+    private Integer csQuantity;
+    @Excel(name = "NIPT数量")
+    private Integer niptQuantity;
+
+    @ApiModelProperty(value = "备注")
+    @Excel(name = "备注", width = 30.0)
+    @Size(max = 260, message = "备注长度不能大于260")
+    private String remarks;
+
+    /*** 单独统计 begin */
+    private String csSummary;
+    private String cmaSummary;
+    private String niptSummary;
+    /** end */
+
+    @Excel(name = "摘要", width = 30.0, isWrap = true)
+    private String summary;
+    public String getSummary() {
+        return "CMA：" + StrUtil.trimToEmpty(cmaSummary) +
+                "\nCS：" + StrUtil.trimToEmpty(csSummary) +
+                "\nNIPT：" + StrUtil.trimToEmpty(niptSummary);
+    }
 
     @ApiModelProperty(value = "姓名首字母")
     private String nameLetter;
@@ -75,27 +92,22 @@ public class TracePatientDTO extends BaseDto {
     @Excel(name = "联系方式")
     private String contactNo;
 
-    @ApiModelProperty(value = "备注")
-    @Excel(name = "备注")
-    @Size(max = 60, message = "备注长度不能大于60")
-    private String remarks;
-
     @ApiModelProperty(value = "创建时间")
-    @Excel(name = "创建时间", format = "yyyy-MM-dd HH:mm:ss")
+    //@Excel(name = "创建时间", format = "yyyy-MM-dd HH:mm:ss")
     @NotNull
     private Date createTime;
 
     @ApiModelProperty(value = "创建人")
-    @Excel(name = "创建人")
+    //@Excel(name = "创建人")
     @JsonSerialize(using= ToStringSerializer.class)
     private Long createUser;
 
     @ApiModelProperty(value = "更新时间")
-    @Excel(name = "更新时间", format = "yyyy-MM-dd HH:mm:ss")
+    //@Excel(name = "更新时间", format = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
     @ApiModelProperty(value = "更新人")
-    @Excel(name = "更新人")
+    //@Excel(name = "更新人")
     @JsonSerialize(using= ToStringSerializer.class)
     private Long updateUser;
 

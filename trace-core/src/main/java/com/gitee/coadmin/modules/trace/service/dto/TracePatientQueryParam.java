@@ -25,12 +25,17 @@ public class TracePatientQueryParam{
 
     @Query(type = Query.Type.GREATER_THAN_EQ)
     private Integer csQuantity;
-
     @Query(type = Query.Type.GREATER_THAN_EQ)
     private Integer cmaQuantity;
-
     @Query(type = Query.Type.GREATER_THAN_EQ)
     Integer niptQuantity;
+
+    @Query(propName = "csQuantity")
+    private Integer csQuantityEq;
+    @Query(propName = "cmaQuantity")
+    private Integer cmaQuantityEq;
+    @Query(propName = "niptQuantity")
+    Integer niptQuantityEq;
 
     /** 精确 */
     @Query
@@ -39,6 +44,10 @@ public class TracePatientQueryParam{
     /** 模糊 */
     @Query( blurry = "name, nameLetter", type = Query.Type.RIGHT_LIKE)
     private String name;
+
+    /** 模糊 */
+    @Query( type = Query.Type.INNER_LIKE)
+    private String remarks;
 
     /** 精确 */
     
