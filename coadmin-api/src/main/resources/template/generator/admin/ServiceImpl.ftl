@@ -69,29 +69,27 @@ public class ${className}ServiceImpl implements ${className}Service {
     @Override
     // @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
-    public int insert(${className}DTO res) {
+    public void insert(${className}DTO res) {
         ${className} entity = ${changeClassName}Converter.toEntity(res);
-        int ret = ${changeClassName}Mapper.insert(entity);
+        ${changeClassName}Mapper.insert(entity);
         res.setId(entity.getId());
-        return ret;
     }
 
     @Override
     // @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
-    public int updateById(${className}DTO res){
+    public void updateById(${className}DTO res){
         ${className} entity = ${changeClassName}Converter.toEntity(res);
-        int ret = ${changeClassName}Mapper.updateById(entity);
+        ${changeClassName}Mapper.updateById(entity);
         // delCaches(res.id);
-        return ret;
     }
 
     @Override
     // @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
-    public int removeByIds(Set<${pkColumnType}> ids){
+    public void removeByIds(Set<${pkColumnType}> ids){
         // delCaches(ids);
-        return ${changeClassName}Mapper.deleteBatchIds(ids);
+        ${changeClassName}Mapper.deleteBatchIds(ids);
     }
     
     /*

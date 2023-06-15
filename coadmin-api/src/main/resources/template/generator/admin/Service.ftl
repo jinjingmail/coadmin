@@ -39,7 +39,7 @@ public interface ${className}Service {
     /**
      * 插入一条新数据。
      */
-    int insert(${className}DTO res);
-    int updateById(${className}DTO res);
-    int removeByIds(Set<${pkColumnType}> ids);
+    void insert(${className}DTO res);
+    void updateById(${className}DTO res);
+    void removeByIds(Set<${pkColumnType}> ids);
 }
