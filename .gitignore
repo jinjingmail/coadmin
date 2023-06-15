@@ -5,6 +5,5 @@
 */*.iml
 /.gradle/
 */rebel.xml
-/coadmin-api/src/main/resources/config/application-prod.yml
 /coadmin-api/src/main/resources/config/application-huihui.yml
 /coadmin-api/src/main/resources/static/*
