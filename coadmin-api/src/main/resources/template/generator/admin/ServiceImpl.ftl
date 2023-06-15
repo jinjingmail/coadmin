@@ -41,19 +41,19 @@ public class ${className}ServiceImpl implements ${className}Service {
     private final ${className}Converter ${changeClassName}Converter;
 
     @Override
-    public PageInfo<${className}DTO> queryAll(${className}QueryParam query, Pageable pageable) {
+    public PageInfo<${className}DTO> pageByParam(${className}QueryParam query, Pageable pageable) {
         IPage<${className}> queryPage = PageUtil.toMybatisPage(pageable);
         IPage<${className}> page = ${changeClassName}Mapper.selectPage(queryPage, QueryHelpMybatisPlus.getPredicate(query));
         return ${changeClassName}Converter.convertPage(page);
     }
 
     @Override
-    public List<${className}DTO> queryAll(${className}QueryParam query){
+    public List<${className}DTO> listByParam(${className}QueryParam query){
         return ${changeClassName}Converter.toDto(${changeClassName}Mapper.selectList(QueryHelpMybatisPlus.getPredicate(query, "id", false)));
     }
 
     @Override
-    public long queryCount(${className}QueryParam query) {
+    public long countByParam(${className}QueryParam query) {
         return ${changeClassName}Mapper.selectCount(QueryHelpMybatisPlus.getPredicate(query));
     }
 

@@ -23,16 +23,16 @@ public interface ${className}Service {
     * @param pageable 分页参数
     * @return PageInfo<${className}DTO>
     */
-    PageInfo<${className}DTO> queryAll(${className}QueryParam query, Pageable pageable);
+    PageInfo<${className}DTO> pageByParam(${className}QueryParam query, Pageable pageable);
 
     /**
     * 查询所有数据不分页
     * @param query 条件参数
     * @return List<${className}DTO>
     */
-    List<${className}DTO> queryAll(${className}QueryParam query);
+    List<${className}DTO> listByParam(${className}QueryParam query);
 
-    long queryCount(${className}QueryParam query);
+    long countByParam(${className}QueryParam query);
 
     ${className}DTO getById(${pkColumnType} id);
 
