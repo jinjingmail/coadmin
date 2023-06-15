@@ -59,31 +59,31 @@ public class ${className}Controller {
     @ApiOperation("查询${apiAlias}")
     @PreAuthorize("@el.check('${changeClassName}:list')")
     public PageInfo<${className}DTO> query(${className}QueryParam query, Pageable pageable){
-        return ${changeClassName}Service.queryAll(query,pageable);
+        return ${changeClassName}Service.pageByParam(query,pageable);
     }
 
     @PostMapping
     @Log(value = "新增${apiAlias}", type = LogActionType.ADD)
     @ApiOperation("新增${apiAlias}")
     @PreAuthorize("@el.check('${changeClassName}:add')")
-    public Integer create(@Validated @RequestBody ${className}DTO res){
-        return ${changeClassName}Service.insert(res);
+    public void create(@Validated @RequestBody ${className}DTO res){
+        ${changeClassName}Service.insert(res);
     }
 
     @PutMapping
     @Log(value = "修改${apiAlias}", type = LogActionType.UPDATE)
     @ApiOperation("修改${apiAlias}")
     @PreAuthorize("@el.check('${changeClassName}:edit')")
-    public Integer update(@Validated @RequestBody ${className}DTO res){
-        return ${changeClassName}Service.updateById(res);
+    public void update(@Validated @RequestBody ${className}DTO res){
+        ${changeClassName}Service.updateById(res);
     }
 
     @DeleteMapping
     @Log(value = "删除${apiAlias}", type = LogActionType.DELETE)
     @ApiOperation("删除${apiAlias}")
     @PreAuthorize("@el.check('${changeClassName}:del')")
-    public Integer delete(@RequestBody Set<${pkColumnType}> ids) {
-        return ${changeClassName}Service.removeByIds(ids);
+    public void delete(@RequestBody Set<${pkColumnType}> ids) {
+        ${changeClassName}Service.removeByIds(ids);
     }
 
     @Log("导出${apiAlias}")
@@ -93,7 +93,7 @@ public class ${className}Controller {
     @PreAuthorize("@el.check('${changeClassName}:down')")
     public void download(${className}QueryParam criteria, HttpServletResponse response) {
         try {
-            List<${className}DTO> dtos = ${changeClassName}Service.queryAll(criteria);
+            List<${className}DTO> dtos = ${changeClassName}Service.listByParam(criteria);
             ExcelUtils.exportExcel(dtos, null, "导出${apiAlias}", ${className}DTO.class, "", response);
         } catch (IOException e) {
             throw new CoException("导出失败");
